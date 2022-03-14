@@ -1,5 +1,4 @@
 #include "stb_namespace.h"
-#include <PCF8574.h>
 
 /*
 STB::Brain::Brain(String BrainName) {
@@ -135,22 +134,24 @@ bool STB::i2cScanner() {
 */
 
 
-
-// Requires relayPinArray, relayInitArray, REL_AMOUNT to be declared
+/**
+ * @param relay (Expander_PCF8574) relay instance
+ * @param pins (int) pin numbers
+ * @param initvals (int) init value
+ * @param amount (int) amount of relays to be initialized
+ * @return bool
+ */
 bool STB::relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
-    Serial.print(F("\n relay init ... "));
+    Serial.print(F("\n relay init ... \n"));
     relay.begin(RELAY_I2C_ADD);
     
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
+        Serial.print("     ");
+        Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
     }
     Serial.print(F(" successful"));
     return true;
 }
 
-
-/*
- Serial.print("     ");
-        Serial.print("Relay ["); Serial.print(relayPinArray[i]); Serial.print("] set to "); Serial.println(relayInitArray[i]);
-*/
