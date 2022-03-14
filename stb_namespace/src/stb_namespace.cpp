@@ -1,12 +1,13 @@
 #include "stb_namespace.h"
 #include <PCF8574.h>
-using namespace stb_namespace;
 
-stb_namespace::Brain::Brain(String BrainName) {
+/*
+STB::Brain::Brain(String BrainName) {
 }
 
-stb_namespace::Brain::~Brain() {
+STB::Brain::~Brain() {
 }
+*/
 
 /**
  *  Initialise I2C, Serial and RS485 busses
@@ -14,7 +15,7 @@ stb_namespace::Brain::~Brain() {
  *  @return true (bool) true on success
  *  @param void void
  */
-bool stb_namespace::brainSerialInit() {
+bool STB::brainSerialInit() {
     Wire.begin();
     Serial.begin(115200);
     delay(100);
@@ -33,7 +34,7 @@ bool stb_namespace::brainSerialInit() {
  *  @param message (String) message to be printed
  *  @param source (String) soure of the message default is "SYS"
  */
-void stb_namespace::printWithHeader(String message, String source) {
+void STB::printWithHeader(String message, String source) {
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println();
     Serial.print("!Br,");
@@ -60,7 +61,8 @@ void stb_namespace::heartbeat() {
  *  @return void
  *  @param void void
  */
-void stb_namespace::softwareReset() {
+/*
+void STB::softwareReset() {
     Serial.println(F("Restarting in"));
     delay(50);
     for (byte i = 3; i > 0; i--) {
@@ -69,6 +71,7 @@ void stb_namespace::softwareReset() {
     }
     asm volatile("  jmp 0");
 }
+*/
 
 /**
  *  Scans the I2C bus all 
@@ -76,7 +79,8 @@ void stb_namespace::softwareReset() {
  *  @return void
  *  @param void void
  */
-bool stb_namespace::i2cScanner() {
+/*
+bool STB::i2cScanner() {
     Serial.println();
     Serial.println(F("I2C scanner:"));
     Serial.println(F("Scanning..."));
@@ -100,11 +104,12 @@ bool stb_namespace::i2cScanner() {
 
     return true;
 }
+*/
 
 
 
 // Requires relayPinArray, relayInitArray, REL_AMOUNT to be declared
-bool stb_namespace::relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
+bool STB::relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
     Serial.print(F("\n relay init ... "));
     relay.begin(RELAY_I2C_ADD);
     
