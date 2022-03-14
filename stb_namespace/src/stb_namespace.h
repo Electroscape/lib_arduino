@@ -12,11 +12,12 @@
 
 namespace stb_namespace {
     class Brain {
-       private:
+        private:
         /* data */
-       public:
-        Brain(String BrainName);
-        ~Brain();
+        
+        public:
+            Brain(String BrainName);
+            ~Brain();
     };
     // static unsigned long lastHeartbeat = millis();
     // static unsigned long heartbeatFrequency = 3000;
@@ -26,4 +27,6 @@ namespace stb_namespace {
     void softwareReset();
     bool i2cScanner();
     bool brainSerialInit();
+    bool relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8);
+
 }  // namespace stb_namespace
