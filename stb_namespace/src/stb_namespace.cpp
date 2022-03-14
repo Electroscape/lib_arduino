@@ -9,21 +9,43 @@ STB::Brain::~Brain() {
 }
 */
 
+void STB::begin() {
+    serial_init();
+    print_info();
+}
+
 /**
  *  Initialise I2C, Serial and RS485 busses
  * 
  *  @return true (bool) true on success
  *  @param void void
  */
-bool STB::brainSerialInit() {
+bool STB::serial_init() {
     Wire.begin();
     Serial.begin(115200);
     delay(100);
-    // initialize the read pin as an output:
     pinMode(MAX_CTRL_PIN, OUTPUT);
-    // Welcome Print
-    printWithHeader("!Setup Begin", "SYS");
     return true;
+}
+
+void STB::print_info() {
+
+    Serial.println(F("+-----------------------------------+"));
+    Serial.println(F("|    TeamEscape HH&S ENGINEERING    |"));
+    Serial.println(F("+-----------------------------------+"));
+    delay(20);
+    printWithHeader("!header_begin");
+    #ifdef title
+        printWithHeader(title);
+    #endif
+    #ifdef version
+        printWithHeader(version);
+    #endif
+    #ifdef versiondate
+        printWithHeader(versionDate);
+    #endif
+    printWithHeader("!header_end");
+    printWithHeader("!setup_begin");
 }
 
 /**
@@ -42,8 +64,14 @@ void STB::printWithHeader(String message, String source) {
     Serial.print(",");
     Serial.print(message);
     Serial.println(",Done.");
+    // check if this can be reduced 
     delay(50);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+}
+
+void STB::print_setup_end() {
+    printWithHeader("!setup_end");
+    Serial.println(); Serial.println("===================START====================="); Serial.println();
 }
 
 
