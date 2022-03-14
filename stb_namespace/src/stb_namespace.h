@@ -5,28 +5,24 @@
 #include <Wire.h>    /* I2C library */
 
 // Defined by hardware
-#define RELAY_I2C_ADD 0x3F
 #define MAX_CTRL_PIN A0
 #define MAX485_WRITE HIGH
 #define MAX485_READ LOW
 
-namespace stb_namespace {
-    class Brain {
-        private:
-        /* data */
-        
-        public:
-            Brain(String BrainName);
-            ~Brain();
-    };
-    // static unsigned long lastHeartbeat = millis();
-    // static unsigned long heartbeatFrequency = 3000;
+#ifndef RELAY_I2C_ADD
+    #define RELAY_I2C_ADD 0x3F
+#endif 
 
-    void printWithHeader(String message, String source=String("SYS"));
+class STB {
+    public:
+    static void printWithHeader(String message, String source=String("SYS"));
     // void heartbeat();
-    void softwareReset();
-    bool i2cScanner();
-    bool brainSerialInit();
-    bool relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8);
+    // void softwareReset();
+    // bool i2cScanner();
+    static bool brainSerialInit();
+    static bool relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8);
+};
 
-}  // namespace stb_namespace
+
+
+
