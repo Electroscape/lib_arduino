@@ -17,13 +17,14 @@ class STB {
     private:
     static bool serial_init();
     static void print_info();
+    
     public:
     static void begin();
     static void printWithHeader(String message, String source=String("SYS"));
     static void print_setup_end();
-    // void heartbeat();
-    // void softwareReset();
-    // bool i2cScanner();
+
+    static bool i2c_scanner();
+    static void software_reset();
     
     static bool relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8);
 };
