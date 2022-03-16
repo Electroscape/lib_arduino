@@ -1,5 +1,5 @@
 #include "stb_namespace.h"
-
+#include <Wire.h>
 /*
 STB::Brain::Brain(String BrainName) {
 }
@@ -101,13 +101,13 @@ void STB::softwareReset() {
 */
 
 /**
- *  Scans the I2C bus all 
+ *  Prints out what I2C addresses respond on the bus
  * 
  *  @return void
  *  @param void void
  */
-/*
-bool STB::i2cScanner() {
+bool STB::i2c_scanner() {
+
     Serial.println();
     Serial.println(F("I2C scanner:"));
     Serial.println(F("Scanning..."));
@@ -121,9 +121,9 @@ bool STB::i2cScanner() {
             Serial.print(i, HEX);
             Serial.println(")");
             count++;
-            delay(1);  // maybe unneeded?
-        }              // end of good response
-    }                  // end of for loop
+            delay(1);  
+        }              
+    }                  
     Serial.println("Done.");
     Serial.print("Found ");
     Serial.print(count, DEC);
@@ -131,8 +131,20 @@ bool STB::i2cScanner() {
 
     return true;
 }
-*/
 
+/**
+ * @brief restarts teh arduino
+ * 
+ */
+void STB::software_reset() {
+    Serial.println(F("Restarting in"));
+    delay(50);
+    for (byte i = 3; i>0; i--) {
+        Serial.println(i);
+        delay(100);
+    }
+    asm volatile ("  jmp 0");
+}
 
 /**
  * @param relay (Expander_PCF8574) relay instance
