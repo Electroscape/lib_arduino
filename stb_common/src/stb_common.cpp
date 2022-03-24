@@ -1,4 +1,4 @@
-#include "stb_namespace.h"
+#include "stb_common.h"
 #include <Wire.h>
 /*
 STB::Brain::Brain(String BrainName) {
@@ -9,8 +9,8 @@ STB::Brain::~Brain() {
 */
 
 void STB::begin() {
-    serial_init();
-    print_info();
+    serialInit();
+    printInfo();
 }
 
 /**
@@ -19,7 +19,7 @@ void STB::begin() {
  *  @return true (bool) true on success
  *  @param void void
  */
-bool STB::serial_init() {
+bool STB::serialInit() {
     Wire.begin();
     Serial.begin(115200);
     delay(100);
@@ -27,7 +27,7 @@ bool STB::serial_init() {
     return true;
 }
 
-void STB::print_info() {
+void STB::printInfo() {
 
     Serial.println(F("+-----------------------------------+"));
     Serial.println(F("|    TeamEscape HH&S ENGINEERING    |"));
@@ -68,7 +68,7 @@ void STB::printWithHeader(String message, String source) {
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
 
-void STB::print_setup_end() {
+void STB::printSetupEnd() {
     printWithHeader("!setup_end");
     Serial.println(); Serial.println("===================START====================="); Serial.println();
 }
@@ -106,7 +106,7 @@ void STB::softwareReset() {
  *  @return void
  *  @param void void
  */
-bool STB::i2c_scanner() {
+bool STB::i2cScanner() {
 
     Serial.println();
     Serial.println(F("I2C scanner:"));
@@ -136,7 +136,7 @@ bool STB::i2c_scanner() {
  * @brief restarts teh arduino
  * 
  */
-void STB::software_reset() {
+void STB::softwareReset() {
     Serial.println(F("Restarting in"));
     delay(50);
     for (byte i = 3; i>0; i--) {
@@ -153,7 +153,7 @@ void STB::software_reset() {
  * @param amount (int) amount of relays to be initialized
  * @return bool
  */
-bool STB::relay_init(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
+bool STB::relayInit(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
     Serial.print(F("\n relay init ... \n"));
     relay.begin(RELAY_I2C_ADD);
     
