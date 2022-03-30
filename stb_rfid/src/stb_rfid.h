@@ -15,7 +15,7 @@ class STB_RFID {
     public:
     static bool cardDetect(Adafruit_PN532 &reader, uint8_t *uid);
     static bool RFID_Init(Adafruit_PN532 &reader);
-    static uint8_t cardRead(Adafruit_PN532 &reader, int datablock);
+    static bool cardRead(Adafruit_PN532 &reader, uint8_t data[16],int datablock);
         // static bool RFID_Gate_locked();
         // static bool read_PN532(int reader_nr, uint8_t *data, uint8_t *uid, uint8_t uidLength);
 };
