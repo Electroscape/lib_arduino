@@ -6,11 +6,15 @@
  * @param reader
  * @return bool
  */
-bool STB_RFID::cardDetect(Adafruit_PN532 &reader) {
+bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
     uint8_t success;
-    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;
-    success = RFID_READERS[reader_nr].readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    Serial.println(success);
+    Serial.println(uidLength);
+    // for (int i=0; i<sizeof(uid); i++) {
+    // Serial.print(uid);
+
 
     return (success && uidLength == 4);
 }
@@ -53,14 +57,51 @@ bool STB_RFID::RFID_Init(Adafruit_PN532 &reader) {
     return true;
 }
 
+
+bool STB_RFID::read_PN532(Adafruit_PN532 &reader, int datablock) {
+    uint8_t success;
+    uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
+    uint8_t uidLength;
+    uint8_t data[16];
+    uint8_t keya[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+
+    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    if (!success) {return false;}
+
+    success = reader.mifareclassic_AuthenticateBlock(uid, uidLength, datablock, 0, keya);
+    if (!success) {
+        Serial.println("Auth failed"); return false;
+    }
+
+    success = reader.mifareclassic_ReadDataBlock(datablock, data);
+    if (!success) {
+        Serial.println("read failed"); return false;
+    }
+    for (int i=0; i<sizeof(i); i++) {
+        Serial.println(data[i]);
+    }
+    // Serial.println(data);
+    return true;
+}
+
+/*
 bool STB_RFID::read_PN532(Adafruit_PN532 &reader, uint8_t *data, uint8_t *uid, int datablock, uint8_t key[]) {
     uint8_t success;
-    if (!cardDetect(reader)) {
+    if (!cardDetect(reader, uid)) {
         return false;
     }
     uint8_t uidLength = 4;
     // 0 is MIFARE_CMD_AUTH_A
     success = reader.mifareclassic_AuthenticateBlock(uid, uidLength, datablock, 0, key);
+    if (!success) {
+        Serial.println("Auth failed");
+        return false;
+    }
+    success = reader.mifareclassic_ReadDataBlock(datablock, data);
+    if (!success) {
+        Serial.println("read failed");
+        return false;
+    }
     return true;
 }
-
+*/
