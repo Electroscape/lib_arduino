@@ -88,17 +88,6 @@ void stb_namespace::heartbeat() {
  *  @return void
  *  @param void void
  */
-/*
-void STB::softwareReset() {
-    Serial.println(F("Restarting in"));
-    delay(50);
-    for (byte i = 3; i > 0; i--) {
-        Serial.println(i);
-        delay(100);
-    }
-    asm volatile("  jmp 0");
-}
-*/
 
 /**
  *  Prints out what I2C addresses respond on the bus
@@ -153,8 +142,8 @@ void STB::softwareReset() {
  * @param amount (int) amount of relays to be initialized
  * @return bool
  */
-bool STB::relayInit(Expander_PCF8574 relay, int pins[], int initvals[], int amount=8) {
-    Serial.print(F("\n relay init ... \n"));
+bool STB::relayInit(Expander_PCF8574 &relay, int pins[], int initvals[], int amount=8) {
+    Serial.print(F("\n relay init on address ")); Serial.println(RELAY_I2C_ADD);
     relay.begin(RELAY_I2C_ADD);
     
     for (int i = 0; i < amount; i++) {
