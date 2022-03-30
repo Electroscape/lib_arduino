@@ -12,4 +12,5 @@ Arduino Libraries used for room software
  - [Password](https://github.com/phrac/arduino/blob/master/tutorials/Password.cpp): Adapted example of a password
  - [PCF8574](https://github.com/skywodd/pcf8574_arduino_library): Library to support using the PCF8574 as I/O expander
  - [SSD1306 ASCII](https://github.com/greiman/SSD1306Ascii): For Displays like SH1106 and SSD1306, supports I2C and SPI, Character only and unbuffered to reduce memory size on smaller arduino devices
- - STB Namespace: stb_namespace: Provides the standard frequently used functions for STB System
+ - STB common Provides the standard frequently used functions for STB System
+ - stb_rfid: helper library to simplyfy and standartize usage of the Adafruit PN532 library across projects
