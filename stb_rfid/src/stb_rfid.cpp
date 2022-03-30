@@ -58,7 +58,7 @@ bool STB_RFID::RFID_Init(Adafruit_PN532 &reader) {
 }
 
 
-bool STB_RFID::read_PN532(Adafruit_PN532 &reader, int datablock) {
+uint8_t STB_RFID::cardRead(Adafruit_PN532 &reader, int datablock=1) {
     uint8_t success;
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;
