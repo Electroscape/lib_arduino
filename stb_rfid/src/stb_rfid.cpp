@@ -63,6 +63,7 @@ bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;
     uint8_t keya[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+    memset(data, 0, sizeof(data));
 
     success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
     if (!success) {return false;}
@@ -76,6 +77,10 @@ bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=
     if (!success) {
         Serial.println("read failed"); return false;
     }
+    if (strlen((char *) data) == 0) {
+        Serial.println("read empty datablock -> invalid");
+        return false;
+    } 
     // Serial.println((char *) data);
     return true;
 }
