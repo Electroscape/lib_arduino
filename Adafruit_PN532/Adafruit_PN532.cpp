@@ -1127,7 +1127,7 @@ uint8_t Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber,
 */
 /**************************************************************************/
 
-#ifdef 1
+#if 0
   uint8_t Adafruit_PN532::mifareultralight_ReadPage(uint8_t page,
                                                     uint8_t *buffer) {
     if (page >= 64) {
@@ -1247,7 +1247,7 @@ uint8_t Adafruit_PN532::mifareclassic_WriteNDEFURI(uint8_t sectorNumber,
 #endif
 
 /***** NTAG2xx Functions ******/
-#ifdef 1
+#if 0
 
   /**************************************************************************/
   /*!
