@@ -1,0 +1,1 @@
+helper library to simplyfy and standartize usage of the Adafruit neopixel library across projects
