@@ -14,3 +14,4 @@ Arduino Libraries used for room software
  - [SSD1306 ASCII](https://github.com/greiman/SSD1306Ascii): For Displays like SH1106 and SSD1306, supports I2C and SPI, Character only and unbuffered to reduce memory size on smaller arduino devices
  - STB common Provides the standard frequently used functions for STB System
  - stb_rfid: helper library to simplyfy and standartize usage of the Adafruit PN532 library across projects
+  - stb_led: helper library to simplyfy and standartize usage of the Adafruit neopixel library across projects
