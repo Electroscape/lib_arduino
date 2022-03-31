@@ -1,4 +1,4 @@
-
+#pragma once
 #include <Adafruit_PN532.h>
 
 #define PN532_SCK               13
