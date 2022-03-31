@@ -1,23 +1,6 @@
 
 #include "stb_rfid.h"
 
-/**
- * @brief 
- * @param reader
- * @return bool
- */
-bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
-    uint8_t success;
-    uint8_t uidLength;
-    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
-    Serial.println(success);
-    Serial.println(uidLength);
-    // for (int i=0; i<sizeof(uid); i++) {
-    // Serial.print(uid);
-
-
-    return (success && uidLength == 4);
-}
 
 
 /**
@@ -26,12 +9,11 @@ bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
  * @param reader 
  * @return success
  */
-bool STB_RFID::RFID_Init(Adafruit_PN532 &reader) {
+bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
     // Serial.print(F("initializing reader..."));
 
-    bool success = true;
     reader.begin();
-    success = reader.setPassiveActivationRetries(5);
+    reader.setPassiveActivationRetries(5);
 
     int retries = 0;
     while (true) {
@@ -55,6 +37,25 @@ bool STB_RFID::RFID_Init(Adafruit_PN532 &reader) {
     }
     reader.SAMConfig();
     return true;
+}
+
+
+/**
+ * @brief 
+ * @param reader
+ * @param uid storage space for the uid 
+ * @return bool return true for valid mifare classic cards
+ */
+bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
+    uint8_t success;
+    uint8_t uidLength;
+    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    Serial.println(success);
+    Serial.println(uidLength);
+    // for (int i=0; i<sizeof(uid); i++) {
+    // Serial.print(uid);
+
+    return (success && uidLength == 4);
 }
 
 
