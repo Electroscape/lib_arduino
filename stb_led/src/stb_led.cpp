@@ -15,11 +15,7 @@ bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int ledCnts[], int pins[], 
     for (size_t i=0; i<sizeof(neopixels); i++) {
         neopixels[i] = Adafruit_NeoPixel(ledCnts[i], pins[i], (clrOrder + clkSpeed));
         neopixels[i].begin();
-        for (int ledNr=0; ledNr<ledCnts[i]; ledNr++) {
-            neopixels[i].setPixelColor(ledNr, neopixels[i].Color(0, 0, 0));
-            neopixels[i].show();
-            delay(10);
-        }
+        STB_LED::setAllStripsToClr(neopixels, neopixels[i].Color(0, 0, 0));
     }
     return true;
 }
