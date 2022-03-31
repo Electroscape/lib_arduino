@@ -1,0 +1,1 @@
+helper library to simplyfy and standartize usage of the Adafruit PN53 library across projects
