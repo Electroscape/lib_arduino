@@ -1,4 +1,11 @@
-
+/**
+ * @file stb_rfid.cpp
+ * @author Martin Pek (Martin.pek@web.de)
+ * @brief 
+ * @version 0.1
+ * @date 2022-04-01
+ * 
+ */
 #include "stb_rfid.h"
 
 
@@ -58,7 +65,15 @@ bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
     return (success && uidLength == 4);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param reader 
+ * @param data 
+ * @param datablock defaults to 1
+ * @return true 
+ * @return false 
+ */
 bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=1) {
     uint8_t success;
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
