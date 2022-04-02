@@ -43,6 +43,7 @@ bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
         retries++;
     }
     reader.SAMConfig();
+    delay(50);
     return true;
 }
 

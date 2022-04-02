@@ -26,6 +26,7 @@ bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int ledCnts[], int pins[], 
         neopixels[i].begin();
         STB_LED::setAllStripsToClr(neopixels, neopixels[i].Color(0, 0, 0));
     }
+    delay(50);
     return true;
 }
 
