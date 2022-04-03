@@ -147,7 +147,7 @@ void STB::printI2cDeviceName (int deviceNo) {
         case 59: Serial.println("Keypad/IO"); break;
         case 60: Serial.println("Oled  (default)"); break;
         case 61: Serial.println("Oled"); break;
-        default: Serial.println("Uknown"); break;
+        default: Serial.println("Unknown"); break;
     }
 }
 
