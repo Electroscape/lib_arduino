@@ -29,9 +29,9 @@ bool STB::serialInit() {
 
 void STB::printInfo() {
 
-    Serial.println(F("+-----------------------------------+"));
-    Serial.println(F("|    TeamEscape HH&S ENGINEERING    |"));
-    Serial.println(F("+-----------------------------------+"));
+    Serial.println(F("+--------------------+"));
+    Serial.println(F("|    Electroscape    |"));
+    Serial.println(F("+--------------------+"));
     delay(20);
     printWithHeader("!header_begin");
     #ifdef title
@@ -96,6 +96,16 @@ void stb_namespace::heartbeat() {
  *  @param void void
  */
 bool STB::i2cScanner() {
+    /*
+    map<int, char> addressMap;
+    addressMap[63] = "Relay";
+    addressMap[56] = "Keypad (default)";
+    addressMap[57] = "Keypad";
+    addressMap[58] = "Keypad";
+    addressMap[59] = "Keypad";
+    addressMap[60] = "Oled  (default)";
+    addressMap[61] = "Oled";
+    */
 
     Serial.println();
     Serial.println(F("I2C scanner:"));
@@ -105,10 +115,11 @@ bool STB::i2cScanner() {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
             Serial.print("Found address: ");
-            Serial.print(i, DEC);
+            // Serial.print(i, DEC);
             Serial.print(" (0x");
             Serial.print(i, HEX);
-            Serial.println(")");
+            Serial.print(")  ");
+            // Serial.println(addressmap[i]);
             count++;
             delay(1);  
         }              
