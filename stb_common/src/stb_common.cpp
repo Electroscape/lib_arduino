@@ -119,7 +119,7 @@ bool STB::i2cScanner() {
             Serial.print(" (0x");
             Serial.print(i, HEX);
             Serial.print(")  ");
-            // Serial.println(addressmap[i]);
+            printI2cDeviceName(i);
             count++;
             delay(1);  
         }              
@@ -130,6 +130,25 @@ bool STB::i2cScanner() {
     Serial.println(" device(s).");
 
     return true;
+}
+
+/**
+ * @brief 
+ * 
+ * @param deviceNo 
+ * @return char 
+ */
+void STB::printI2cDeviceName (int deviceNo) {
+    switch (deviceNo) {
+        case 63: Serial.println("Relay"); break;
+        case 56: Serial.println("Keypad (default)"); break;
+        case 57: Serial.println("Keypad/IO"); break;
+        case 58: Serial.println("Keypad/IO"); break;
+        case 59: Serial.println("Keypad/IO"); break;
+        case 60: Serial.println("Oled  (default)"); break;
+        case 61: Serial.println("Oled"); break;
+        default: Serial.println("Uknown"); break;
+    }
 }
 
 /**
