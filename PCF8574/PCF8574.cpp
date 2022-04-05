@@ -22,7 +22,7 @@
 #include "PCint.h"
 #endif
 
-Expander_PCF8574::Expander_PCF8574() :
+PCF8574::PCF8574() :
 		_PORT(0), _PIN(0), _DDR(0), _address(0)
 #ifdef PCF8574_INTERRUPT_SUPPORT
 		, _oldPIN(0), _isrIgnore(0), _pcintPin(0), _intMode(), _intCallback()
@@ -30,7 +30,7 @@ Expander_PCF8574::Expander_PCF8574() :
 {
 }
 
-void Expander_PCF8574::begin(uint8_t address) {
+void PCF8574::begin(uint8_t address) {
 
 	/* Store the I2C address and init the Wire library */
 	_address = address;
@@ -38,7 +38,7 @@ void Expander_PCF8574::begin(uint8_t address) {
 	readGPIO();
 }
 
-void Expander_PCF8574::pinMode(uint8_t pin, uint8_t mode) {
+void PCF8574::pinMode(uint8_t pin, uint8_t mode) {
 
 	/* Switch according mode */
 	switch (mode) {
@@ -65,7 +65,7 @@ void Expander_PCF8574::pinMode(uint8_t pin, uint8_t mode) {
 	updateGPIO();
 }
 
-void Expander_PCF8574::digitalWrite(uint8_t pin, uint8_t value) {
+void PCF8574::digitalWrite(uint8_t pin, uint8_t value) {
 
 	/* Set PORT bit value */
 	if (value)
@@ -77,7 +77,7 @@ void Expander_PCF8574::digitalWrite(uint8_t pin, uint8_t value) {
 	updateGPIO();
 }
 
-uint8_t Expander_PCF8574::digitalRead(uint8_t pin) {
+uint8_t PCF8574::digitalRead(uint8_t pin) {
 
 	/* Read GPIO */
 	readGPIO();
@@ -91,7 +91,7 @@ uint8_t Expander_PCF8574::digitalRead(uint8_t pin) {
 	return (_PIN & (1 << pin)) ? HIGH : LOW;
 }
 
-void Expander_PCF8574::write(uint8_t value) {
+void PCF8574::write(uint8_t value) {
 
 	/* Store pins values and apply */
 	_PORT = value;
@@ -100,7 +100,7 @@ void Expander_PCF8574::write(uint8_t value) {
 	updateGPIO();
 }
 
-uint8_t Expander_PCF8574::read() {
+uint8_t PCF8574::read() {
 
 	/* Read GPIO */
 	readGPIO();
@@ -114,31 +114,31 @@ uint8_t Expander_PCF8574::read() {
 	return _PIN;
 }
 
-void Expander_PCF8574::pullUp(uint8_t pin) {
+void PCF8574::pullUp(uint8_t pin) {
 
 	/* Same as pinMode(INPUT_PULLUP) */
 	pinMode(pin, INPUT_PULLUP); // /!\ pinMode form THE LIBRARY
 }
 
-void Expander_PCF8574::pullDown(uint8_t pin) {
+void PCF8574::pullDown(uint8_t pin) {
 
 	/* Same as pinMode(INPUT) */
 	pinMode(pin, INPUT); // /!\ pinMode form THE LIBRARY
 }
 
-void Expander_PCF8574::clear() {
+void PCF8574::clear() {
 
 	/* User friendly wrapper for write() */
 	write(0x00);
 }
 
-void Expander_PCF8574::set() {
+void PCF8574::set() {
 
 	/* User friendly wrapper for write() */
 	write(0xFF);
 }
 
-void Expander_PCF8574::toggle(uint8_t pin) {
+void PCF8574::toggle(uint8_t pin) {
 
 	/* Toggle pin state */
 	_PORT ^= (1 << pin);
@@ -147,7 +147,7 @@ void Expander_PCF8574::toggle(uint8_t pin) {
 	updateGPIO();
 }
 
-void Expander_PCF8574::blink(uint8_t pin, uint16_t count, uint32_t duration) {
+void PCF8574::blink(uint8_t pin, uint16_t count, uint32_t duration) {
 
 	/* Compute steps duration */
 	duration /= count * 2;
@@ -164,7 +164,7 @@ void Expander_PCF8574::blink(uint8_t pin, uint16_t count, uint32_t duration) {
 }
 
 #ifdef PCF8574_INTERRUPT_SUPPORT
-void Expander_PCF8574::enableInterrupt(uint8_t pin, void (*selfCheckFunction)(void)) {
+void PCF8574::enableInterrupt(uint8_t pin, void (*selfCheckFunction)(void)) {
 
 	/* Store interrupt pin number */
 	_pcintPin = pin;
@@ -181,13 +181,13 @@ void Expander_PCF8574::enableInterrupt(uint8_t pin, void (*selfCheckFunction)(vo
 	PCattachInterrupt(pin, selfCheckFunction, FALLING);
 }
 
-void Expander_PCF8574::disableInterrupt() {
+void PCF8574::disableInterrupt() {
 
 	/* Detach interrupt handler */
 	PCdetachInterrupt(_pcintPin);
 }
 
-void Expander_PCF8574::checkForInterrupt() {
+void PCF8574::checkForInterrupt() {
 
 	/* Avoid nested interrupt triggered by I2C read/write */
 	if(_isrIgnore)
@@ -236,7 +236,7 @@ void Expander_PCF8574::checkForInterrupt() {
 	_isrIgnore = 0;
 }
 
-void Expander_PCF8574::attachInterrupt(uint8_t pin, void (*userFunc)(void),
+void PCF8574::attachInterrupt(uint8_t pin, void (*userFunc)(void),
 		uint8_t mode) {
 
 	/* Store interrupt mode and callback */
@@ -244,14 +244,14 @@ void Expander_PCF8574::attachInterrupt(uint8_t pin, void (*userFunc)(void),
 	_intCallback[pin] = userFunc;
 }
 
-void Expander_PCF8574::detachInterrupt(uint8_t pin) {
+void PCF8574::detachInterrupt(uint8_t pin) {
 
 	/* Void interrupt handler */
 	_intCallback[pin] = 0;
 }
 #endif
 
-void Expander_PCF8574::readGPIO() {
+void PCF8574::readGPIO() {
 
 #ifdef PCF8574_INTERRUPT_SUPPORT
 	/* Store old _PIN value */
@@ -265,7 +265,7 @@ void Expander_PCF8574::readGPIO() {
 	_PIN = I2CREAD();
 }
 
-void Expander_PCF8574::updateGPIO() {
+void PCF8574::updateGPIO() {
 
 	/* Read current GPIO states */
 	//readGPIO(); // Experimental

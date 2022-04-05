@@ -166,13 +166,13 @@ void STB::softwareReset() {
 }
 
 /**
- * @param relay (Expander_PCF8574) relay instance
+ * @param relay (PCF8574) relay instance
  * @param pins (int) pin numbers
  * @param initvals (int) init value
  * @param amount (int) amount of relays to be initialized
  * @return bool
  */
-bool STB::relayInit(Expander_PCF8574 &relay, int pins[], int initvals[], int amount=8) {
+bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
     Serial.print(F("\n relay init on address ")); Serial.println(RELAY_I2C_ADD);
     relay.begin(RELAY_I2C_ADD);
     

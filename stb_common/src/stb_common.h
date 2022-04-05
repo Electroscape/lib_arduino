@@ -27,7 +27,7 @@ class STB {
     static bool i2cScanner();
     static void softwareReset();
     
-    static bool relayInit(Expander_PCF8574 &relay, int pins[], int initvals[], int amount=8);
+    static bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 };
 
 
