@@ -37,7 +37,7 @@ void STB::printInfo() {
         printWithHeader(title);
     #endif
     #ifdef version
-        printWithHeader(version);
+        printWithHeader("v" + version);
     #endif
     #ifdef versiondate
         printWithHeader(versionDate);
