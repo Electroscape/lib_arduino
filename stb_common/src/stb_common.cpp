@@ -21,6 +21,7 @@ void STB::begin() {
  */
 bool STB::serialInit() {
     Wire.begin();
+    Wire.setClock(i2cClkSpeed);
     Serial.begin(115200);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
@@ -173,6 +174,7 @@ void STB::softwareReset() {
  * @return bool
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
+
     Serial.print(F("\n relay init on address ")); Serial.println(RELAY_I2C_ADD);
     relay.begin(RELAY_I2C_ADD);
     

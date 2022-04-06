@@ -13,6 +13,8 @@
     #define RELAY_I2C_ADD 0x3F
 #endif 
 
+#define i2cClkSpeed 100000
+
 class STB {
     private:
     static bool serialInit();
