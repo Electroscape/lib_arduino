@@ -1,13 +1,11 @@
 #include "stb_common.h"
 #include <Wire.h>
-/*
-STB::Brain::Brain(String BrainName) {
-}
 
-STB::Brain::~Brain() {
-}
-*/
 
+/**
+ * @brief starts serial and prints out information about the program to be run
+ * 
+ */
 void STB::begin() {
     serialInit();
     printInfo();
@@ -69,26 +67,16 @@ void STB::printWithHeader(String message, String source) {
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
 
+
+/**
+ * @brief prints a setup end to serial
+ * 
+ */
 void STB::printSetupEnd() {
     printWithHeader("!setup_end");
     Serial.println(); Serial.println("===================START====================="); Serial.println();
 }
 
-
-/*
-void stb_namespace::heartbeat() {
-    if (millis() - lastHeartbeat >= heartbeatFrequency) {
-        printWithHeader(F("Hearthbeat"), F("SYS"));
-    }
-}
-*/
-
-/**
- *  assembly command makes the mcontroller jumps to memory location 0 
- * 
- *  @return void
- *  @param void void
- */
 
 /**
  *  Prints out what I2C addresses respond on the bus
@@ -97,16 +85,6 @@ void stb_namespace::heartbeat() {
  *  @param void void
  */
 bool STB::i2cScanner() {
-    /*
-    map<int, char> addressMap;
-    addressMap[63] = "Relay";
-    addressMap[56] = "Keypad (default)";
-    addressMap[57] = "Keypad";
-    addressMap[58] = "Keypad";
-    addressMap[59] = "Keypad";
-    addressMap[60] = "Oled  (default)";
-    addressMap[61] = "Oled";
-    */
 
     Serial.println();
     Serial.println(F("I2C scanner:"));
@@ -141,19 +119,19 @@ bool STB::i2cScanner() {
  */
 void STB::printI2cDeviceName (int deviceNo) {
     switch (deviceNo) {
-        case 63: Serial.println("Relay"); break;
         case 56: Serial.println("Keypad (default)"); break;
         case 57: Serial.println("Keypad/IO"); break;
         case 58: Serial.println("Keypad/IO"); break;
         case 59: Serial.println("Keypad/IO"); break;
         case 60: Serial.println("Oled  (default)"); break;
         case 61: Serial.println("Oled"); break;
+        case 63: Serial.println("Relay"); break;
         default: Serial.println("Unknown"); break;
     }
 }
 
 /**
- * @brief restarts teh arduino
+ * @brief restarts the arduino
  * 
  */
 void STB::softwareReset() {
