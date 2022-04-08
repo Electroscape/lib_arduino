@@ -20,21 +20,10 @@
  */
 bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) {
     oled->begin(&SH1106_128x64, oledAddr);
-    // oledset400kHz();
-    // oledsetScroll(true);
-    // oledsetFont(Adafruit5x7);
-    // oledprintln(" fucking work already ");
-    // STB_OLED::startupScreen(oled);
+    oled->set400kHz();
+    oled->setScroll(true);
+    oled->setFont(Verdana12_bold);
+    oled->clear();
+    // oled->println("  System startup...");
     return true;
-}
-
-/**
- * @brief shows proccess during system startup
- * 
- * @param oled 
- */
-void STB_OLED::startupScreen(SSD1306AsciiWire &oled) {
-    oled.clear();
-    oled.setFont(Verdana12_bold);
-    oled.println("\n System startup...");
 }
