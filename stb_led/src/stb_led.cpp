@@ -21,12 +21,14 @@
  * @return false 
  */
 bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int ledCnts[], int pins[], uint32_t clrOrder, int clkSpeed) {
+    Serial.print(F("\nLED init ..."));
     for (size_t i=0; i<sizeof(neopixels); i++) {
         neopixels[i] = Adafruit_NeoPixel(ledCnts[i], pins[i], (clrOrder + clkSpeed));
         neopixels[i].begin();
         STB_LED::setAllStripsToClr(neopixels, neopixels[i].Color(0, 0, 0));
     }
     delay(50);
+    Serial.print(F(" successful\n"));
     return true;
 }
 

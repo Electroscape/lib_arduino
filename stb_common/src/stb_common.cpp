@@ -153,7 +153,7 @@ void STB::softwareReset() {
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
 
-    Serial.print(F("\n relay init on address ")); Serial.println(RELAY_I2C_ADD);
+    Serial.print(F("\nrelay init on address ")); Serial.print(RELAY_I2C_ADD); Serial.print(F(" ...\n"));
     relay.begin(RELAY_I2C_ADD);
     
     for (int i = 0; i < amount; i++) {
@@ -162,7 +162,7 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
         Serial.print("     ");
         Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
     }
-    Serial.print(F(" successful"));
+    Serial.print(F("\nrelay init successful\n"));
     return true;
 }
 

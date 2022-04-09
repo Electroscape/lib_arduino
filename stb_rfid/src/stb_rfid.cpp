@@ -17,7 +17,8 @@
  * @return success
  */
 bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
-    // Serial.print(F("initializing reader..."));
+
+    Serial.print(F("\nRFID init ... \n"));
 
     reader.begin();
     reader.setPassiveActivationRetries(5);
@@ -44,6 +45,7 @@ bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
     }
     reader.SAMConfig();
     delay(50);
+    Serial.print(F("\nRFID init ... Successful \n"));
     return true;
 }
 
