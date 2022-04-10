@@ -1,3 +1,14 @@
+/**
+ * @file stb_common.cpp
+ * @author Martin Pek (martin.pek@web.de)
+ * @brief 
+ * @version 0.1
+ * @date 2022-04-10
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "stb_common.h"
 #include <Wire.h>
 
@@ -86,8 +97,7 @@ void STB::printSetupEnd() {
  */
 bool STB::i2cScanner() {
 
-    Serial.println();
-    Serial.println(F("I2C scanner:"));
+    Serial.println(F("\nI2C scanner:"));
     Serial.println(F("Scanning..."));
     byte count = 0;
     for (byte i = 8; i < 120; i++) {
