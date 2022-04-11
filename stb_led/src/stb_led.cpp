@@ -21,6 +21,9 @@
  * @return false 
  */
 bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int ledCnts[], int pins[], uint32_t clrOrder, int clkSpeed) {
+    
+    Serial.println(F("\n===== LED INIT ====="));
+    Serial.print(F("  - ")); Serial.println(sizeof(ledCnts));
     for (size_t i=0; i<sizeof(neopixels); i++) {
         neopixels[i] = Adafruit_NeoPixel(ledCnts[i], pins[i], (clrOrder + clkSpeed));
         neopixels[i].begin();

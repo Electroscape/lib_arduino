@@ -20,8 +20,6 @@
  */
 bool STB_OLED::oledInit(SSD1306AsciiWire oled, DevType oledType, int oledAddr) {
     oled.begin(&oledType, oledAddr);
-    oled.set400kHz();
-    oled.setScroll(true);
     STB_OLED::startupScreen(oled);
     return true;
 }

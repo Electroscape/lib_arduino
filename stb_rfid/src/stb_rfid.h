@@ -1,5 +1,7 @@
 #pragma once
 #include <Adafruit_PN532.h>
+#include <PN532_I2C.h>
+#include <PN532.h>
 
 #define PN532_SCK               13
 #define PN532_MOSI              11
@@ -16,6 +18,9 @@ class STB_RFID {
     static bool RFIDInit(Adafruit_PN532 &reader);
     static bool cardDetect(Adafruit_PN532 &reader, uint8_t *uid);
     static bool cardRead(Adafruit_PN532 &reader, uint8_t data[16],int datablock);
+    static bool RFIDInitI2c(PN532 &reader);
+    static bool cardDetectI2c(PN532 &reader, uint8_t *uid);
+    static bool cardReadI2c(PN532 &reader, uint8_t data[16],int datablock);
         // static bool RFID_Gate_locked();
         // static bool read_PN532(int reader_nr, uint8_t *data, uint8_t *uid, uint8_t uidLength);
 };

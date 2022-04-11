@@ -1,4 +1,4 @@
-#include "stb_common.h"
+#include "stb_keypad.h"
 #include <Wire.h>
 
 
@@ -18,9 +18,8 @@ void STB::begin() {
  *  @param void void
  */
 bool STB::serialInit() {
-    Wire.setClock(i2cClkSpeed);
     Wire.begin();
-    // Wire.setClock(i2cClkSpeed);
+    Wire.setClock(i2cClkSpeed);
     Serial.begin(115200);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
@@ -29,13 +28,11 @@ bool STB::serialInit() {
 
 void STB::printInfo() {
 
-    Serial.println();
-    Serial.println();
     Serial.println(F("+--------------------+"));
     Serial.println(F("|    Electroscape    |"));
     Serial.println(F("+--------------------+"));
     delay(20);
-    // printWithHeader("!header_begin");
+    printWithHeader("!header_begin");
     #ifdef title
         printWithHeader(title);
     #endif
@@ -45,8 +42,8 @@ void STB::printInfo() {
     #ifdef versiondate
         printWithHeader(versionDate);
     #endif
-    // printWithHeader("!header_end");
-    // printWithHeader("!setup_begin");
+    printWithHeader("!header_end");
+    printWithHeader("!setup_begin");
 }
 
 /**
@@ -76,7 +73,7 @@ void STB::printWithHeader(String message, String source) {
  * 
  */
 void STB::printSetupEnd() {
-    // printWithHeader("!setup_end");
+    printWithHeader("!setup_end");
     Serial.println(); Serial.println("===================START====================="); Serial.println();
 }
 
@@ -88,27 +85,28 @@ void STB::printSetupEnd() {
  *  @param void void
  */
 bool STB::i2cScanner() {
-    
+
     Serial.println();
-    Serial.println("===== I2C INIT =====");
+    Serial.println(F("I2C scanner:"));
+    Serial.println(F("Scanning..."));
     byte count = 0;
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
-            Serial.print("  - ");
+            Serial.print("Found address: ");
             // Serial.print(i, DEC);
-            Serial.print("0x");
+            Serial.print(" (0x");
             Serial.print(i, HEX);
-            Serial.print(": ");
+            Serial.print(")  ");
             printI2cDeviceName(i);
             count++;
             delay(1);  
         }              
     }                  
-    // Serial.println();
-    // Serial.print("Found ");
-    // Serial.print(count, DEC);
-    // Serial.println(" device(s).");
+    Serial.println("Done.");
+    Serial.print("Found ");
+    Serial.print(count, DEC);
+    Serial.println(" device(s).");
 
     return true;
 }
@@ -155,15 +153,16 @@ void STB::softwareReset() {
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
 
-    Serial.print(F("\n===== RELAY INIT (0x")); Serial.print(RELAY_I2C_ADD, HEX); Serial.println(") =====");
+    Serial.print(F("\n relay init on address ")); Serial.println(RELAY_I2C_ADD);
     relay.begin(RELAY_I2C_ADD);
     
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
-        Serial.print("  - ");
-        Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("]: "); Serial.println(initvals[i]);
+        Serial.print("     ");
+        Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
     }
+    Serial.print(F(" successful"));
     return true;
 }
 
