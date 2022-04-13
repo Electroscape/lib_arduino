@@ -24,19 +24,8 @@ bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) 
     oled->setScroll(true);
     oled->setFont(Verdana12_bold);
     oled->clear();
-    // oled->println("  System startup...");
+    oled->println("  System startup...");
     return true;
-}
-
-/**
- * @brief shows proccess during system startup
- * 
- * @param oled 
- */
-void STB_OLED::startupScreen(SSD1306AsciiWire &oled) {
-    oled.clear();
-    oled.setFont(Verdana12_bold);
-    oled.println("\n System startup...");
 }
 
 void STB_OLED::systemPrint(SSD1306AsciiWire oled, String text) {
