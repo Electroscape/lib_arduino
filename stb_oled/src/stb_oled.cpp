@@ -36,3 +36,13 @@ void STB_OLED::startupScreen(SSD1306AsciiWire &oled) {
     oled.setFont(Verdana12_bold);
     oled.println("\n System startup...");
 }
+
+void STB_OLED::systemPrint(SSD1306AsciiWire oled, String text) {
+    oled.print(text);
+    Serial.print(text);
+}
+
+void STB_OLED::systemPrintln(SSD1306AsciiWire oled, String text) {
+    oled.println(text);
+    Serial.println(text);
+}
