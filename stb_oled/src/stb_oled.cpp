@@ -18,11 +18,13 @@
  * @param oledAddr 
  * @return true 
  */
-bool STB_OLED::oledInit(SSD1306AsciiWire oled, DevType oledType, int oledAddr) {
-    oled.begin(&oledType, oledAddr);
-    oled.set400kHz();
-    oled.setScroll(true);
-    STB_OLED::startupScreen(oled);
+bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) {
+    oled->begin(&SH1106_128x64, oledAddr);
+    // oled->set400kHz();
+    oled->setScroll(true);
+    oled->setFont(Verdana12_bold);
+    oled->clear();
+    // oled->println("  System startup...");
     return true;
 }
 
