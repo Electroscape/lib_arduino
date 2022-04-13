@@ -7,6 +7,7 @@
  * 
  */
 #include "stb_rfid.h"
+#include <stb_common.h>
 
 
 
@@ -30,7 +31,8 @@ bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
             Serial.print(F("Didn't find PN53x board\n"));
             if (retries > 5) {
                 Serial.print(F("PN532 startup timed out"));
-                return false;
+                delay(5);
+    	        STB::softwareReset();
             }
         } else {
             Serial.print(F("Found chip PN5"));
