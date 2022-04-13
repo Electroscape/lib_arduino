@@ -19,12 +19,17 @@
  * @return true 
  */
 bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) {
+    Serial.print(F("\n\nOLED init on Address: 0x"));
+    Serial.println(oledAddr, HEX);
+    delay(10);
     oled->begin(&SH1106_128x64, oledAddr);
     // oled->set400kHz();
     oled->setScroll(true);
     oled->setFont(Verdana12_bold);
     oled->clear();
     oled->println("  System startup...");
+    Serial.println(F("Successful"));
+    delay(10);
     return true;
 }
 

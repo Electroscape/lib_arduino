@@ -96,9 +96,9 @@ void STB::printSetupEnd() {
  *  @param void void
  */
 bool STB::i2cScanner() {
-
-    Serial.println(F("\nI2C scanner:"));
+    Serial.println(F("\n\nI2C scanner:"));
     Serial.println(F("Scanning..."));
+    delay(10);
     byte count = 0;
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
@@ -117,7 +117,7 @@ bool STB::i2cScanner() {
     Serial.print("Found ");
     Serial.print(count, DEC);
     Serial.println(" device(s).");
-
+    delay(10);
     return true;
 }
 
@@ -172,7 +172,7 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
         Serial.print("     ");
         Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
     }
-    Serial.print(F("\nrelay init successful\n"));
+    Serial.println(F("\nrelay init successful"));
     return true;
 }
 
