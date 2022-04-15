@@ -1,3 +1,4 @@
+#pragma once
 #include "SSD1306AsciiWire.h"
 
 class STB_OLED {
