@@ -10,7 +10,15 @@
  */
 
 #include "stb_common.h"
-#include <Wire.h>
+
+/**
+ * @brief Construct a new stb::stb dbg object, creates and oled instance to be used a debug print
+ * 
+ */
+STB::STB() {
+    begin();
+    STB_OLED::oledInit(&defaultOled , SH1106_128x64);
+}
 
 
 /**
@@ -88,6 +96,23 @@ void STB::printSetupEnd() {
     Serial.println(); Serial.println("===================START====================="); Serial.println();
 }
 
+/**
+ * @brief Prints a message on serial and OLED and potentially interface pi, latter is TBD
+ * @param message 
+ */
+void STB::dbg(String message) {
+    STB::defaultOled.print(message);
+    Serial.print(message);
+}
+
+/**
+ * @brief Prints a message on serial and OLED and potentially interface pi, latter is TBD
+ * @param message 
+ */
+void STB::dbgln(String message) {
+    STB::defaultOled.println(message);
+    Serial.println(message);
+}
 
 /**
  *  Prints out what I2C addresses respond on the bus
@@ -175,4 +200,7 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
     Serial.println(F("\nrelay init successful"));
     return true;
 }
+
+
+
 
