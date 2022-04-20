@@ -101,7 +101,7 @@ void STB::printSetupEnd() {
  * @param message 
  */
 void STB::dbg(String message) {
-    STB::defaultOled.print(message);
+    defaultOled.print(message);
     Serial.print(message);
 }
 
@@ -110,7 +110,7 @@ void STB::dbg(String message) {
  * @param message 
  */
 void STB::dbgln(String message) {
-    STB::defaultOled.println(message);
+    defaultOled.println(message);
     Serial.println(message);
 }
 
@@ -121,6 +121,7 @@ void STB::dbgln(String message) {
  *  @param void void
  */
 bool STB::i2cScanner() {
+    dbgln("   I2C Scanner:");
     Serial.println(F("\n\nI2C scanner:"));
     Serial.println(F("Scanning..."));
     delay(10);
@@ -130,6 +131,7 @@ bool STB::i2cScanner() {
         if (Wire.endTransmission() == 0) {
             Serial.print("Found address: ");
             // Serial.print(i, DEC);
+            // todo convert to hex in dbg
             Serial.print(" (0x");
             Serial.print(i, HEX);
             Serial.print(")  ");
@@ -187,7 +189,7 @@ void STB::softwareReset() {
  * @return bool
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
-
+    dbgln("  relay init on address " + RELAY_I2C_ADD); 
     Serial.print(F("\nrelay init on address ")); Serial.print(RELAY_I2C_ADD); Serial.print(F(" ...\n"));
     relay.begin(RELAY_I2C_ADD);
     

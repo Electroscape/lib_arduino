@@ -31,8 +31,8 @@ class STB {
     void dbg(String message);
     void dbgln(String message);
 
-    static bool i2cScanner();
+    bool i2cScanner();
     static void softwareReset();
     
-    static bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
+    bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 };
