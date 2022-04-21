@@ -15,10 +15,7 @@
  * @brief Construct a new stb::stb dbg object, creates and oled instance to be used a debug print
  * 
  */
-STB::STB() {
-    begin();
-    STB_OLED::oledInit(&defaultOled , SH1106_128x64);
-}
+STB::STB() {}
 
 
 /**
@@ -28,6 +25,8 @@ STB::STB() {
 void STB::begin() {
     serialInit();
     printInfo();
+    STB_OLED::oledInit(&defaultOled , SH1106_128x64);
+    defaultOled.setFont(Adafruit5x7);
 }
 
 /**
@@ -101,6 +100,7 @@ void STB::printSetupEnd() {
  * @param message 
  */
 void STB::dbg(String message) {
+    delay(2);
     defaultOled.print(message);
     Serial.print(message);
 }
@@ -110,6 +110,7 @@ void STB::dbg(String message) {
  * @param message 
  */
 void STB::dbgln(String message) {
+    delay(2);
     defaultOled.println(message);
     Serial.println(message);
 }

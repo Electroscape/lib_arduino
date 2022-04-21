@@ -25,9 +25,9 @@ class STB {
     public:
     SSD1306AsciiWire defaultOled;
     STB();
-    static void begin();
+    void begin();
     static void printWithHeader(String message, String source=String("SYS"));
-    static void printSetupEnd();
+    void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
 
