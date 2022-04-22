@@ -92,7 +92,7 @@ void STB::printWithHeader(String message, String source) {
  */
 void STB::printSetupEnd() {
     printWithHeader("!setup_end");
-    Serial.println(); Serial.println("===================START====================="); Serial.println();
+    Serial.println(); dbgln("===START===\n");
 }
 
 /**
@@ -122,29 +122,25 @@ void STB::dbgln(String message) {
  *  @param void void
  */
 bool STB::i2cScanner() {
+    Serial.println();
     dbgln("   I2C Scanner:");
-    Serial.println(F("\n\nI2C scanner:"));
-    Serial.println(F("Scanning..."));
     delay(10);
     byte count = 0;
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
-            Serial.print("Found address: ");
+            dbg("Found address: ");
             // Serial.print(i, DEC);
             // todo convert to hex in dbg
-            Serial.print(" (0x");
+            dbg(" (0x");
             Serial.print(i, HEX);
-            Serial.print(")  ");
+            dbg(")  ");
             printI2cDeviceName(i);
             count++;
             delay(1);  
         }              
     }                  
-    Serial.println("Done.");
-    Serial.print("Found ");
-    Serial.print(count, DEC);
-    Serial.println(" device(s).");
+    dbg("Done.");
     delay(10);
     return true;
 }
@@ -157,14 +153,14 @@ bool STB::i2cScanner() {
  */
 void STB::printI2cDeviceName (int deviceNo) {
     switch (deviceNo) {
-        case 56: Serial.println("Keypad (default)"); break;
-        case 57: Serial.println("Keypad/IO"); break;
-        case 58: Serial.println("Keypad/IO"); break;
-        case 59: Serial.println("Keypad/IO"); break;
-        case 60: Serial.println("Oled  (default)"); break;
-        case 61: Serial.println("Oled"); break;
-        case 63: Serial.println("Relay"); break;
-        default: Serial.println("Unknown"); break;
+        case 56: dbg("Keypad (default)"); break;
+        case 58: dbg("Keypad/IO"); break;
+        case 57: dbg("Keypad/IO"); break;
+        case 59: dbg("Keypad/IO"); break;
+        case 60: dbg("Oled  (default)"); break;
+        case 61: dbg("Oled"); break;
+        case 63: dbg("Relay"); break;
+        default: dbg("Unknown"); break;
     }
 }
 
@@ -197,10 +193,9 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
-        Serial.print("     ");
-        Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
+        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbg(String(initvals[i]));
     }
-    Serial.println(F("\nrelay init successful"));
+    dbg(F("\nrelay init successful"));
     return true;
 }
 
