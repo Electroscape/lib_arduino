@@ -20,7 +20,7 @@ class STB {
     private:
     static bool serialInit();
     static void printInfo();
-    static void printI2cDeviceName(int deviceNo);
+    void printI2cDeviceName(int deviceNo);
     
     public:
     SSD1306AsciiWire defaultOled;

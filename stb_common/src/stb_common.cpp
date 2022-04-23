@@ -73,6 +73,7 @@ void STB::printInfo() {
  *  @param source (String) soure of the message default is "SYS"
  */
 void STB::printWithHeader(String message, String source) {
+    delay(2);
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println();
     Serial.print("!Br,");
@@ -81,7 +82,7 @@ void STB::printWithHeader(String message, String source) {
     Serial.print(message);
     Serial.println(",Done.");
     // check if this can be reduced 
-    delay(50);
+    delay(20);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
 
@@ -91,8 +92,9 @@ void STB::printWithHeader(String message, String source) {
  * 
  */
 void STB::printSetupEnd() {
+    delay(2);
     printWithHeader("!setup_end");
-    Serial.println(); Serial.println("===================START====================="); Serial.println();
+    Serial.println(); dbgln("\n===START===\n");
 }
 
 /**
@@ -122,29 +124,25 @@ void STB::dbgln(String message) {
  *  @param void void
  */
 bool STB::i2cScanner() {
+    Serial.println();
     dbgln("   I2C Scanner:");
-    Serial.println(F("\n\nI2C scanner:"));
-    Serial.println(F("Scanning..."));
     delay(10);
-    byte count = 0;
+    String hexAddr = "";
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
-            Serial.print("Found address: ");
+            dbg("Found: ");
             // Serial.print(i, DEC);
             // todo convert to hex in dbg
-            Serial.print(" (0x");
-            Serial.print(i, HEX);
-            Serial.print(")  ");
+            dbg(" (0x");
+            hexAddr = (i);
+            dbg(hexAddr);
+            dbgln(")  ");
             printI2cDeviceName(i);
-            count++;
             delay(1);  
         }              
     }                  
-    Serial.println("Done.");
-    Serial.print("Found ");
-    Serial.print(count, DEC);
-    Serial.println(" device(s).");
+    dbgln("I2C scan complete");
     delay(10);
     return true;
 }
@@ -157,14 +155,14 @@ bool STB::i2cScanner() {
  */
 void STB::printI2cDeviceName (int deviceNo) {
     switch (deviceNo) {
-        case 56: Serial.println("Keypad (default)"); break;
-        case 57: Serial.println("Keypad/IO"); break;
-        case 58: Serial.println("Keypad/IO"); break;
-        case 59: Serial.println("Keypad/IO"); break;
-        case 60: Serial.println("Oled  (default)"); break;
-        case 61: Serial.println("Oled"); break;
-        case 63: Serial.println("Relay"); break;
-        default: Serial.println("Unknown"); break;
+        case 56: dbgln("Keypad (default)"); break;
+        case 58: dbgln("Keypad/IO"); break;
+        case 57: dbgln("Keypad/IO"); break;
+        case 59: dbgln("Keypad/IO"); break;
+        case 60: dbgln("Oled  (default)"); break;
+        case 61: dbgln("Oled"); break;
+        case 63: dbgln("Relay"); break;
+        default: dbgln("Unknown"); break;
     }
 }
 
@@ -190,17 +188,16 @@ void STB::softwareReset() {
  * @return bool
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
-    dbgln("  relay init on address " + RELAY_I2C_ADD); 
-    Serial.print(F("\nrelay init on address ")); Serial.print(RELAY_I2C_ADD); Serial.print(F(" ...\n"));
+    dbgln("relayinit on " + String(RELAY_I2C_ADD)); 
+
     relay.begin(RELAY_I2C_ADD);
     
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
-        Serial.print("     ");
-        Serial.print("Relay ["); Serial.print(pins[i]); Serial.print("] set to "); Serial.println(initvals[i]);
+        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbg(String(initvals[i]));
     }
-    Serial.println(F("\nrelay init successful"));
+    dbgln(F("\nrelay init successful"));
     return true;
 }
 
