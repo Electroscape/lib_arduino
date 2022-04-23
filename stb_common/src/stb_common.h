@@ -20,19 +20,19 @@ class STB {
     private:
     static bool serialInit();
     static void printInfo();
-    static void printI2cDeviceName(int deviceNo);
+    void printI2cDeviceName(int deviceNo);
     
     public:
     SSD1306AsciiWire defaultOled;
     STB();
-    static void begin();
+    void begin();
     static void printWithHeader(String message, String source=String("SYS"));
-    static void printSetupEnd();
+    void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
 
-    static bool i2cScanner();
+    bool i2cScanner();
     static void softwareReset();
     
-    static bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
+    bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 };

@@ -27,7 +27,7 @@ bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) 
     oled->setScroll(true);
     oled->setFont(Verdana12_bold);
     oled->clear();
-    oled->println("  System startup...");
+    // oled->println("  System startup...");
     Serial.println(F("Successful"));
     delay(10);
     return true;
