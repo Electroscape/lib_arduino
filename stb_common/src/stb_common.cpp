@@ -132,10 +132,9 @@ bool STB::i2cScanner() {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
             dbg("Found: ");
-            // Serial.print(i, DEC);
-            // todo convert to hex in dbg
             dbg(" (0x");
-            hexAddr = (i);
+            hexAddr = String(i, HEX);
+            hexAddr.toUpperCase();
             dbg(hexAddr);
             dbgln(")  ");
             printI2cDeviceName(i);
@@ -188,7 +187,9 @@ void STB::softwareReset() {
  * @return bool
  */
 bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
-    dbgln("relayinit on " + String(RELAY_I2C_ADD)); 
+    String relayString = String(RELAY_I2C_ADD, HEX);
+    relayString.toUpperCase();
+    dbgln("relayinit on " + relayString); 
 
     relay.begin(RELAY_I2C_ADD);
     
