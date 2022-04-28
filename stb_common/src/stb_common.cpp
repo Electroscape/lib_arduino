@@ -196,7 +196,7 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
-        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbg(String(initvals[i]));
+        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
     }
     dbgln(F("\nrelay init successful"));
     return true;
