@@ -73,7 +73,7 @@ void STB::printInfo() {
  *  @param source (String) soure of the message default is "SYS"
  */
 void STB::printWithHeader(String message, String source) {
-    delay(2);
+    Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println();
     Serial.print("!Br,");
@@ -81,8 +81,7 @@ void STB::printWithHeader(String message, String source) {
     Serial.print(",");
     Serial.print(message);
     Serial.println(",Done.");
-    // check if this can be reduced 
-    delay(20);
+    Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
 
