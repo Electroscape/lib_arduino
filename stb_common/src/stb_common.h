@@ -15,12 +15,16 @@
 #endif 
 
 #define i2cClkSpeed 100000
+#define rs485timeout 50
 
 class STB {
     private:
     static bool serialInit();
     static void printInfo();
+    bool rs485PollingCheck(String message);
     void printI2cDeviceName(int deviceNo);
+    bool isMaster = false;
+    cstring messageBuffer = "";
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -30,7 +34,8 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
-
+    void RS485SetToMaster();
+    bool rs485Write(String message);
     bool i2cScanner();
     static void softwareReset();
     

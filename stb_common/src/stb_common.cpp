@@ -39,8 +39,10 @@ bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
     Serial.begin(115200);
+    Serial.setTimeout(long(rs485timeout));
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     return true;
 }
 
@@ -115,6 +117,30 @@ void STB::dbgln(String message) {
     defaultOled.println(message);
     Serial.println(message);
 }
+
+void stb::RS485SetToMaster() {
+    isMaster = true;
+}
+
+bool stb::rs485Write(String message) {
+
+    // checks
+
+    digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    Serial.println(message);
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+    return true;
+}
+
+/**
+ * @brief 
+ * @param message 
+ * @return if slave is being polled and can send
+ */
+bool STB::rs485PollingCheck(String message) {
+
+}
+
 
 /**
  *  Prints out what I2C addresses respond on the bus
