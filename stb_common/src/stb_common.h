@@ -15,12 +15,22 @@
 #endif 
 
 #define i2cClkSpeed 100000
+#define rs485timeout 5
+#define slaveCount 8
 
 class STB {
     private:
     static bool serialInit();
     static void printInfo();
+    bool rs485PollingCheck(String message);
     void printI2cDeviceName(int deviceNo);
+    bool isMaster = false;
+    int slaveAddr = 0;
+    // instead of generating better store that String to look for
+    String slavePollStr = "MASTER";
+    unsigned long maxPollingWait = 100;
+    // time the master waits for  the slave to respond
+    unsigned long maxResponseTime = 5;
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -30,7 +40,11 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
-
+    void RS485SetToMaster();
+    void RS485SetSlaveAddr(int no);
+    void RS485PerformPoll();
+    bool rs485Write(String message);
+    bool rs485PollingCheck();
     bool i2cScanner();
     static void softwareReset();
     

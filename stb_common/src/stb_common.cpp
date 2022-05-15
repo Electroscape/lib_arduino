@@ -39,8 +39,10 @@ bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
     Serial.begin(115200);
+    Serial.setTimeout(long(rs485timeout));
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     return true;
 }
 
@@ -115,6 +117,65 @@ void STB::dbgln(String message) {
     defaultOled.println(message);
     Serial.println(message);
 }
+
+void STB::RS485SetToMaster() {
+    isMaster = true;
+}
+
+void STB::RS485SetSlaveAddr(int no) {
+    slaveAddr = no;
+    slavePollStr = "!Poll";
+    slavePollStr.concat(no);
+}
+
+void STB::RS485PerformPoll() {
+    String message = "";
+    for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
+        message = "!Poll";
+        message.concat(slaveNo);
+        rs485Write(message);
+        if (Serial.available()) {
+            defaultOled.println("rcvd: " + Serial.readString());
+        }
+        
+    }
+}
+
+
+bool STB::rs485Write(String message) {
+
+    // failed to get a bus clearance, adding msg to buffer
+    if ( !(isMaster || rs485PollingCheck()) ) {
+        // Todo: create and add to buffer
+        // maybe also a fnc to be called inside the loop
+        return false;
+    }
+
+    digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    Serial.println(message);
+    Serial.flush();
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+    return true;
+}
+
+
+
+/**
+ * @brief 
+ * @param message 
+ * @return if slave is being polled and can send
+ */
+bool STB::rs485PollingCheck() {
+    unsigned long startTime = millis();
+    while (Serial.available() && (millis() - startTime) < maxPollingWait) {
+        String message = Serial.readString();
+        if (slavePollStr.compareTo(message) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 /**
  *  Prints out what I2C addresses respond on the bus
