@@ -15,7 +15,7 @@
 #endif 
 
 #define i2cClkSpeed 100000
-#define rs485timeout 5
+#define rs485timeout 20
 #define slaveCount 8
 
 class STB {
@@ -32,7 +32,7 @@ class STB {
     String eof = "!EOF";
     unsigned long maxPollingWait = 100;
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 5;
+    unsigned long maxResponseTime = 60;
     
     public:
     SSD1306AsciiWire defaultOled;

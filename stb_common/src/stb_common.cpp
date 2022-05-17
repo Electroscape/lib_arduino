@@ -38,7 +38,7 @@ void STB::begin() {
 bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
-    Serial.begin(115200);
+    Serial.begin(9600);
     Serial.setTimeout(long(rs485timeout));
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
@@ -93,9 +93,10 @@ void STB::printWithHeader(String message, String source) {
  * 
  */
 void STB::printSetupEnd() {
-    delay(2);
     printWithHeader("!setup_end");
-    Serial.println(); dbgln("\n===START===\n");
+    Serial.println();
+    Serial.flush(); 
+    dbgln("\n===START===\n");
 }
 
 /**
@@ -103,9 +104,9 @@ void STB::printSetupEnd() {
  * @param message 
  */
 void STB::dbg(String message) {
-    delay(2);
     defaultOled.print(message);
     Serial.print(message);
+    Serial.flush();
 }
 
 /**
@@ -113,9 +114,9 @@ void STB::dbg(String message) {
  * @param message 
  */
 void STB::dbgln(String message) {
-    delay(2);
     defaultOled.println(message);
     Serial.println(message);
+    Serial.flush();
 }
 
 void STB::rs485SetToMaster() {
@@ -126,23 +127,31 @@ void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     slavePollStr = "!Poll";
     slavePollStr.concat(no);
+    dbgln(slavePollStr);
+    delay(2000);
 }
 
 void STB::rs485PerformPoll() {
     String message = "";
     String rcvd = "";
-    for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
+    unsigned long rvcdTimestamp;
+    for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
         message = "!Poll";
         message.concat(slaveNo);
+        rvcdTimestamp = millis();
         rs485Write(message);
-        while (Serial.available()) {
-            rcvd.concat(Serial.readString());
+        while (Serial.available() && (millis() - rvcdTimestamp < maxResponseTime)) {
+            // rcvd.concat(Serial.readString());
+            rcvd = Serial.readString();
+            rvcdTimestamp = millis();
             if (rcvd.endsWith(eof)) {
                 break;
             }
         }
         STB::cmdInterpreter(rcvd);
-        defaultOled.println("rcvd: " + rcvd);        
+        if (rcvd.length() > 0) {      
+            defaultOled.println(rcvd);        
+        }
     }
 }
 
@@ -150,16 +159,23 @@ void STB::rs485PerformPoll() {
 bool STB::rs485Write(String message) {
 
     // failed to get a bus clearance, adding msg to buffer
-    if ( !(isMaster || rs485PollingCheck()) ) {
+    if (!isMaster && !rs485PollingCheck()) {
+        dbgln("not cleared to\n write RS485");
         // Todo: create and add to buffer
         // maybe also a fnc to be called inside the loop
         return false;
     }
-
+    Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    delay(1);
     Serial.println(message);
     Serial.flush();
+    delay(1);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+    if (!isMaster) {
+        dbgln("send: " + message);
+    }
+
     return true;
 }
 
@@ -172,18 +188,20 @@ bool STB::rs485Write(String message) {
  */
 bool STB::rs485PollingCheck() {
     unsigned long startTime = millis();
-    while (Serial.available() && (millis() - startTime) < maxPollingWait) {
-        String message = Serial.readString();
-        if (slavePollStr.compareTo(message) == 0) {
-            return true;
+    while (millis() - startTime < maxPollingWait) {
+        if (Serial.available()) {
+            String message = Serial.readString();
+            if (slavePollStr.compareTo(message) == 0) {
+                return true;
+            }
         }
     }
+    dbgln("polling failed");
     return false;
 }
 
 
 void STB::cmdInterpreter(String rcvd) {
-
 }
 
 /**
