@@ -118,26 +118,31 @@ void STB::dbgln(String message) {
     Serial.println(message);
 }
 
-void STB::RS485SetToMaster() {
+void STB::rs485SetToMaster() {
     isMaster = true;
 }
 
-void STB::RS485SetSlaveAddr(int no) {
+void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     slavePollStr = "!Poll";
     slavePollStr.concat(no);
 }
 
-void STB::RS485PerformPoll() {
+void STB::rs485PerformPoll() {
     String message = "";
+    String rcvd = "";
     for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
         message = "!Poll";
         message.concat(slaveNo);
         rs485Write(message);
-        if (Serial.available()) {
-            defaultOled.println("rcvd: " + Serial.readString());
+        while (Serial.available()) {
+            rcvd.concat(Serial.readString());
+            if (rcvd.endsWith(eof)) {
+                break;
+            }
         }
-        
+        STB::cmdInterpreter(rcvd);
+        defaultOled.println("rcvd: " + rcvd);        
     }
 }
 
@@ -176,6 +181,10 @@ bool STB::rs485PollingCheck() {
     return false;
 }
 
+
+void STB::cmdInterpreter(String rcvd) {
+
+}
 
 /**
  *  Prints out what I2C addresses respond on the bus
