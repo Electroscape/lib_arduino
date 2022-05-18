@@ -16,6 +16,7 @@
 
 #define i2cClkSpeed 100000
 #define slaveCount 8
+#define buffersize 64
 
 class STB {
     private:

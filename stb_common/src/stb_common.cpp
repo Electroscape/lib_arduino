@@ -125,7 +125,7 @@ void STB::rs485SetToMaster() {
 
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
-    slavePollStr = "!Poll";
+    slavePollStr = "Slave respons to \n!Poll";
     slavePollStr.concat(no);
     dbgln(slavePollStr);
     delay(2000);
@@ -133,25 +133,28 @@ void STB::rs485SetSlaveAddr(int no) {
 
 void STB::rs485PerformPoll() {
     String message = "";
-    String rcvd = "";
-    unsigned long rvcdTimestamp;
-    for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
+    char rcvd[buffersize] = "";
+    int bufferpos;
+
+    for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
+        bufferpos = 0;
         message = "!Poll";
         message.concat(slaveNo);
-        rvcdTimestamp = millis();
+        // rvcdTimestamp = millis();
         rs485Write(message);
-        while (Serial.available() && (millis() - rvcdTimestamp < maxResponseTime)) {
-            // rcvd.concat(Serial.readString());
-            rcvd = Serial.readString();
-            rvcdTimestamp = millis();
+        while (Serial.available() && bufferpos < buffersize) {
+            rcvd[bufferpos] = Serial.read();
+            bufferpos++;
+            /*
+            needs to be made compatible with char
             if (rcvd.endsWith(eof)) {
                 break;
             }
+            */
         }
         STB::cmdInterpreter(rcvd);
-        if (rcvd.length() > 0) {      
-            defaultOled.println(rcvd);        
-        }
+        defaultOled.print("rcvd: ");        
+        defaultOled.println(rcvd);        
     }
 }
 
