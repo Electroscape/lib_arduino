@@ -15,12 +15,12 @@
 #endif 
 
 #define i2cClkSpeed 100000
-#define rs485timeout 20
 #define slaveCount 8
 
 class STB {
     private:
-    static bool serialInit();
+    long rs485timeout = 200;
+    bool serialInit();
     static void printInfo();
     bool rs485PollingCheck(String message);
     void printI2cDeviceName(int deviceNo);

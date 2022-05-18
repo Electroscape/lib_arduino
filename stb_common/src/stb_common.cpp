@@ -39,7 +39,7 @@ bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
     Serial.begin(9600);
-    Serial.setTimeout(long(rs485timeout));
+    Serial.setTimeout(rs485timeout);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
