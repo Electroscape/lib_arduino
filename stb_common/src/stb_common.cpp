@@ -167,10 +167,8 @@ bool STB::rs485Write(String message) {
     }
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-    delay(1);
     Serial.println(message);
     Serial.flush();
-    delay(1);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     if (!isMaster) {
         dbgln("send: " + message);
@@ -191,7 +189,7 @@ bool STB::rs485PollingCheck() {
     while (millis() - startTime < maxPollingWait) {
         if (Serial.available()) {
             String message = Serial.readString();
-            if (slavePollStr.compareTo(message) == 0) {
+            if (message.startsWith(slavePollStr)) {
                 return true;
             }
         }
