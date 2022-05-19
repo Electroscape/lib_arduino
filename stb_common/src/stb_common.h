@@ -25,7 +25,7 @@ class STB {
     static void printInfo();
     bool rs485PollingCheck(String message);
     void printI2cDeviceName(int deviceNo);
-    void cmdInterpreter(String rcvd);
+    void cmdInterpreter(String rcvd, int slaveNo);
     bool isMaster = false;
     int slaveAddr = 0;
     // instead of generating better store that String to look for

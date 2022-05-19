@@ -144,35 +144,39 @@ void STB::rs485PerformPoll() {
         long slotStart = millis();
         rs485Write(message);
 
-        while ((millis() - slotStart) < maxResponseTime) {
+        /*
+        // use this to read what teh mother recieves 
+        while () {
             if (Serial.available()) {
                 Serial.write(Serial.read());
             }
         }
-
+        */
         
-        /*
-        while (Serial.available() && bufferpos < buffersize) {
-            rcvd[bufferpos] = Serial.read();
-            bufferpos++;
+        while ((millis() - slotStart) < maxResponseTime && bufferpos < buffersize) {
+            
+            if (Serial.available()) {
+                
+                rcvd[bufferpos] = Serial.read();
 
-            if (rcvd[bufferpos] == eof[eofIndex]) {
-                eofIndex++;
-                if (eofIndex == 4) { 
-                    break; 
-                }  else {
-                    eofIndex = 0;
+                if (rcvd[bufferpos] == eof[eofIndex]) {
+                    eofIndex++;
+                    if (eofIndex == 4) { 
+                        // only interpret valid frame
+                        cmdInterpreter(rcvd, slaveNo);
+                        break; 
+                    }
+                } else {
+                    // eofIndex = 0;
                 }
+
+                bufferpos++;
             }
         }
-        */
 
-        /*
-        STB::cmdInterpreter(rcvd);
-        defaultOled.print("rcvd: ");        
-        defaultOled.println(rcvd);        
-        */
-
+        if (bufferpos > 0) {
+            defaultOled.println(rcvd);
+        }
     }
 }
 
@@ -186,12 +190,15 @@ bool STB::rs485Write(String message) {
         // maybe also a fnc to be called inside the loop
         return false;
     }
+
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println(message);
+    if (!isMaster) {Serial.println(eof);}
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+
     if (!isMaster) {
-        dbgln("send: " + message);
+        dbgln("RS485 out: \n" + message);
     }
 
     return true;
@@ -205,7 +212,7 @@ bool STB::rs485Write(String message) {
  * @return if slave is being polled and can send
  */
 bool STB::rs485PollingCheck() {
-    
+
     char rcvd;
     int index = 0;
     unsigned long startTime = millis();
@@ -229,7 +236,10 @@ bool STB::rs485PollingCheck() {
 }
 
 
-void STB::cmdInterpreter(String rcvd) {
+void STB::cmdInterpreter(String rcvd, int slaveNo) {
+    defaultOled.print("rcvd cmd from ");        
+    defaultOled.println(slaveNo);        
+    defaultOled.println(rcvd);        
 }
 
 /**
