@@ -30,7 +30,7 @@ class STB {
     int slaveAddr = 0;
     // instead of generating better store that String to look for
     String slavePollStr = "MASTER";
-    String eof = "!EOF";
+    char eof[5] = "!EOF";
     unsigned long maxPollingWait = 100;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 60;

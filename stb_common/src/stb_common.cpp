@@ -134,23 +134,27 @@ void STB::rs485SetSlaveAddr(int no) {
 void STB::rs485PerformPoll() {
     String message = "";
     char rcvd[buffersize] = "";
-    int bufferpos;
+    int bufferpos, eofIndex;
 
     for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
-        bufferpos = 0;
+        bufferpos = eofIndex = 0;
         message = "!Poll";
         message.concat(slaveNo);
         // rvcdTimestamp = millis();
         rs485Write(message);
+
         while (Serial.available() && bufferpos < buffersize) {
             rcvd[bufferpos] = Serial.read();
             bufferpos++;
-            /*
-            needs to be made compatible with char
-            if (rcvd.endsWith(eof)) {
-                break;
+
+            if (rcvd[bufferpos] == eof[eofIndex]) {
+                eofIndex++;
+                if (eofIndex == 4) { 
+                    break; 
+                }  else {
+                    eofIndex = 0;
+                }
             }
-            */
         }
         STB::cmdInterpreter(rcvd);
         defaultOled.print("rcvd: ");        
