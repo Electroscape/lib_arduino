@@ -38,7 +38,7 @@ void STB::begin() {
 bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
-    Serial.begin(9600);
+    Serial.begin(115200);
     Serial.setTimeout(rs485timeout);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
@@ -141,9 +141,17 @@ void STB::rs485PerformPoll() {
         bufferpos = eofIndex = 0;
         message = "!Poll";
         message.concat(slaveNo);
-        // rvcdTimestamp = millis();
+        long slotStart = millis();
         rs485Write(message);
 
+        while ((millis() - slotStart) < maxResponseTime) {
+            if (Serial.available()) {
+                Serial.write(Serial.read());
+            }
+        }
+
+        
+        /*
         while (Serial.available() && bufferpos < buffersize) {
             rcvd[bufferpos] = Serial.read();
             bufferpos++;
@@ -157,9 +165,14 @@ void STB::rs485PerformPoll() {
                 }
             }
         }
+        */
+
+        /*
         STB::cmdInterpreter(rcvd);
         defaultOled.print("rcvd: ");        
         defaultOled.println(rcvd);        
+        */
+
     }
 }
 
@@ -168,12 +181,11 @@ bool STB::rs485Write(String message) {
 
     // failed to get a bus clearance, adding msg to buffer
     if (!isMaster && !rs485PollingCheck()) {
-        dbgln("not cleared to\n write RS485");
+        // dbgln("not cleared to\n write RS485");
         // Todo: create and add to buffer
         // maybe also a fnc to be called inside the loop
         return false;
     }
-    Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println(message);
     Serial.flush();
@@ -193,16 +205,26 @@ bool STB::rs485Write(String message) {
  * @return if slave is being polled and can send
  */
 bool STB::rs485PollingCheck() {
+    
+    char rcvd;
+    int index = 0;
     unsigned long startTime = millis();
-    while (millis() - startTime < maxPollingWait) {
+
+    while ((millis() - startTime) < maxPollingWait) {
         if (Serial.available()) {
-            String message = Serial.readString();
-            if (message.startsWith(slavePollStr)) {
-                return true;
+            if (slavePollStr[index] == Serial.read()) {
+                index++;
+                if (index > 5) {
+                    // small delay needed otherwise brain and mother collide on other brains
+                    delay(1);
+                    return true;
+                }
+            } else {
+                index == 0;
             }
         }
     }
-    dbgln("polling failed");
+
     return false;
 }
 

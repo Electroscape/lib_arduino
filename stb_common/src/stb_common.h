@@ -20,7 +20,7 @@
 
 class STB {
     private:
-    long rs485timeout = 200;
+    long rs485timeout = 10;
     bool serialInit();
     static void printInfo();
     bool rs485PollingCheck(String message);
@@ -33,7 +33,7 @@ class STB {
     char eof[5] = "!EOF";
     unsigned long maxPollingWait = 100;
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 60;
+    unsigned long maxResponseTime = 50;
     
     public:
     SSD1306AsciiWire defaultOled;
