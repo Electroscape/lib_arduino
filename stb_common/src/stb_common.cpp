@@ -136,7 +136,7 @@ void STB::rs485PerformPoll() {
     char rcvd[buffersize] = "";
     int bufferpos, eofIndex;
 
-    for (int slaveNo; slaveNo < slaveCount; slaveNo++) {
+    for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
         bufferpos = eofIndex = 0;
         message = "!Poll";
         message.concat(slaveNo);
