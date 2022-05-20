@@ -121,6 +121,10 @@ void STB::dbgln(String message) {
 
 void STB::rs485SetToMaster() {
     isMaster = true;
+    // quick and dirty, do not leave this past testing
+    int relayPins[8] = {0,1,2,3,4,5,6,7};
+    int relayInitVals[8] = {1,1,1,1,1,1,1,1};
+    relayInit(motherRelay, relayPins, relayInitVals);
 }
 
 void STB::rs485SetSlaveAddr(int no) {
@@ -138,7 +142,8 @@ void STB::rs485PerformPoll() {
     int bufferpos, eofIndex;
 
     for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
-        bufferpos = eofIndex = 0;
+        bufferpos = 0;
+        eofIndex = 0;
         message = "!Poll";
         message.concat(slaveNo);
         long slotStart = millis();
@@ -237,14 +242,32 @@ bool STB::rs485PollingCheck() {
 
 
 void STB::cmdInterpreter(char *rcvd, int slaveNo) {
-    defaultOled.print("rcvd cmd from ");        
-    defaultOled.println(slaveNo);        
-    defaultOled.println(rcvd);      
+    defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
+    defaultOled.println(rcvd);        
+    defaultOled.println(relayKeyword);        
 
-    if (strncmp(rcvd, relayKeyword, 6)) {
+    if (strncmp(rcvd, relayKeyword, 6) == 0) {
+        defaultOled.println("Keyword Relay!");    
         char* splits = strtok(rcvd, delimiter);
-    }  
+        // already go to the 2nd entry
+        splits = strtok(NULL, delimiter);
 
+        int i = 0;
+        int values[2] = {0,0};
+        while (splits && i < 2) {
+            // ASCII code, the numbers (digits) start from 48
+            values[i++] = (int) *splits - 48;
+            splits = strtok(NULL, delimiter);
+        }
+        if (i==2) {
+            defaultOled.print("values are: "); 
+            defaultOled.print(values[0]);
+            defaultOled.print("  ");
+            defaultOled.println(values[1]);
+            motherRelay.digitalWrite(values[0], values[1]);
+        }
+    }  
+    delay(2000);
 }
 
 /**

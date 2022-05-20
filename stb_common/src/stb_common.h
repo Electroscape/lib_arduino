@@ -33,12 +33,15 @@ class STB {
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
-    unsigned long maxPollingWait = 100;
+    unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 50;
+    unsigned long maxResponseTime = 20;
     
     public:
     SSD1306AsciiWire defaultOled;
+    // may move to
+    PCF8574 motherRelay;
+
     STB();
     void begin();
     static void printWithHeader(String message, String source=String("SYS"));
