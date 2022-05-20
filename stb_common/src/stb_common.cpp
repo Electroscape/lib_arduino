@@ -236,10 +236,15 @@ bool STB::rs485PollingCheck() {
 }
 
 
-void STB::cmdInterpreter(String rcvd, int slaveNo) {
+void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     defaultOled.print("rcvd cmd from ");        
     defaultOled.println(slaveNo);        
-    defaultOled.println(rcvd);        
+    defaultOled.println(rcvd);      
+
+    if (strncmp(rcvd, relayKeyword, 6)) {
+        char* splits = strtok(rcvd, delimiter);
+    }  
+
 }
 
 /**

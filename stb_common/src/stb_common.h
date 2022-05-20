@@ -25,12 +25,14 @@ class STB {
     static void printInfo();
     bool rs485PollingCheck(String message);
     void printI2cDeviceName(int deviceNo);
-    void cmdInterpreter(String rcvd, int slaveNo);
+    void cmdInterpreter(char *rcvd, int slaveNo);
     bool isMaster = false;
     int slaveAddr = 0;
     // instead of generating better store that String to look for
     String slavePollStr = "MASTER";
     char eof[5] = "!EOF";
+    char delimiter[2] = "_";
+    char relayKeyword[7] = "!Relay";
     unsigned long maxPollingWait = 100;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 50;
