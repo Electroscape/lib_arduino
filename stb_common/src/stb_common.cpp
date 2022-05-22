@@ -240,6 +240,17 @@ bool STB::rs485PollingCheck() {
     return false;
 }
 
+bool STB::rs485SendRelayCmd(int relayNo, int value) {
+    String msg = relayKeyword;
+    msg.concat("_");
+    msg.concat(relayNo);
+    msg.concat("_");
+    msg.concat(value);
+    // till fixed
+    msg.concat("_");
+    return (rs485Write(msg));
+}
+
 
 void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       

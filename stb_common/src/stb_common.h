@@ -53,6 +53,7 @@ class STB {
     void rs485PerformPoll();
     bool rs485Write(String message);
     bool rs485PollingCheck();
+    bool rs485SendRelayCmd(int relayNo, int value);
     bool i2cScanner();
     static void softwareReset();
     
