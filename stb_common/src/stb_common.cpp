@@ -246,8 +246,6 @@ bool STB::rs485SendRelayCmd(int relayNo, int value) {
     msg.concat(relayNo);
     msg.concat("_");
     msg.concat(value);
-    // till fixed
-    msg.concat("_");
     return (rs485Write(msg));
 }
 
@@ -270,6 +268,7 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             splits = strtok(NULL, delimiter);
         }
         if (i==2) {
+            // add a safety check here
             defaultOled.print("values are: "); 
             defaultOled.print(values[0]);
             defaultOled.print("  ");
