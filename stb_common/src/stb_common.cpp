@@ -260,14 +260,13 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     if (strncmp(rcvd, relayKeyword, 6) == 0) {
         defaultOled.println("Keyword Relay!");    
         char* splits = strtok(rcvd, delimiter);
-        // already go to the 2nd entry
+        // we need to skip the first one aka the keyword
         splits = strtok(NULL, delimiter);
 
         int i = 0;
         int values[2] = {0,0};
         while (splits && i < 2) {
-            // ASCII code, the numbers (digits) start from 48
-            values[i++] = (int) *splits - 48;
+            values[i++] = atoi(splits);
             splits = strtok(NULL, delimiter);
         }
         if (i==2) {
