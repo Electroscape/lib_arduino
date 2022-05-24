@@ -13,14 +13,12 @@
 
 /**
  * @brief Construct a new stb::stb dbg object, creates and oled instance to be used a debug print
- * 
  */
 STB::STB() {}
 
 
 /**
  * @brief starts serial and prints out information about the program to be run
- * 
  */
 void STB::begin() {
     serialInit();
@@ -47,7 +45,6 @@ bool STB::serialInit() {
 }
 
 void STB::printInfo() {
-
     Serial.println(F("+--------------------+"));
     Serial.println(F("|    Electroscape    |"));
     Serial.println(F("+--------------------+"));
@@ -90,7 +87,6 @@ void STB::printWithHeader(String message, String source) {
 
 /**
  * @brief prints a setup end to serial
- * 
  */
 void STB::printSetupEnd() {
     printWithHeader("!setup_end");
@@ -119,14 +115,21 @@ void STB::dbgln(String message) {
     Serial.flush();
 }
 
+/**
+ * @brief sets Master along with relay initialisation
+ */
 void STB::rs485SetToMaster() {
+    // TODO: may need to add a parameter for pins and initvalues
     isMaster = true;
-    // quick and dirty, do not leave this past testing
     int relayPins[8] = {0,1,2,3,4,5,6,7};
     int relayInitVals[8] = {1,1,1,1,1,1,1,1};
     relayInit(motherRelay, relayPins, relayInitVals);
 }
 
+/**
+ * @brief sets slaveNo and creates a pollstring to respond to
+ * @param no 
+ */
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     dbgln("Slave respons to"); 
@@ -136,6 +139,9 @@ void STB::rs485SetSlaveAddr(int no) {
     delay(2000);
 }
 
+/**
+ * @brief polls the bus slaves
+ */
 void STB::rs485PerformPoll() {
     String message = "";
     char rcvd[buffersize] = "";
@@ -185,12 +191,16 @@ void STB::rs485PerformPoll() {
     }
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param message 
+ * @return if message was written or bus clearance didnt occur
+ */
 bool STB::rs485Write(String message) {
 
     // failed to get a bus clearance, adding msg to buffer
     if (!isMaster && !rs485PollingCheck()) {
-        // dbgln("not cleared to\n write RS485");
         // Todo: create and add to buffer
         // maybe also a fnc to be called inside the loop
         return false;
@@ -240,6 +250,13 @@ bool STB::rs485PollingCheck() {
     return false;
 }
 
+
+/**
+ * @brief 
+ * @param relayNo 
+ * @param value 
+ * @return if message was command was send or bus clearance didnt occur
+ */
 bool STB::rs485SendRelayCmd(int relayNo, int value) {
     String msg = relayKeyword;
     msg.concat("_");
@@ -250,6 +267,11 @@ bool STB::rs485SendRelayCmd(int relayNo, int value) {
 }
 
 
+/**
+ * @brief 
+ * @param rcvd 
+ * @param slaveNo 
+ */
 void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
     defaultOled.println(rcvd);        
@@ -280,8 +302,7 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
 }
 
 /**
- *  Prints out what I2C addresses respond on the bus
- * 
+ *  @brief Prints out what I2C addresses responded on the bus
  *  @return void
  *  @param void void
  */
