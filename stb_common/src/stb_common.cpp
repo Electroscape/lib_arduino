@@ -140,7 +140,7 @@ void STB::rs485SetSlaveAddr(int no) {
 }
 
 /**
- * @brief polls the bus slaves
+ * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
     String message = "";
@@ -272,21 +272,30 @@ bool STB::rs485SendRelayCmd(int relayNo, int value) {
  */
 void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
-    defaultOled.println(rcvd);        
-    defaultOled.println(relayKeyword);        
+    defaultOled.println(rcvd);     
 
-    if (strncmp(rcvd, relayKeyword, 6) == 0) {
+    char* line = strtok(rcvd, "\n"); 
+
+    while (line) {
+
+        if (strncmp(line, relayKeyword, 6) != 0) {
+            line = strtok(rcvd, "\n"); 
+            continue;
+        }
+
         defaultOled.println("Keyword Relay!");    
-        char* splits = strtok(rcvd, delimiter);
+        char* splits = strtok(line, delimiter);
         // we need to skip the first one aka the keyword
         splits = strtok(NULL, delimiter);
 
         int i = 0;
         int values[2] = {0,0};
+
         while (splits && i < 2) {
             values[i++] = atoi(splits);
             splits = strtok(NULL, delimiter);
         }
+
         if (i==2) {
             // add a safety check here
             defaultOled.print("values are: "); 
@@ -294,9 +303,11 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             defaultOled.print("  ");
             defaultOled.println(values[1]);
             motherRelay.digitalWrite(values[0], values[1]);
-        }
-    }  
-    delay(2000);
+        }  
+
+        line = strtok(rcvd, "\n"); 
+    }
+    
 }
 
 /**
