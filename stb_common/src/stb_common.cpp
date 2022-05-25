@@ -143,7 +143,8 @@ void STB::rs485SetSlaveAddr(int no) {
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
-    char rcvd[masterBufferSize] = "";
+    String message = "";
+    char rcvd[buffersize] = "";
     int bufferpos, eofIndex;
 
     for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
@@ -151,9 +152,8 @@ void STB::rs485PerformPoll() {
         memset(rcvd, 0, buffersize);
         bufferpos = 0;
         eofIndex = 0;
-        char message[16] =  "!Poll";
-        char slaveNoStr = slaveNo;
-        strcat(message, slaveNoStr);
+        message = "!Poll";
+        message.concat(slaveNo);
         long slotStart = millis();
         rs485Write(message);
 
@@ -166,7 +166,7 @@ void STB::rs485PerformPoll() {
         }
         */
         
-        while ((millis() - slotStart) < maxResponseTime && bufferpos < masterBufferSize) {
+        while ((millis() - slotStart) < maxResponseTime && bufferpos < buffersize) {
             
             if (Serial.available()) {
                 
@@ -194,37 +194,25 @@ void STB::rs485PerformPoll() {
  * @brief 
  * 
  * @param message 
- * @return if message was written or added to the buffer
+ * @return if message was written or bus clearance didnt occur
  */
-bool STB::rs485Write(char *message) {
+bool STB::rs485Write(String message) {
 
     // failed to get a bus clearance, adding msg to buffer
     if (!isMaster && !rs485PollingCheck()) {
-        
-        if (strlen(msgBuffer) + 2 <= msgBufferSize) { 
-            strcat(msgBuffer, message);
-            strcat(msgBuffer, "\n");
-            return false;
-        } else {
-            // if we cannot buffer we have to wait for clearance 
-            while (!rs485PollingCheck()) {}
-        }
+        // Todo: create and add to buffer
+        // maybe also a fnc to be called inside the loop
+        return false;
     }
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-    if (strlen(msgBuffer)) {
-        Serial.println(msgBuffer);
-        // not sure if needed
-        // Serial.flush(); 
-        // msgBuffer = "";
-    }
     Serial.println(message);
     if (!isMaster) {Serial.println(eof);}
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 
     if (!isMaster) {
-        dbg("RS485 out: \n"); dbgln(message);
+        dbgln("RS485 out: \n" + message);
     }
 
     return true;
@@ -268,13 +256,12 @@ bool STB::rs485PollingCheck() {
  * @return if message was command was send or bus clearance didnt occur
  */
 bool STB::rs485SendRelayCmd(int relayNo, int value) {
-    char msg[16] = "";
-    strcpy(msg, relayKeyword);
-    strcat(msg, "_");
-    strcat(msg, relayNo);
-    strcat(msg, "_");
-    strcat(msg, value);
-    return rs485Write(msg);
+    String msg = relayKeyword;
+    msg.concat("_");
+    msg.concat(relayNo);
+    msg.concat("_");
+    msg.concat(value);
+    return (rs485Write(msg));
 }
 
 

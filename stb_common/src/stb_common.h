@@ -16,32 +16,26 @@
 
 #define i2cClkSpeed 100000
 #define slaveCount 8
-#define msgBufferSize 32
-#define masterBufferSize 64
-
-
+#define buffersize 64
 
 class STB {
     private:
     long rs485timeout = 10;
-    unsigned long maxPollingWait = 300;
-    // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 20;
-
+    bool serialInit();
+    static void printInfo();
+    bool rs485PollingCheck(String message);
+    void printI2cDeviceName(int deviceNo);
+    void cmdInterpreter(char *rcvd, int slaveNo);
     bool isMaster = false;
     int slaveAddr = 0;
+    // instead of generating better store that String to look for
     String slavePollStr = "MASTER";
-    
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
-    
-    char msgBuffer[msgBufferSize] = "";
-
-    bool serialInit();
-    static void printInfo();
-    void printI2cDeviceName(int deviceNo);
-    void cmdInterpreter(char *rcvd, int slaveNo);
+    unsigned long maxPollingWait = 300;
+    // time the master waits for  the slave to respond
+    unsigned long maxResponseTime = 20;
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -57,7 +51,7 @@ class STB {
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
     void rs485PerformPoll();
-    bool rs485Write(char *message);
+    bool rs485Write(String message);
     bool rs485PollingCheck();
     bool rs485SendRelayCmd(int relayNo, int value);
     bool i2cScanner();
