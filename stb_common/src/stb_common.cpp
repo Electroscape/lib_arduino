@@ -13,14 +13,12 @@
 
 /**
  * @brief Construct a new stb::stb dbg object, creates and oled instance to be used a debug print
- * 
  */
 STB::STB() {}
 
 
 /**
  * @brief starts serial and prints out information about the program to be run
- * 
  */
 void STB::begin() {
     serialInit();
@@ -39,13 +37,14 @@ bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
     Serial.begin(115200);
+    Serial.setTimeout(rs485timeout);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     return true;
 }
 
 void STB::printInfo() {
-
     Serial.println(F("+--------------------+"));
     Serial.println(F("|    Electroscape    |"));
     Serial.println(F("+--------------------+"));
@@ -88,12 +87,12 @@ void STB::printWithHeader(String message, String source) {
 
 /**
  * @brief prints a setup end to serial
- * 
  */
 void STB::printSetupEnd() {
-    delay(2);
     printWithHeader("!setup_end");
-    Serial.println(); dbgln("\n===START===\n");
+    Serial.println();
+    Serial.flush(); 
+    dbgln("\n===START===\n");
 }
 
 /**
@@ -101,9 +100,9 @@ void STB::printSetupEnd() {
  * @param message 
  */
 void STB::dbg(String message) {
-    delay(2);
     defaultOled.print(message);
     Serial.print(message);
+    Serial.flush();
 }
 
 /**
@@ -111,14 +110,199 @@ void STB::dbg(String message) {
  * @param message 
  */
 void STB::dbgln(String message) {
-    delay(2);
     defaultOled.println(message);
     Serial.println(message);
+    Serial.flush();
 }
 
 /**
- *  Prints out what I2C addresses respond on the bus
+ * @brief sets Master along with relay initialisation
+ */
+void STB::rs485SetToMaster() {
+    // TODO: may need to add a parameter for pins and initvalues
+    isMaster = true;
+    int relayPins[8] = {0,1,2,3,4,5,6,7};
+    int relayInitVals[8] = {1,1,1,1,1,1,1,1};
+    relayInit(motherRelay, relayPins, relayInitVals);
+}
+
+/**
+ * @brief sets slaveNo and creates a pollstring to respond to
+ * @param no 
+ */
+void STB::rs485SetSlaveAddr(int no) {
+    slaveAddr = no;
+    dbgln("Slave respons to"); 
+    slavePollStr = "!Poll";
+    slavePollStr.concat(no);
+    dbgln(slavePollStr);
+    delay(2000);
+}
+
+/**
+ * @brief polls the bus slaves
+ */
+void STB::rs485PerformPoll() {
+    String message = "";
+    char rcvd[buffersize] = "";
+    int bufferpos, eofIndex;
+
+    for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
+        bufferpos = 0;
+        eofIndex = 0;
+        message = "!Poll";
+        message.concat(slaveNo);
+        long slotStart = millis();
+        rs485Write(message);
+
+        /*
+        // use this to read what teh mother recieves 
+        while () {
+            if (Serial.available()) {
+                Serial.write(Serial.read());
+            }
+        }
+        */
+        
+        while ((millis() - slotStart) < maxResponseTime && bufferpos < buffersize) {
+            
+            if (Serial.available()) {
+                
+                rcvd[bufferpos] = Serial.read();
+
+                if (rcvd[bufferpos] == eof[eofIndex]) {
+                    eofIndex++;
+                    if (eofIndex == 4) { 
+                        // only interpret valid frame
+                        cmdInterpreter(rcvd, slaveNo);
+                        break; 
+                    }
+                } else {
+                    // eofIndex = 0;
+                }
+
+                bufferpos++;
+            }
+        }
+
+        if (bufferpos > 0) {
+            defaultOled.println(rcvd);
+        }
+    }
+}
+
+/**
+ * @brief 
  * 
+ * @param message 
+ * @return if message was written or bus clearance didnt occur
+ */
+bool STB::rs485Write(String message) {
+
+    // failed to get a bus clearance, adding msg to buffer
+    if (!isMaster && !rs485PollingCheck()) {
+        // Todo: create and add to buffer
+        // maybe also a fnc to be called inside the loop
+        return false;
+    }
+
+    digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    Serial.println(message);
+    if (!isMaster) {Serial.println(eof);}
+    Serial.flush();
+    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+
+    if (!isMaster) {
+        dbgln("RS485 out: \n" + message);
+    }
+
+    return true;
+}
+
+
+
+/**
+ * @brief 
+ * @param message 
+ * @return if slave is being polled and can send
+ */
+bool STB::rs485PollingCheck() {
+
+    char rcvd;
+    int index = 0;
+    unsigned long startTime = millis();
+
+    while ((millis() - startTime) < maxPollingWait) {
+        if (Serial.available()) {
+            if (slavePollStr[index] == Serial.read()) {
+                index++;
+                if (index > 5) {
+                    // small delay needed otherwise brain and mother collide on other brains
+                    delay(1);
+                    return true;
+                }
+            } else {
+                index == 0;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+/**
+ * @brief 
+ * @param relayNo 
+ * @param value 
+ * @return if message was command was send or bus clearance didnt occur
+ */
+bool STB::rs485SendRelayCmd(int relayNo, int value) {
+    String msg = relayKeyword;
+    msg.concat("_");
+    msg.concat(relayNo);
+    msg.concat("_");
+    msg.concat(value);
+    return (rs485Write(msg));
+}
+
+
+/**
+ * @brief 
+ * @param rcvd 
+ * @param slaveNo 
+ */
+void STB::cmdInterpreter(char *rcvd, int slaveNo) {
+    defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
+    defaultOled.println(rcvd);        
+    defaultOled.println(relayKeyword);        
+
+    if (strncmp(rcvd, relayKeyword, 6) == 0) {
+        defaultOled.println("Keyword Relay!");    
+        char* splits = strtok(rcvd, delimiter);
+        // we need to skip the first one aka the keyword
+        splits = strtok(NULL, delimiter);
+
+        int i = 0;
+        int values[2] = {0,0};
+        while (splits && i < 2) {
+            values[i++] = atoi(splits);
+            splits = strtok(NULL, delimiter);
+        }
+        if (i==2) {
+            // add a safety check here
+            defaultOled.print("values are: "); 
+            defaultOled.print(values[0]);
+            defaultOled.print("  ");
+            defaultOled.println(values[1]);
+            motherRelay.digitalWrite(values[0], values[1]);
+        }
+    }  
+    delay(2000);
+}
+
+/**
+ *  @brief Prints out what I2C addresses responded on the bus
  *  @return void
  *  @param void void
  */
