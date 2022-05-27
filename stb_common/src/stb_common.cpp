@@ -322,7 +322,7 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             motherRelay.digitalWrite(values[0], values[1]);
         }  
 
-        line = strtok(rcvd, "\n"); 
+        line = strtok(NULL, "\n"); 
     }
     
 }
