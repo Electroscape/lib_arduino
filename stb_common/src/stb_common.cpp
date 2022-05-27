@@ -144,12 +144,12 @@ void STB::rs485SetSlaveAddr(int no) {
  */
 void STB::rs485PerformPoll() {
     String message = "";
-    char rcvd[buffersize] = "";
+    char rcvd[bufferSize] = "";
     int bufferpos, eofIndex;
 
     for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
         // reset rcvd buffer
-        memset(rcvd, 0, buffersize);
+        memset(rcvd, 0, bufferSize);
         bufferpos = 0;
         eofIndex = 0;
         message = "!Poll";
@@ -166,7 +166,7 @@ void STB::rs485PerformPoll() {
         }
         */
         
-        while ((millis() - slotStart) < maxResponseTime && bufferpos < buffersize) {
+        while ((millis() - slotStart) < maxResponseTime && bufferpos < bufferSize) {
             
             if (Serial.available()) {
                 
@@ -189,6 +189,23 @@ void STB::rs485PerformPoll() {
         }
     }
 }
+
+
+/**
+ * @brief
+ *
+ * @param message
+ * @return if place was available in the buffer
+ */
+bool STB::rs485AddToBuffer(String message) {
+    if (strlen(buffer) + message.length() + 2 <= bufferSize) {
+        strcat(buffer, message.c_str());
+        strcat(buffer, "\n\0");
+        return true;
+    }
+    return false;
+}
+
 
 /**
  * @brief 

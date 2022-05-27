@@ -16,7 +16,7 @@
 
 #define i2cClkSpeed 100000
 #define slaveCount 8
-#define buffersize 64
+#define bufferSize 64
 
 class STB {
     private:
@@ -36,6 +36,7 @@ class STB {
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 20;
+    char buffer[bufferSize] = "";
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -51,6 +52,7 @@ class STB {
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
     void rs485PerformPoll();
+    bool rs485AddToBuffer(String message);
     bool rs485Write(String message);
     bool rs485PollingCheck();
     bool rs485SendRelayCmd(int relayNo, int value);
