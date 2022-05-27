@@ -185,7 +185,8 @@ void STB::rs485PerformPoll() {
         }
 
         if (bufferpos > 0) {
-            defaultOled.println(rcvd);
+            // defaultOled.println(rcvd);
+            memset(rcvd, 0, bufferSize);
         }
     }
 }
@@ -206,6 +207,25 @@ bool STB::rs485AddToBuffer(String message) {
     return false;
 }
 
+/**
+ * @brief 
+ * 
+ * @return if buffer could be send 
+ */
+bool STB::rs485SendBuffer() {
+
+    if (strlen(buffer) == 0 ) { return true; }
+
+    if (!rs485PollingCheck()) {
+        dbgln("no buffer clearnce");
+        return false;
+    }
+
+    rs485Write(buffer);
+    memset(buffer, 0, bufferSize);
+    return true;
+}
+
 
 /**
  * @brief 
@@ -213,14 +233,7 @@ bool STB::rs485AddToBuffer(String message) {
  * @param message 
  * @return if message was written or bus clearance didnt occur
  */
-bool STB::rs485Write(String message) {
-
-    // failed to get a bus clearance, adding msg to buffer
-    if (!isMaster && !rs485PollingCheck()) {
-        // Todo: create and add to buffer
-        // maybe also a fnc to be called inside the loop
-        return false;
-    }
+void STB::rs485Write(String message) {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println(message);
@@ -231,8 +244,6 @@ bool STB::rs485Write(String message) {
     if (!isMaster) {
         dbgln("RS485 out: \n" + message);
     }
-
-    return true;
 }
 
 
@@ -278,7 +289,7 @@ bool STB::rs485SendRelayCmd(int relayNo, int value) {
     msg.concat(relayNo);
     msg.concat("_");
     msg.concat(value);
-    return (rs485Write(msg));
+    return (rs485AddToBuffer(msg));
 }
 
 
@@ -293,10 +304,13 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
 
     char* line = strtok(rcvd, "\n"); 
 
-    while (line) {
+    while (line != NULL) {
+
+        dbgln(line);
+        delay(200);
 
         if (strncmp(line, relayKeyword, 6) != 0) {
-            line = strtok(rcvd, "\n"); 
+            line = strtok(NULL, "\n"); 
             continue;
         }
 
@@ -320,6 +334,7 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             defaultOled.print("  ");
             defaultOled.println(values[1]);
             motherRelay.digitalWrite(values[0], values[1]);
+            delay(1000);
         }  
 
         line = strtok(NULL, "\n"); 
