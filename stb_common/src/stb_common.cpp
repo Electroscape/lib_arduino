@@ -148,6 +148,8 @@ void STB::rs485PerformPoll() {
     int bufferpos, eofIndex;
 
     for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
+        // reset rcvd buffer
+        memset(rcvd, 0, buffersize);
         bufferpos = 0;
         eofIndex = 0;
         message = "!Poll";
@@ -170,18 +172,15 @@ void STB::rs485PerformPoll() {
                 
                 rcvd[bufferpos] = Serial.read();
 
-                if (rcvd[bufferpos] == eof[eofIndex]) {
-                    eofIndex++;
+                if (rcvd[bufferpos++] == eof[eofIndex++]) {
                     if (eofIndex == 4) { 
                         // only interpret valid frame
                         cmdInterpreter(rcvd, slaveNo);
                         break; 
                     }
                 } else {
-                    // eofIndex = 0;
+                    eofIndex = 0;
                 }
-
-                bufferpos++;
             }
         }
 
