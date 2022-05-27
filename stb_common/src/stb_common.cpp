@@ -201,7 +201,8 @@ void STB::rs485PerformPoll() {
 bool STB::rs485AddToBuffer(String message) {
     if (strlen(buffer) + message.length() + 2 <= bufferSize) {
         strcat(buffer, message.c_str());
-        strcat(buffer, "\n\0");
+        // todo check if there is a need for string termination with \0
+        strcat(buffer, "\n");
         return true;
     }
     return false;
@@ -306,8 +307,9 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
 
     while (line != NULL) {
 
+        // TODO fix the problem with multiple strtoks
         dbgln(line);
-        delay(200);
+        delay(500);
 
         if (strncmp(line, relayKeyword, 6) != 0) {
             line = strtok(NULL, "\n"); 
