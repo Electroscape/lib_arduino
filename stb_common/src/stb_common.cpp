@@ -227,7 +227,6 @@ bool STB::rs485Write(String message) {
  */
 bool STB::rs485PollingCheck() {
 
-    char rcvd;
     int index = 0;
     unsigned long startTime = millis();
 
@@ -241,7 +240,7 @@ bool STB::rs485PollingCheck() {
                     return true;
                 }
             } else {
-                index == 0;
+                index = 0;
             }
         }
     }
