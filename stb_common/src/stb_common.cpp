@@ -48,7 +48,7 @@ void STB::printInfo() {
     Serial.println(F("+--------------------+"));
     Serial.println(F("|    Electroscape    |"));
     Serial.println(F("+--------------------+"));
-    delay(20);
+    Serial.flush();
     printWithHeader("!header_begin");
     #ifdef title
         printWithHeader(title);
@@ -340,7 +340,6 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             defaultOled.print("  ");
             defaultOled.println(values[1]);
             motherRelay.digitalWrite(values[0], values[1]);
-            delay(1000);
         }  
 
         line += lineLenght + 1;
@@ -357,7 +356,6 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
 bool STB::i2cScanner() {
     Serial.println();
     dbgln("   I2C Scanner:");
-    delay(10);
     String hexAddr = "";
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
@@ -373,7 +371,6 @@ bool STB::i2cScanner() {
         }              
     }                  
     dbgln("I2C scan complete");
-    delay(10);
     return true;
 }
 
