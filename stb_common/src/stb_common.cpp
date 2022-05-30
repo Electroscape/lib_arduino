@@ -303,26 +303,30 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
     defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
     defaultOled.println(rcvd);     
 
+    int lineCnt = 0;
     char* line = strtok(rcvd, "\n"); 
 
     while (line != NULL) {
+        lineCnt++;
+        line = strtok(NULL, "\n");
+    }
 
-        // TODO fix the problem with multiple strtoks
-        dbgln(line);
-        delay(500);
+    line = rcvd;
+    int lineLenght = 0;
 
+    for (int lineNo = 0; lineNo < lineCnt; lineNo++) {
+
+        lineLenght = strlen(line);
         if (strncmp(line, relayKeyword, 6) != 0) {
-            line = strtok(NULL, "\n"); 
+            line += lineLenght + 1;
             continue;
         }
 
-        defaultOled.println("Keyword Relay!");    
-        char* splits = strtok(line, delimiter);
-        // we need to skip the first one aka the keyword
-        splits = strtok(NULL, delimiter);
-
         int i = 0;
         int values[2] = {0,0};
+        char* splits = strtok(line, delimiter);
+        // need to get rid of the keyword itself
+        splits = strtok(NULL, delimiter);
 
         while (splits && i < 2) {
             values[i++] = atoi(splits);
@@ -339,7 +343,8 @@ void STB::cmdInterpreter(char *rcvd, int slaveNo) {
             delay(1000);
         }  
 
-        line = strtok(NULL, "\n"); 
+        line += lineLenght + 1;
+
     }
     
 }
