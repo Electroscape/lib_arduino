@@ -24,6 +24,7 @@ class STB {
     bool serialInit();
     static void printInfo();
     bool rs485PollingCheck(String message);
+    void rs485Write(String message);
     void printI2cDeviceName(int deviceNo);
     void cmdInterpreter(char *rcvd, int slaveNo);
     bool isMaster = false;
@@ -40,7 +41,6 @@ class STB {
     
     public:
     SSD1306AsciiWire defaultOled;
-    // may move to
     PCF8574 motherRelay;
 
     STB();
@@ -54,7 +54,6 @@ class STB {
     void rs485PerformPoll();
     bool rs485AddToBuffer(String message);
     bool rs485SendBuffer();
-    void rs485Write(String message);
     bool rs485PollingCheck();
     bool rs485SendRelayCmd(int relayNo, int value);
     bool i2cScanner();
