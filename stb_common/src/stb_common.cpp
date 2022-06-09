@@ -64,8 +64,7 @@ void STB::printInfo() {
 }
 
 /**
- *  Activates MAX485 to write on the rs485 bus. Serial print the message with 
- *  the known frame to the frontend
+ * legacy at this point, also does not handle bus clearance
  * 
  *  @return void
  *  @param message (String) message to be printed
@@ -156,15 +155,6 @@ void STB::rs485PerformPoll() {
         message.concat(slaveNo);
         long slotStart = millis();
         rs485Write(message);
-
-        /*
-        // use this to read what teh mother recieves 
-        while () {
-            if (Serial.available()) {
-                Serial.write(Serial.read());
-            }
-        }
-        */
         
         while ((millis() - slotStart) < maxResponseTime && bufferpos < bufferSize) {
             
@@ -196,13 +186,12 @@ void STB::rs485PerformPoll() {
  * @brief
  *
  * @param message
- * @return if place was available in the buffer
+ * @return if place was available in the bufferOut
  */
 bool STB::rs485AddToBuffer(String message) {
-    if (strlen(buffer) + message.length() + 2 <= bufferSize) {
-        strcat(buffer, message.c_str());
-        // todo check if there is a need for string termination with \0
-        strcat(buffer, "\n");
+    if (strlen(bufferOut) + message.length() + 2 <= bufferSize) {
+        strcat(bufferOut, message.c_str());
+        strcat(bufferOut, "\n");
         return true;
     }
     return false;
@@ -211,19 +200,20 @@ bool STB::rs485AddToBuffer(String message) {
 /**
  * @brief 
  * 
- * @return if buffer could be send 
+ * @return if bufferOut could be send 
  */
-bool STB::rs485SendBuffer() {
-
-    if (strlen(buffer) == 0 ) { return true; }
+bool STB::rs485SlaveRespond() {
 
     if (!rs485PollingCheck()) {
         dbgln("no buffer clearnce");
         return false;
     }
 
-    rs485Write(buffer);
-    memset(buffer, 0, bufferSize);
+
+
+    rs485Write(bufferOut);
+    memset(bufferOut, 0, bufferSize);
+    rs485Write(eof);
     return true;
 }
 
@@ -264,6 +254,8 @@ bool STB::rs485PollingCheck() {
             if (slavePollStr[index] == Serial.read()) {
                 index++;
                 if (index > 5) {
+                    
+                    // check for EOF here
                     // small delay needed otherwise brain and mother collide on other brains
                     delay(1);
                     return true;

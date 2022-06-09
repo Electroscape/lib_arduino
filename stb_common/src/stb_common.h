@@ -34,10 +34,13 @@ class STB {
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
+    char ACK[5] = "!ACK";
+    char NACK[6] = "!NACK";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 20;
-    char buffer[bufferSize] = "";
+    char bufferOut[bufferSize] = "";
+    char rcvd[bufferSize] = "";
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -53,6 +56,7 @@ class STB {
     void rs485SetSlaveAddr(int no);
     void rs485PerformPoll();
     bool rs485AddToBuffer(String message);
+    bool rs485SlaveRespond();
     bool rs485SendBuffer();
     bool rs485PollingCheck();
     bool rs485SendRelayCmd(int relayNo, int value);
