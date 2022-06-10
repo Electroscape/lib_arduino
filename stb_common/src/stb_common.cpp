@@ -143,40 +143,17 @@ void STB::rs485SetSlaveAddr(int no) {
  */
 void STB::rs485PerformPoll() {
     String message = "";
-    char rcvd[bufferSize] = "";
-    int bufferpos, eofIndex;
 
     for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
-        // reset rcvd buffer
-        memset(rcvd, 0, bufferSize);
-        bufferpos = 0;
-        eofIndex = 0;
+
         message = "!Poll";
         message.concat(slaveNo);
-        long slotStart = millis();
         rs485Write(message);
-        
-        while ((millis() - slotStart) < maxResponseTime && bufferpos < bufferSize) {
-            
-            if (Serial.available()) {
-                
-                rcvd[bufferpos] = Serial.read();
+        rs485Receive();
 
-                if (rcvd[bufferpos++] == eof[eofIndex++]) {
-                    if (eofIndex == 4) { 
-                        // only interpret valid frame
-                        cmdInterpreter(rcvd, slaveNo);
-                        break; 
-                    }
-                } else {
-                    eofIndex = 0;
-                }
-            }
-        }
-
-        if (bufferpos > 0) {
+        if (strlen(rcvd) > 0) {
+            cmdInterpreter(slaveNo);
             // defaultOled.println(rcvd);
-            memset(rcvd, 0, bufferSize);
         }
     }
 }
@@ -238,6 +215,35 @@ void STB::rs485Write(String message) {
 }
 
 
+/**
+ * @brief received rs485 to rcvd buffer, also resets the buffer before writing to it
+ * 
+ */
+bool STB::rs485Receive() {
+    memset(rcvd, 0, bufferSize);
+    int bufferpos = 0;
+    int eofIndex = 0;
+    long slotStart = millis();
+    
+    while ((millis() - slotStart) < maxResponseTime && bufferpos < bufferSize) {
+
+        if (Serial.available()) {
+            
+            rcvd[bufferpos] = Serial.read();
+
+            if (rcvd[bufferpos++] == eof[eofIndex++]) {
+                if (eofIndex == 4) { 
+                    return true;
+                }
+            } else {
+                eofIndex = 0;
+            }
+        }
+    }
+    return false;
+}
+
+
 
 /**
  * @brief 
@@ -254,9 +260,9 @@ bool STB::rs485PollingCheck() {
             if (slavePollStr[index] == Serial.read()) {
                 index++;
                 if (index > 5) {
-                    
-                    // check for EOF here
-                    // small delay needed otherwise brain and mother collide on other brains
+                    if (rs485Receive()) {
+                        // slave interpretation here alternatively resend request in else loop
+                    }
                     delay(1);
                     return true;
                 }
@@ -291,7 +297,7 @@ bool STB::rs485SendRelayCmd(int relayNo, int value) {
  * @param rcvd 
  * @param slaveNo 
  */
-void STB::cmdInterpreter(char *rcvd, int slaveNo) {
+void STB::cmdInterpreter(int slaveNo) {
     defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
     defaultOled.println(rcvd);     
 

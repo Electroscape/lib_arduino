@@ -21,12 +21,6 @@
 class STB {
     private:
     long rs485timeout = 10;
-    bool serialInit();
-    static void printInfo();
-    bool rs485PollingCheck(String message);
-    void rs485Write(String message);
-    void printI2cDeviceName(int deviceNo);
-    void cmdInterpreter(char *rcvd, int slaveNo);
     bool isMaster = false;
     int slaveAddr = 0;
     // instead of generating better store that String to look for
@@ -41,6 +35,16 @@ class STB {
     unsigned long maxResponseTime = 20;
     char bufferOut[bufferSize] = "";
     char rcvd[bufferSize] = "";
+
+
+    bool serialInit();
+    static void printInfo();
+    bool rs485PollingCheck(String message);
+    void rs485Write(String message);
+    bool rs485Receive();
+    void printI2cDeviceName(int deviceNo);
+    void cmdInterpreter(int slaveNo);
+
     
     public:
     SSD1306AsciiWire defaultOled;
