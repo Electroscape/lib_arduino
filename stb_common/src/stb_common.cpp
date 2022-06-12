@@ -193,7 +193,6 @@ bool STB::rs485SlaveRespond() {
 
     rs485Write(bufferOut);
     memset(bufferOut, 0, bufferSize);
-    rs485Write(eof);
     return true;
 }
 
