@@ -132,7 +132,7 @@ void STB::rs485SetToMaster() {
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     dbgln("Slave respons to"); 
-    slavePollStr = "!Poll";
+    slavePollStr = String(pollStr);
     slavePollStr.concat(no);
     dbgln(slavePollStr);
     delay(2000);
@@ -199,7 +199,7 @@ bool STB::rs485SlaveRespond() {
 
 /**
  * @brief 
- * 
+ * todo check if message gets too long including EOF
  * @param message 
  * @return if message was written or bus clearance didnt occur
  */
@@ -247,6 +247,17 @@ bool STB::rs485Receive() {
 }
 
 
+void STB::rs485setSlaveAsTgt(int slaveNo) {
+    char slaveStr[8] = "";
+    strcpy(slaveStr, pollStr);
+    // fperm here
+    strcat(slaveStr, (char)slaveNo);
+    strcat(slaveStr, "\n");
+    // this will put the slaveStr in beginning of the buffer
+    // there should not be other data left here anyways, alternativle use strCat
+    strcpy(bufferOut, slaveStr);
+};
+
 
 /**
  * @brief 
@@ -293,6 +304,20 @@ bool STB::rs485RcvdNextLn(char* line) {
     return false;
 }
 
+
+/**
+ * @brief send the given message to the designated slave
+ * @param slaveNo 
+ * @param message 
+ * todo \/ implement the return without being a dummy
+ * @return if message got acknowled
+ */
+bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
+    rs485setSlaveAsTgt(slaveNo);
+    // newline is handled by teh aboive so nothing to worry
+    strcat(bufferOut, message);
+    return true;
+};
 
 
 
