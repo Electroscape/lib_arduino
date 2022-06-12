@@ -35,7 +35,7 @@ class STB {
     unsigned long maxResponseTime = 20;
     char bufferOut[bufferSize] = "";
     char rcvd[bufferSize] = "";
-
+    char* rcvdPtr;
 
     bool serialInit();
     static void printInfo();
@@ -63,6 +63,7 @@ class STB {
     bool rs485SlaveRespond();
     bool rs485SendBuffer();
     bool rs485PollingCheck();
+    bool rs485RcvdNextLn(char* line);
     bool rs485SendRelayCmd(int relayNo, int value);
     bool i2cScanner();
     static void softwareReset();

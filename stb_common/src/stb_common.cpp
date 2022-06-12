@@ -148,6 +148,8 @@ void STB::rs485PerformPoll() {
 
         message = "!Poll";
         message.concat(slaveNo);
+        message.concat("\n");
+        // message.concat("line1\n2\n3\nlastline");
         rs485Write(message);
         rs485Receive();
 
@@ -205,7 +207,7 @@ void STB::rs485Write(String message) {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println(message);
-    if (!isMaster) {Serial.println(eof);}
+    Serial.println(eof);
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 
@@ -217,7 +219,7 @@ void STB::rs485Write(String message) {
 
 /**
  * @brief received rs485 to rcvd buffer, also resets the buffer before writing to it
- * 
+ * TODO: resend request if EOF is not found
  */
 bool STB::rs485Receive() {
     memset(rcvd, 0, bufferSize);
@@ -233,6 +235,7 @@ bool STB::rs485Receive() {
 
             if (rcvd[bufferpos++] == eof[eofIndex++]) {
                 if (eofIndex == 4) { 
+                    rcvdPtr = strtok(rcvd, "\n"); 
                     return true;
                 }
             } else {
@@ -273,6 +276,21 @@ bool STB::rs485PollingCheck() {
     }
 
     return false;
+}
+
+
+/**
+ * @brief return the next line in the rcvd buffer
+ * @param line 
+ * @return if rcvd buffer is empty
+ */
+bool STB::rs485RcvdNextLn(char* line) {
+    if (rcvdPtr != NULL) {
+        strcpy(line, rcvdPtr);
+        rcvdPtr = strtok(NULL, "\n");
+        return true;
+    }
+    return false
 }
 
 
