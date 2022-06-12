@@ -205,7 +205,7 @@ void STB::rs485Write(String message) {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.println(message);
-    if (!isMaster) {Serial.println(eof);}
+    Serial.println(eof);
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 
@@ -217,7 +217,7 @@ void STB::rs485Write(String message) {
 
 /**
  * @brief received rs485 to rcvd buffer, also resets the buffer before writing to it
- * 
+ * TODO: resend request if EOF is not found
  */
 bool STB::rs485Receive() {
     memset(rcvd, 0, bufferSize);
@@ -273,6 +273,17 @@ bool STB::rs485PollingCheck() {
     }
 
     return false;
+}
+
+
+/**
+ * @brief return the next line in the rcvd buffer
+ * @param line 
+ * @return if rcvd buffer is empty
+ */
+bool STB::rs485RcvdNextLn(char* line) {
+    // strcpy()
+    return false
 }
 
 

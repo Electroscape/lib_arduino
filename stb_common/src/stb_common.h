@@ -63,6 +63,7 @@ class STB {
     bool rs485SlaveRespond();
     bool rs485SendBuffer();
     bool rs485PollingCheck();
+    bool rs485RcvdNextLn(char* line);
     bool rs485SendRelayCmd(int relayNo, int value);
     bool i2cScanner();
     static void softwareReset();
