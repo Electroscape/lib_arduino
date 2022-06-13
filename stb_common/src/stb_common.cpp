@@ -132,7 +132,7 @@ void STB::rs485SetToMaster() {
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     dbgln("Slave respons to"); 
-    slavePollStr = "!Poll";
+    slavePollStr = String(pollStr);
     slavePollStr.concat(no);
     dbgln(slavePollStr);
     delay(2000);
@@ -148,11 +148,14 @@ void STB::rs485PerformPoll() {
 
         message = "!Poll";
         message.concat(slaveNo);
+        message.concat("\n");
+        // message.concat("line1\n2\n3\nlastline");
         rs485Write(message);
         rs485Receive();
 
         if (strlen(rcvd) > 0) {
-            cmdInterpreter(slaveNo);
+
+            // TODO: new input receive here
             // defaultOled.println(rcvd);
         }
     }
@@ -190,14 +193,13 @@ bool STB::rs485SlaveRespond() {
 
     rs485Write(bufferOut);
     memset(bufferOut, 0, bufferSize);
-    rs485Write(eof);
     return true;
 }
 
 
 /**
  * @brief 
- * 
+ * todo check if message gets too long including EOF
  * @param message 
  * @return if message was written or bus clearance didnt occur
  */
@@ -233,6 +235,7 @@ bool STB::rs485Receive() {
 
             if (rcvd[bufferpos++] == eof[eofIndex++]) {
                 if (eofIndex == 4) { 
+                    rcvdPtr = strtok(rcvd, "\n"); 
                     return true;
                 }
             } else {
@@ -243,6 +246,17 @@ bool STB::rs485Receive() {
     return false;
 }
 
+
+void STB::rs485setSlaveAsTgt(int slaveNo) {
+    char slaveStr[8] = "";
+    strcpy(slaveStr, pollStr);
+    // fperm here
+    strcat(slaveStr, (char)slaveNo);
+    strcat(slaveStr, "\n");
+    // this will put the slaveStr in beginning of the buffer
+    // there should not be other data left here anyways, alternativle use strCat
+    strcpy(bufferOut, slaveStr);
+};
 
 
 /**
@@ -282,80 +296,30 @@ bool STB::rs485PollingCheck() {
  * @return if rcvd buffer is empty
  */
 bool STB::rs485RcvdNextLn(char* line) {
-    // strcpy()
-    return false
+    if (rcvdPtr != NULL) {
+        strcpy(line, rcvdPtr);
+        rcvdPtr = strtok(NULL, "\n");
+        return true;
+    }
+    return false;
 }
 
 
 /**
- * @brief 
- * @param relayNo 
- * @param value 
- * @return if message was command was send or bus clearance didnt occur
- */
-bool STB::rs485SendRelayCmd(int relayNo, int value) {
-    String msg = relayKeyword;
-    msg.concat("_");
-    msg.concat(relayNo);
-    msg.concat("_");
-    msg.concat(value);
-    return (rs485AddToBuffer(msg));
-}
-
-
-/**
- * @brief 
- * @param rcvd 
+ * @brief send the given message to the designated slave
  * @param slaveNo 
+ * @param message 
+ * todo \/ implement the return without being a dummy
+ * @return if message got acknowled
  */
-void STB::cmdInterpreter(int slaveNo) {
-    defaultOled.print("rcvd cmd from "); defaultOled.println(slaveNo);       
-    defaultOled.println(rcvd);     
+bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
+    rs485setSlaveAsTgt(slaveNo);
+    // newline is handled by teh aboive so nothing to worry
+    strcat(bufferOut, message);
+    return true;
+};
 
-    int lineCnt = 0;
-    char* line = strtok(rcvd, "\n"); 
 
-    while (line != NULL) {
-        lineCnt++;
-        line = strtok(NULL, "\n");
-    }
-
-    line = rcvd;
-    int lineLenght = 0;
-
-    for (int lineNo = 0; lineNo < lineCnt; lineNo++) {
-
-        lineLenght = strlen(line);
-        if (strncmp(line, relayKeyword, 6) != 0) {
-            line += lineLenght + 1;
-            continue;
-        }
-
-        int i = 0;
-        int values[2] = {0,0};
-        char* splits = strtok(line, delimiter);
-        // need to get rid of the keyword itself
-        splits = strtok(NULL, delimiter);
-
-        while (splits && i < 2) {
-            values[i++] = atoi(splits);
-            splits = strtok(NULL, delimiter);
-        }
-
-        if (i==2) {
-            // add a safety check here
-            defaultOled.print("values are: "); 
-            defaultOled.print(values[0]);
-            defaultOled.print("  ");
-            defaultOled.println(values[1]);
-            motherRelay.digitalWrite(values[0], values[1]);
-        }  
-
-        line += lineLenght + 1;
-
-    }
-    
-}
 
 /**
  *  @brief Prints out what I2C addresses responded on the bus

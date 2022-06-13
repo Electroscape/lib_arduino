@@ -24,6 +24,7 @@ class STB {
     bool isMaster = false;
     int slaveAddr = 0;
     // instead of generating better store that String to look for
+    const char pollStr[6] = "!Poll";
     String slavePollStr = "MASTER";
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
@@ -35,16 +36,15 @@ class STB {
     unsigned long maxResponseTime = 20;
     char bufferOut[bufferSize] = "";
     char rcvd[bufferSize] = "";
-
+    char* rcvdPtr;
 
     bool serialInit();
     static void printInfo();
     bool rs485PollingCheck(String message);
     void rs485Write(String message);
     bool rs485Receive();
+    void rs485setSlaveAsTgt(int slaveNo);
     void printI2cDeviceName(int deviceNo);
-    void cmdInterpreter(int slaveNo);
-
     
     public:
     SSD1306AsciiWire defaultOled;
@@ -64,7 +64,7 @@ class STB {
     bool rs485SendBuffer();
     bool rs485PollingCheck();
     bool rs485RcvdNextLn(char* line);
-    bool rs485SendRelayCmd(int relayNo, int value);
+    bool rs485SendCmdToSlave(int slaveNo, char* message);
     bool i2cScanner();
     static void softwareReset();
     
