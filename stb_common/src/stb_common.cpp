@@ -11,6 +11,7 @@
 
 #include "stb_common.h"
 
+
 /**
  * @brief Construct a new stb::stb dbg object, creates and oled instance to be used a debug print
  */
@@ -26,6 +27,7 @@ void STB::begin() {
     STB_OLED::oledInit(&defaultOled , SH1106_128x64);
     defaultOled.setFont(Adafruit5x7);
 }
+
 
 /**
  *  Initialise I2C, Serial and RS485 busses
@@ -43,6 +45,7 @@ bool STB::serialInit() {
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     return true;
 }
+
 
 void STB::printInfo() {
     Serial.println(F("+--------------------+"));
@@ -94,6 +97,7 @@ void STB::printSetupEnd() {
     dbgln("\n===START===\n");
 }
 
+
 /**
  * @brief Prints a message on serial and OLED and potentially interface pi, latter is TBD
  * @param message 
@@ -103,6 +107,7 @@ void STB::dbg(String message) {
     Serial.print(message);
     Serial.flush();
 }
+
 
 /**
  * @brief Prints a message on serial and OLED and potentially interface pi, latter is TBD
@@ -114,6 +119,7 @@ void STB::dbgln(String message) {
     Serial.flush();
 }
 
+
 /**
  * @brief sets Master along with relay initialisation
  */
@@ -124,6 +130,7 @@ void STB::rs485SetToMaster() {
     int relayInitVals[8] = {1,1,1,1,1,1,1,1};
     relayInit(motherRelay, relayPins, relayInitVals);
 }
+
 
 /**
  * @brief sets slaveNo and creates a pollstring to respond to
@@ -137,6 +144,7 @@ void STB::rs485SetSlaveAddr(int no) {
     dbgln(slavePollStr);
     delay(2000);
 }
+
 
 /**
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
@@ -163,8 +171,7 @@ void STB::rs485PerformPoll() {
 
 
 /**
- * @brief
- *
+ * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
  * @return if place was available in the bufferOut
  */
@@ -177,6 +184,7 @@ bool STB::rs485AddToBuffer(String message) {
     return false;
 }
 
+
 /**
  * @brief 
  * 
@@ -188,8 +196,6 @@ bool STB::rs485SlaveRespond() {
         dbgln("no buffer clearnce");
         return false;
     }
-
-
 
     rs485Write(bufferOut);
     memset(bufferOut, 0, bufferSize);
@@ -247,6 +253,10 @@ bool STB::rs485Receive() {
 }
 
 
+/**
+ * @brief adds 
+ * @param slaveNo 
+ */
 void STB::rs485setSlaveAsTgt(int slaveNo) {
     char slaveStr[8] = "";
     strcpy(slaveStr, pollStr);
@@ -320,7 +330,6 @@ bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
 };
 
 
-
 /**
  *  @brief Prints out what I2C addresses responded on the bus
  *  @return void
@@ -347,6 +356,7 @@ bool STB::i2cScanner() {
     return true;
 }
 
+
 /**
  * @brief 
  * 
@@ -366,9 +376,9 @@ void STB::printI2cDeviceName (int deviceNo) {
     }
 }
 
+
 /**
  * @brief restarts the arduino
- * 
  */
 void STB::softwareReset() {
     Serial.println(F("Restarting in"));
@@ -379,6 +389,7 @@ void STB::softwareReset() {
     }
     asm volatile ("  jmp 0");
 }
+
 
 /**
  * @param relay (PCF8574) relay instance
