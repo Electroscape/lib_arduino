@@ -150,22 +150,19 @@ void STB::rs485SetSlaveAddr(int no) {
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
-    String message = "";
+    polledSlave++;
+    if (polledSlave >= slaveCount) {
+        polledSlave = 0;
+    }
 
-    for (int slaveNo = 0; slaveNo < slaveCount; slaveNo++) {
+    rs485setSlaveAsTgt(polledSlave);
+    // message.concat("line1\n2\n3\nlastline");
+    rs485Write(bufferOut);
+    rs485Receive();
 
-        message = "!Poll";
-        message.concat(slaveNo);
-        message.concat("\n");
-        // message.concat("line1\n2\n3\nlastline");
-        rs485Write(message);
-        rs485Receive();
-
-        if (strlen(rcvd) > 0) {
-
-            // TODO: new input receive here
-            // defaultOled.println(rcvd);
-        }
+    if (strlen(rcvd) > 0) {
+        // TODO: new input receive here
+        defaultOled.println(rcvd);
     }
 }
 
@@ -192,10 +189,12 @@ bool STB::rs485AddToBuffer(String message) {
  */
 bool STB::rs485SlaveRespond() {
 
+    /*
     if (!rs485PollingCheck()) {
         dbgln("no buffer clearnce");
         return false;
     }
+    */
 
     rs485Write(bufferOut);
     memset(bufferOut, 0, bufferSize);
@@ -211,15 +210,22 @@ bool STB::rs485SlaveRespond() {
  */
 void STB::rs485Write(String message) {
 
+    // todo: move down, shall nto stay here and uncomment
+    if (!isMaster) {
+        dbgln("RS485 out: \n");
+        dbgln(bufferOut);
+    }
+
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-    Serial.println(message);
+    if (strlen(bufferOut) > 0) {
+        Serial.println(bufferOut);
+        Serial.flush();
+        memset(bufferOut, 0, bufferSize);
+    }
     Serial.println(eof);
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 
-    if (!isMaster) {
-        dbgln("RS485 out: \n" + message);
-    }
 }
 
 
@@ -258,14 +264,13 @@ bool STB::rs485Receive() {
  * @param slaveNo 
  */
 void STB::rs485setSlaveAsTgt(int slaveNo) {
-    char slaveStr[8] = "";
-    strcpy(slaveStr, pollStr);
-    // fperm here
-    strcat(slaveStr, (char)slaveNo);
-    strcat(slaveStr, "\n");
-    // this will put the slaveStr in beginning of the buffer
     // there should not be other data left here anyways, alternativle use strCat
-    strcpy(bufferOut, slaveStr);
+    strcpy(bufferOut, pollStr);
+    char slaveNoStr[3];
+    sprintf(slaveNoStr, "%i", slaveNo);
+    strcat(bufferOut, slaveNoStr);
+    strcat(bufferOut, "\n");
+    // this will put the slaveStr in beginning of the buffer
 };
 
 
@@ -276,11 +281,16 @@ void STB::rs485setSlaveAsTgt(int slaveNo) {
  */
 bool STB::rs485PollingCheck() {
 
+
+
     int index = 0;
     unsigned long startTime = millis();
 
     while ((millis() - startTime) < maxPollingWait) {
         if (Serial.available()) {
+            dbg(String(Serial.read()));
+
+            /*
             if (slavePollStr[index] == Serial.read()) {
                 index++;
                 if (index > 5) {
@@ -293,10 +303,12 @@ bool STB::rs485PollingCheck() {
             } else {
                 index = 0;
             }
+            */
+
         }
     }
 
-    return false;
+    return true;
 }
 
 

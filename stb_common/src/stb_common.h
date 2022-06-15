@@ -23,8 +23,11 @@ class STB {
     long rs485timeout = 10;
     bool isMaster = false;
     int slaveAddr = 0;
+    // start at -1 to start with slave 0 since we do the increment in the beginning
+    int polledSlave = -1;
     // instead of generating better store that String to look for
     const char pollStr[6] = "!Poll";
+    // maybe change this name to keep things less confusing sine mother uses slaveStr
     String slavePollStr = "MASTER";
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
