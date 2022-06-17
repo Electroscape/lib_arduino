@@ -138,10 +138,12 @@ void STB::rs485SetToMaster() {
  */
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
-    dbgln("Slave respons to"); 
+    dbgln("Slave responds to"); 
+    char noString[2];
+    sprintf(noString, "%d", no);
     strcpy(slavePollStr, pollStr);
-    strcat(slavePollStr, no);
-    dbgln(slavePollStr);
+    strcat(slavePollStr, noString);
+    Serial.println(slavePollStr);
     delay(2000);
 }
 
@@ -150,6 +152,7 @@ void STB::rs485SetSlaveAddr(int no) {
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
+    dbgln("performpoll start");
     polledSlave++;
     if (polledSlave >= slaveCount) {
         polledSlave = 0;
@@ -158,12 +161,14 @@ void STB::rs485PerformPoll() {
     rs485setSlaveAsTgt(polledSlave);
     // message.concat("line1\n2\n3\nlastline");
     rs485Write(bufferOut);
+    dbgln("going rcv");
     rs485Receive();
 
     if (strlen(rcvd) > 0) {
         // TODO: new input receive here
         defaultOled.println(rcvd);
     }
+    dbgln("performpoll end");
 }
 
 
@@ -189,12 +194,12 @@ bool STB::rs485AddToBuffer(String message) {
  */
 bool STB::rs485SlaveRespond() {
 
-    /*
+    dbgln("slaveRespond");
+
     if (!rs485PollingCheck()) {
         dbgln("no buffer clearnce");
         return false;
     }
-    */
 
     rs485Write(bufferOut);
     memset(bufferOut, 0, bufferSize);
@@ -210,18 +215,20 @@ bool STB::rs485SlaveRespond() {
  */
 void STB::rs485Write(String message) {
 
-    // todo: move down, shall nto stay here and uncomment
-    if (!isMaster) {
+    // todo: move down, shall not stay here and uncomment
+    /*
+    if (!isMaster && strlen(bufferOut) > 0) {
         dbgln("RS485 out: \n");
         dbgln(bufferOut);
     }
+    */
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-    if (strlen(bufferOut) > 0) {
-        Serial.println(bufferOut);
-        Serial.flush();
-        memset(bufferOut, 0, bufferSize);
-    }
+
+    Serial.println(bufferOut);
+    Serial.flush();
+    memset(bufferOut, 0, bufferSize);
+
     Serial.println(eof);
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
@@ -247,6 +254,8 @@ bool STB::rs485Receive() {
 
             if (rcvd[bufferpos++] == eof[eofIndex++]) {
                 if (eofIndex == 4) { 
+                    dbgln("rcvd:");
+                    dbgln(rcvd);
                     rcvdPtr = strtok(rcvd, "\n"); 
                     return true;
                 }
@@ -281,16 +290,15 @@ void STB::rs485setSlaveAsTgt(int slaveNo) {
  */
 bool STB::rs485PollingCheck() {
 
-
-
     int index = 0;
     unsigned long startTime = millis();
+    int cycles = 0;
+    Serial.println(slavePollStr);
 
     while ((millis() - startTime) < maxPollingWait) {
-        if (Serial.available()) {
-            dbg(String(Serial.read()));
 
-            /*
+        if (Serial.available()) {
+
             if (slavePollStr[index] == Serial.read()) {
                 index++;
                 if (index > 5) {
@@ -303,12 +311,18 @@ bool STB::rs485PollingCheck() {
             } else {
                 index = 0;
             }
-            */
-
+            cycles++;
         }
+        
     }
 
-    return true;
+    dbgln("pollingcheck :");
+    dbgln(String(index));
+    dbgln(String(cycles));
+
+    delay(599);
+
+    return false;
 }
 
 

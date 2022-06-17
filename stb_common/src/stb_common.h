@@ -26,10 +26,10 @@ class STB {
     // start at -1 to start with slave 0 since we do the increment in the beginning
     int polledSlave = -1;
     // instead of generating better store that String to look for
-    const char pollStr[6] = "!Poll";
+    char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    char slavePollStr[7] = "MASTER";
-    char eof[5] = "!EOF";
+    char slavePollStr[7] = "!Poll9\0";
+    char eof[6] = "!EOF\0";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
     char ACK[5] = "!ACK";
@@ -43,7 +43,6 @@ class STB {
 
     bool serialInit();
     static void printInfo();
-    bool rs485PollingCheck(String message);
     void rs485Write(String message);
     bool rs485Receive();
     void rs485setSlaveAsTgt(int slaveNo);
