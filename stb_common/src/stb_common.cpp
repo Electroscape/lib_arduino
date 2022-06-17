@@ -139,8 +139,8 @@ void STB::rs485SetToMaster() {
 void STB::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
     dbgln("Slave respons to"); 
-    slavePollStr = String(pollStr);
-    slavePollStr.concat(no);
+    strcpy(slavePollStr, pollStr);
+    strcat(slavePollStr, no);
     dbgln(slavePollStr);
     delay(2000);
 }

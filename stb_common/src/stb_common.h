@@ -28,7 +28,7 @@ class STB {
     // instead of generating better store that String to look for
     const char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    String slavePollStr = "MASTER";
+    char slavePollStr[7] = "MASTER";
     char eof[5] = "!EOF";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
