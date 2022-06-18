@@ -28,7 +28,6 @@ class STB {
     // instead of generating better store that String to look for
     char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    char slavePollStr[7] = "!Poll9\0";
     char eof[6] = "!EOF\0";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
@@ -51,6 +50,8 @@ class STB {
     public:
     SSD1306AsciiWire defaultOled;
     PCF8574 motherRelay;
+
+    char slavePollStr[8] = "!Poll9\0";
 
     STB();
     void begin();
