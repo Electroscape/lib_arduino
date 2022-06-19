@@ -424,7 +424,7 @@ void STB::softwareReset() {
  * @param amount (int) amount of relays to be initialized
  * @return bool
  */
-bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8) {
+bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
     String relayString = String(RELAY_I2C_ADD, HEX);
     relayString.toUpperCase();
     dbgln("relayinit on " + relayString); 
