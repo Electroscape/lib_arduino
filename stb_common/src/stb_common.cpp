@@ -152,7 +152,6 @@ void STB::rs485SetSlaveAddr(int no) {
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
-    dbgln("performpoll start");
     polledSlave++;
     if (polledSlave >= slaveCount) {
         polledSlave = 0;
@@ -161,14 +160,12 @@ void STB::rs485PerformPoll() {
     rs485setSlaveAsTgt(polledSlave);
     // message.concat("line1\n2\n3\nlastline");
     rs485Write(bufferOut);
-    dbgln("going rcv");
     rs485Receive();
 
     if (strlen(rcvd) > 0) {
         // TODO: new input receive here
-        defaultOled.println(rcvd);
+        dbgln(rcvd);
     }
-    dbgln("performpoll end");
 }
 
 
@@ -254,6 +251,7 @@ bool STB::rs485Receive() {
 
             if (rcvd[bufferpos++] == eof[eofIndex++]) {
                 if (eofIndex == 4) { 
+                    rcvd[bufferpos] = "\0";
                     dbgln("rcvd:");
                     dbgln(rcvd);
                     rcvdPtr = strtok(rcvd, "\n"); 
