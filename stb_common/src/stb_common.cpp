@@ -222,13 +222,11 @@ void STB::rs485Write(String message) {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
 
-    Serial.println(bufferOut);
-    Serial.flush();
-    memset(bufferOut, 0, bufferSize);
-
+    Serial.print(bufferOut);
     Serial.println(eof);
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
+    memset(bufferOut, 0, bufferSize);
 
 }
 
@@ -254,7 +252,11 @@ bool STB::rs485Receive() {
                     rcvd[bufferpos] = "\0";
                     dbgln("rcvd:");
                     dbgln(rcvd);
+
                     rcvdPtr = strtok(rcvd, "\n"); 
+                    dbgln("rcvdptr:");
+                    dbgln(rcvdPtr);
+    
                     return true;
                 }
             } else {
@@ -262,6 +264,8 @@ bool STB::rs485Receive() {
             }
         }
     }
+    dbgln("rcvd without EOF");
+    dbgln(rcvd);
     return false;
 }
 
@@ -329,13 +333,12 @@ bool STB::rs485PollingCheck() {
  * @param line 
  * @return if rcvd buffer is empty
  */
-bool STB::rs485RcvdNextLn(char* line) {
+bool STB::rs485RcvdNextLn() {
     if (rcvdPtr != NULL) {
-        strcpy(line, rcvdPtr);
         rcvdPtr = strtok(NULL, "\n");
         return true;
     }
-    return false;
+    return true;
 }
 
 

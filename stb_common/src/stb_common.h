@@ -15,7 +15,7 @@
 #endif 
 
 #define i2cClkSpeed 100000
-#define slaveCount 8
+#define slaveCount 1
 #define bufferSize 64
 
 class STB {
@@ -28,17 +28,16 @@ class STB {
     // instead of generating better store that String to look for
     char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    char eof[6] = "!EOF\0";
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
     char ACK[5] = "!ACK";
     char NACK[6] = "!NACK";
+    char eof[6] = "!EOF\0";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 20;
-    char bufferOut[bufferSize] = "";
+    unsigned long maxResponseTime = 50;
     char rcvd[bufferSize] = "";
-    char* rcvdPtr;
+    char bufferOut[bufferSize] = "";
 
     bool serialInit();
     static void printInfo();
@@ -52,6 +51,10 @@ class STB {
     PCF8574 motherRelay;
 
     char slavePollStr[8] = "!Poll9\0";
+    char rcvdLn[bufferSize] = "";
+    char* rcvdPtr;
+
+
 
     STB();
     void begin();
@@ -66,7 +69,7 @@ class STB {
     bool rs485SlaveRespond();
     bool rs485SendBuffer();
     bool rs485PollingCheck();
-    bool rs485RcvdNextLn(char* line);
+    bool rs485RcvdNextLn();
     bool rs485SendCmdToSlave(int slaveNo, char* message);
     bool i2cScanner();
     static void softwareReset();
