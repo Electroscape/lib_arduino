@@ -35,7 +35,7 @@ class STB {
     char eof[6] = "!EOF\0";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 50;
+    unsigned long maxResponseTime = 300;
     char rcvd[bufferSize] = "";
     char bufferOut[bufferSize] = "";
 

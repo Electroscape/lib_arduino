@@ -196,6 +196,7 @@ bool STB::rs485SlaveRespond() {
     if (!rs485PollingCheck()) {
         dbgln("no buffer clearnce");
         return false;
+        dbgln(rcvd);
     }
 
     rs485Write(bufferOut);
@@ -247,25 +248,24 @@ bool STB::rs485Receive() {
             
             rcvd[bufferpos] = Serial.read();
 
-            if (rcvd[bufferpos++] == eof[eofIndex++]) {
+            if (rcvd[bufferpos] == eof[eofIndex]) {
+                eofIndex++;
                 if (eofIndex == 4) { 
-                    rcvd[bufferpos] = "\0";
-                    dbgln("rcvd:");
                     dbgln(rcvd);
-
+                    rcvd[bufferpos+1] = "\0";
                     rcvdPtr = strtok(rcvd, "\n"); 
-                    dbgln("rcvdptr:");
-                    dbgln(rcvdPtr);
-    
                     return true;
                 }
             } else {
                 eofIndex = 0;
             }
+            bufferpos++;
         }
     }
-    dbgln("rcvd without EOF");
-    dbgln(rcvd);
+    if (strlen(rcvd) > 0) {
+        dbgln("no EOF!");
+        dbgln(rcvd);
+    }
     return false;
 }
 
@@ -285,6 +285,10 @@ void STB::rs485setSlaveAsTgt(int slaveNo) {
 };
 
 
+bool STB::rs485SendBuffer() {
+    rs485Write(bufferOut);
+}
+
 /**
  * @brief 
  * @param message 
@@ -294,8 +298,6 @@ bool STB::rs485PollingCheck() {
 
     int index = 0;
     unsigned long startTime = millis();
-    int cycles = 0;
-    Serial.println(slavePollStr);
 
     while ((millis() - startTime) < maxPollingWait) {
 
@@ -313,17 +315,9 @@ bool STB::rs485PollingCheck() {
             } else {
                 index = 0;
             }
-            cycles++;
         }
         
     }
-
-    dbgln("pollingcheck :");
-    dbgln(String(index));
-    dbgln(String(cycles));
-
-    delay(599);
-
     return false;
 }
 
@@ -334,11 +328,11 @@ bool STB::rs485PollingCheck() {
  * @return if rcvd buffer is empty
  */
 bool STB::rs485RcvdNextLn() {
-    if (rcvdPtr != NULL) {
+    if (rcvdPtr) {
         rcvdPtr = strtok(NULL, "\n");
         return true;
     }
-    return true;
+    return false;
 }
 
 
@@ -353,6 +347,9 @@ bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
     rs485setSlaveAsTgt(slaveNo);
     // newline is handled by teh aboive so nothing to worry
     strcat(bufferOut, message);
+    dbgln("cmd to slave");
+    dbgln(bufferOut);
+    rs485SendBuffer();
     return true;
 };
 
