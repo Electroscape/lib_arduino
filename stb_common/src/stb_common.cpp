@@ -194,9 +194,8 @@ bool STB::rs485SlaveRespond() {
     dbgln("slaveRespond");
 
     if (!rs485PollingCheck()) {
-        dbgln("no buffer clearnce");
+        Serial.println("no buffer clearnce");
         return false;
-        dbgln(rcvd);
     }
 
     rs485Write(bufferOut);
@@ -251,7 +250,7 @@ bool STB::rs485Receive() {
             if (rcvd[bufferpos] == eof[eofIndex]) {
                 eofIndex++;
                 if (eofIndex == 4) { 
-                    dbgln(rcvd);
+                    //dbgln(rcvd);
                     rcvd[bufferpos+1] = "\0";
                     rcvdPtr = strtok(rcvd, "\n"); 
                     return true;
@@ -262,10 +261,12 @@ bool STB::rs485Receive() {
             bufferpos++;
         }
     }
+    /*
     if (strlen(rcvd) > 0) {
         dbgln("no EOF!");
         dbgln(rcvd);
     }
+    */
     return false;
 }
 
@@ -328,11 +329,8 @@ bool STB::rs485PollingCheck() {
  * @return if rcvd buffer is empty
  */
 bool STB::rs485RcvdNextLn() {
-    if (rcvdPtr) {
-        rcvdPtr = strtok(NULL, "\n");
-        return true;
-    }
-    return false;
+    rcvdPtr = strtok(NULL, "\n");
+    return (rcvdPtr != NULL);
 }
 
 
