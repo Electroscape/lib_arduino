@@ -15,11 +15,11 @@
 #endif 
 
 #define i2cClkSpeed 100000
-#define slaveCount 1
 #define bufferSize 64
 
 class STB {
     private:
+    int slaveCount = 8;
     long rs485timeout = 10;
     bool isMaster = false;
     int slaveAddr = 0;
@@ -54,8 +54,6 @@ class STB {
     char rcvdLn[bufferSize] = "";
     char* rcvdPtr;
 
-
-
     STB();
     void begin();
     static void printWithHeader(String message, String source=String("SYS"));
@@ -64,6 +62,8 @@ class STB {
     void dbgln(String message);
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
+    // ideally it would be an array of which slave number are active...
+    void rs485SetSlaveCount(int count);
     void rs485PerformPoll();
     bool rs485AddToBuffer(String message);
     bool rs485SlaveRespond();

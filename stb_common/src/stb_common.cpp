@@ -149,6 +149,15 @@ void STB::rs485SetSlaveAddr(int no) {
 
 
 /**
+ * @brief defines how many slaves are being polled
+ * @param count 
+ */
+void STB::rs485SetSlaveCount(int count) {
+    slaveCount = count;
+}
+
+
+/**
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
 void STB::rs485PerformPoll() {
@@ -212,14 +221,6 @@ bool STB::rs485SlaveRespond() {
  */
 void STB::rs485Write(String message) {
 
-    // todo: move down, shall not stay here and uncomment
-    /*
-    if (!isMaster && strlen(bufferOut) > 0) {
-        dbgln("RS485 out: \n");
-        dbgln(bufferOut);
-    }
-    */
-
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
 
     Serial.print(bufferOut);
@@ -261,12 +262,7 @@ bool STB::rs485Receive() {
             bufferpos++;
         }
     }
-    /*
-    if (strlen(rcvd) > 0) {
-        dbgln("no EOF!");
-        dbgln(rcvd);
-    }
-    */
+
     return false;
 }
 
