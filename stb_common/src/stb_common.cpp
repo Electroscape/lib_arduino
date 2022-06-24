@@ -240,7 +240,7 @@ bool STB::rs485Receive() {
     memset(rcvd, 0, bufferSize);
     int bufferpos = 0;
     int eofIndex = 0;
-    long slotStart = millis();
+    unsigned long slotStart = millis();
     
     while ((millis() - slotStart) < maxResponseTime && bufferpos < bufferSize) {
 
