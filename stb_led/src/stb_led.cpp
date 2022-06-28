@@ -20,13 +20,13 @@
  * @return true 
  * @return false 
  */
-bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int ledCnts[], int pins[], uint32_t clrOrder, int clkSpeed) {
+bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int stripeCount, int ledCnts[], int pins[], uint32_t clrOrder, int clkSpeed) {
     Serial.print(F("\n\nLED init ..."));
     delay(10);
-    for (size_t i=0; i<sizeof(neopixels); i++) {
+    for (int i=0; i<stripeCount; i++) {
         neopixels[i] = Adafruit_NeoPixel(ledCnts[i], pins[i], (clrOrder + clkSpeed));
         neopixels[i].begin();
-        STB_LED::setAllStripsToClr(neopixels, neopixels[i].Color(0, 0, 0));
+        STB_LED::setAllStripsToClr(neopixels, 1,  neopixels[i].Color(0, 0, 0));
     }
     delay(40);
     Serial.println(F(" successful"));
@@ -54,8 +54,8 @@ void STB_LED::setStripToClr(Adafruit_NeoPixel &neopixel, long int clr) {
  * @param neopixels array of led instances
  * @param clr 
  */
-void STB_LED::setAllStripsToClr(Adafruit_NeoPixel neopixels[], long int clr) {
-    for (size_t i=0; i<sizeof(neopixels); i++) {
+void STB_LED::setAllStripsToClr(Adafruit_NeoPixel neopixels[], int stripeCount, long int clr) {
+    for (int i=0; i<stripeCount; i++) {
         STB_LED::setStripToClr(neopixels[i], clr);
     }
 }
