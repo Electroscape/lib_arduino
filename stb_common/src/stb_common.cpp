@@ -168,7 +168,7 @@ void STB::rs485PerformPoll() {
 
     rs485setSlaveAsTgt(polledSlave);
     // message.concat("line1\n2\n3\nlastline");
-    rs485Write(bufferOut);
+    rs485Write();
     rs485Receive();
 
     if (strlen(rcvd) > 0) {
@@ -207,8 +207,7 @@ bool STB::rs485SlaveRespond() {
         return false;
     }
 
-    rs485Write(bufferOut);
-    memset(bufferOut, 0, bufferSize);
+    rs485Write();
     return true;
 }
 
@@ -219,7 +218,7 @@ bool STB::rs485SlaveRespond() {
  * @param message 
  * @return if message was written or bus clearance didnt occur
  */
-void STB::rs485Write(String message) {
+void STB::rs485Write() {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
 
@@ -282,9 +281,30 @@ void STB::rs485setSlaveAsTgt(int slaveNo) {
 };
 
 
-bool STB::rs485SendBuffer() {
-    rs485Write(bufferOut);
+/**
+ * @brief sends the acknowledge msg
+ */
+void STB::rs485SendAck() {
+    rs485AddToBuffer(ACK);
+    rs485Write();
 }
+
+
+/**
+ * @brief send buffer and waits for ack response if flag was set
+ * @return if ack was received, if not a cmd returns true
+ */
+bool STB::rs485SendBuffer(bool isCmd) {
+    rs485Write();
+    if (!isCmd) {return true;}
+    rs485Receive();
+    if (rs485RcvdNextLn()) {
+        dbgln(rcvdPtr);
+        if (strncmp(ACK, rcvdPtr, 4) == 0) { return true; }
+    }
+    return false;
+}
+
 
 /**
  * @brief 

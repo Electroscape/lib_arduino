@@ -30,7 +30,6 @@ class STB {
     // maybe change this name to keep things less confusing sine mother uses slaveStr
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
-    char ACK[5] = "!ACK";
     char NACK[6] = "!NACK";
     char eof[6] = "!EOF\0";
     unsigned long maxPollingWait = 300;
@@ -41,7 +40,7 @@ class STB {
 
     bool serialInit();
     static void printInfo();
-    void rs485Write(String message);
+    void rs485Write();
     bool rs485Receive();
     void rs485setSlaveAsTgt(int slaveNo);
     void printI2cDeviceName(int deviceNo);
@@ -50,6 +49,7 @@ class STB {
     SSD1306AsciiWire defaultOled;
     PCF8574 motherRelay;
 
+    char ACK[7] = "!ACK\0";
     char slavePollStr[8] = "!Poll9\0";
     char rcvdLn[bufferSize] = "";
     char* rcvdPtr;
@@ -67,7 +67,8 @@ class STB {
     void rs485PerformPoll();
     bool rs485AddToBuffer(String message);
     bool rs485SlaveRespond();
-    bool rs485SendBuffer();
+    void rs485SendAck();
+    bool rs485SendBuffer(bool isCmd=false);
     bool rs485PollingCheck();
     bool rs485RcvdNextLn();
     bool rs485SendCmdToSlave(int slaveNo, char* message);
