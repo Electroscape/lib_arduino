@@ -79,14 +79,14 @@ bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
  * @return true 
  * @return false 
  */
-bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=1) {
+bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=1, uint16_t timeout) {
     uint8_t success;
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;
     uint8_t keya[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
     memset(data, 0, sizeof(data));
 
-    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+    success = reader.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength, timeout);
     if (!success) {return false;}
 
     success = reader.mifareclassic_AuthenticateBlock(uid, uidLength, datablock, 0, keya);
