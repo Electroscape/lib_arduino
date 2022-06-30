@@ -200,8 +200,6 @@ bool STB::rs485AddToBuffer(String message) {
  */
 bool STB::rs485SlaveRespond() {
 
-    dbgln("slaveRespond");
-
     if (!rs485PollingCheck()) {
         Serial.println("no buffer clearnce");
         return false;
@@ -298,8 +296,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Write();
     if (!isCmd) {return true;}
     rs485Receive();
-    if (rs485RcvdNextLn()) {
-        dbgln(rcvdPtr);
+    while (rs485RcvdNextLn()) {
         if (strncmp(ACK, rcvdPtr, 4) == 0) { return true; }
     }
     return false;
