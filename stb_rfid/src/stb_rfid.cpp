@@ -80,7 +80,7 @@ bool STB_RFID::cardDetect(Adafruit_PN532 &reader, uint8_t *uid) {
  * @return false 
  */
 bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=1, uint16_t timeout) {
-    uint8_t success;
+    bool success;
     uint8_t uid[] = {0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
     uint8_t uidLength;
     uint8_t keya[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
