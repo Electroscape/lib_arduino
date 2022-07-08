@@ -234,6 +234,7 @@ void STB::rs485Write() {
  * TODO: resend request if EOF is not found
  */
 bool STB::rs485Receive() {
+
     memset(rcvd, 0, bufferSize);
     int bufferpos = 0;
     int eofIndex = 0;
@@ -297,6 +298,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     if (!isCmd) {return true;}
     rs485Receive();
     while (rs485RcvdNextLn()) {
+        dbgln(rcvdPtr);
         if (strncmp(ACK, rcvdPtr, 4) == 0) { return true; }
     }
     return false;
