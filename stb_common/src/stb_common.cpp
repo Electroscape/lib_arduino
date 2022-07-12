@@ -194,8 +194,7 @@ bool STB::rs485AddToBuffer(String message) {
 
 
 /**
- * @brief 
- * 
+ * @brief slave checks if being polled and responds with the buffer 
  * @return if bufferOut could be send 
  */
 bool STB::rs485SlaveRespond() {
@@ -266,7 +265,7 @@ bool STB::rs485Receive() {
 
 
 /**
- * @brief adds 
+ * @brief WIP adds string of slave to be polled into the buffer
  * @param slaveNo 
  */
 void STB::rs485setSlaveAsTgt(int slaveNo) {
@@ -306,7 +305,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
 
 
 /**
- * @brief 
+ * @brief checks if being polled and message is complete, msg stored in rcvd
  * @param message 
  * @return if slave is being polled and can send
  */
@@ -353,7 +352,6 @@ bool STB::rs485RcvdNextLn() {
  * @brief send the given message to the designated slave
  * @param slaveNo 
  * @param message 
- * todo \/ implement the return without being a dummy
  * @return if message got acknowled
  */
 bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
@@ -395,7 +393,7 @@ bool STB::i2cScanner() {
 
 
 /**
- * @brief 
+ * @brief mapping of I2C address
  * 
  * @param deviceNo 
  * @return char 
@@ -429,6 +427,7 @@ void STB::softwareReset() {
 
 
 /**
+ * @brief initializes the given relay along with init states
  * @param relay (PCF8574) relay instance
  * @param pins (int) pin numbers
  * @param initvals (int) init value

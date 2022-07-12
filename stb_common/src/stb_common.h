@@ -18,6 +18,7 @@
 #define bufferSize 64
 
 class STB {
+
     private:
     int slaveCount = 8;
     long rs485timeout = 10;

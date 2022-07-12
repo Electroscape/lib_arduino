@@ -12,8 +12,7 @@
 
 
 /**
- * @brief 
- * 
+ * @brief initializes the parsed RFID reader
  * @param reader 
  * @return success
  */

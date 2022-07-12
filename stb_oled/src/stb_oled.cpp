@@ -33,11 +33,22 @@ bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) 
     return true;
 }
 
+
+/**
+ * @brief prints to Serial and Oled
+ * @param oled 
+ * @param text 
+ */
 void STB_OLED::systemPrint(SSD1306AsciiWire oled, String text) {
     oled.print(text);
     Serial.print(text);
 }
 
+/**
+ * @brief prints to Serial and Oled with newline in the end
+ * @param oled 
+ * @param text 
+ */
 void STB_OLED::systemPrintln(SSD1306AsciiWire oled, String text) {
     oled.println(text);
     Serial.println(text);
