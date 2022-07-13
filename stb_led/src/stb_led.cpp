@@ -48,6 +48,20 @@ void STB_LED::setStripToClr(Adafruit_NeoPixel &neopixel, long int clr) {
     delay(10);
 }
 
+
+/**
+ * @brief 
+ * 
+ * @param neopixel 
+ * @param clrs 
+ */
+void STB_LED::setStripToClrs(Adafruit_NeoPixel &neopixel, uint32_t  clrs[], int size) {
+    for (int ledNr=0; ledNr<size; ledNr++) {
+        neopixel.setPixelColor(ledNr, clrs[ledNr]);
+        neopixel.show();
+    }
+    delay(10);
+}
 /**
  * @brief 
  * 
