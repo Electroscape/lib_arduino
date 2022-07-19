@@ -40,7 +40,7 @@ class STB {
     char bufferOut[bufferSize] = "";
 
     bool serialInit();
-    static void printInfo();
+    void printInfo();
     void rs485Write();
     bool rs485Receive();
     void rs485setSlaveAsTgt(int slaveNo);

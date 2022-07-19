@@ -23,9 +23,9 @@ STB::STB() {}
  */
 void STB::begin() {
     serialInit();
-    printInfo();
     STB_OLED::oledInit(&defaultOled , SH1106_128x64);
     defaultOled.setFont(Adafruit5x7);
+    printInfo();
 }
 
 
@@ -48,10 +48,11 @@ bool STB::serialInit() {
 
 
 void STB::printInfo() {
-    Serial.println(F("+--------------------+"));
-    Serial.println(F("|    Electroscape    |"));
-    Serial.println(F("+--------------------+"));
-    Serial.flush();
+
+    defaultOled.println(F("\n\n+--------------------+"));
+    defaultOled.println(F("|    Electroscape    |"));
+    defaultOled.println(F("+--------------------+"));
+
     printWithHeader("!header_begin");
     #ifdef title
         printWithHeader(title);
@@ -64,6 +65,8 @@ void STB::printInfo() {
     #endif
     printWithHeader("!header_end");
     printWithHeader("!setup_begin");
+
+    delay(300);
 }
 
 /**
@@ -387,7 +390,7 @@ bool STB::i2cScanner() {
             delay(1);  
         }              
     }                  
-    dbgln("I2C scan complete");
+    delay(3000);
     return true;
 }
 
@@ -446,7 +449,7 @@ bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
         relay.digitalWrite(pins[i], initvals[i]);
         dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
     }
-    dbgln(F("\nrelay init successful"));
+    delay(500);
     return true;
 }
 
