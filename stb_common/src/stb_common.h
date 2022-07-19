@@ -32,7 +32,7 @@ class STB {
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
     char NACK[6] = "!NACK";
-    char eof[6] = "!EOF\0";
+    char eof[6] = "!EOF";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 300;
@@ -50,8 +50,8 @@ class STB {
     SSD1306AsciiWire defaultOled;
     PCF8574 motherRelay;
 
-    char ACK[7] = "!ACK\0";
-    char slavePollStr[8] = "!Poll9\0";
+    char ACK[7] = "!ACK";
+    char slavePollStr[8] = "!Poll9";
     char rcvdLn[bufferSize] = "";
     char* rcvdPtr;
 

@@ -12,8 +12,25 @@
 #include "stb_mother.h"
 
 
-stb_mother::stb_mother(/* args */) {}
+STB_MOTHER::STB_MOTHER(/* args */) {}
 
-stb_mother::~stb_mother() {}
+STB_MOTHER::~STB_MOTHER() {}
 
-void stb_mother::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {}
+void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
+
+    // STB.rs485setSlaveAsTgt(brainNo);
+    char msg[16] = "";
+    strcpy(msg, keyWords.flagKeyword);
+    char noString[3];
+    sprintf(noString, "%d", cmdFlag);
+    strcat(msg, noString);
+    strcat(msg, "_");
+    if (status) {
+        strcat(msg, "1");
+    } else {
+        strcat(msg, "0");
+    }
+    
+    STB.dbgln(msg);
+    // STB.rs485AddToBuffer(msg);
+}

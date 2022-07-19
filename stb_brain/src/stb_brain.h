@@ -2,14 +2,15 @@
 
 #include <stb_shared.h>
 
-class stb_brain
-{
-private:
-    /* data */
-public:
-    flags flags();
-    stb_brain(/* args */);
-    ~stb_brain();
+class stb_brain {
+    private:
+        keyWords keyWords();
+        /* data */
+    public:
+        flags flags();
+        void receiveInputFlags();
+        stb_brain(/* args */);
+        ~stb_brain();
 };
 
 class flags {

@@ -15,3 +15,10 @@ enum cmdFlags {
     RFID,
     OLED
 };
+ 
+
+// global keywords being used
+class KeyWords {
+    public:
+    char flagKeyword[7] = "!Flag_";
+};

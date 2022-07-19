@@ -1,16 +1,18 @@
 #pragma once
 
+#include <stb_common.h>
 #include <stb_shared.h>
 
-class stb_mother
+class STB_MOTHER
 {
-private:
-    /* data */
-public:
-    stb_mother(/* args */);
-    ~stb_mother();
+    private:
+        /* data */
+    public:
+        STB_MOTHER(/* args */);
+        ~STB_MOTHER();
+        KeyWords keyWords;
 
-    void setFlag(int brainNo, cmdFlags cmdFlag, bool status);
+        void setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status);
 };
 
 
