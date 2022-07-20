@@ -12,7 +12,7 @@ class STB_MOTHER
         ~STB_MOTHER();
         KeyWords keyWords;
 
-        void setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status);
+        bool setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status);
 };
 
 

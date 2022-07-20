@@ -43,7 +43,6 @@ class STB {
     void printInfo();
     void rs485Write();
     bool rs485Receive();
-    void rs485setSlaveAsTgt(int slaveNo);
     void printI2cDeviceName(int deviceNo);
     
     public:
@@ -61,6 +60,7 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
+    void rs485setSlaveAsTgt(int slaveNo);
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
     // ideally it would be an array of which slave number are active...

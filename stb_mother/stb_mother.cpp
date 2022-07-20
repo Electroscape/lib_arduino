@@ -16,9 +16,9 @@ STB_MOTHER::STB_MOTHER(/* args */) {}
 
 STB_MOTHER::~STB_MOTHER() {}
 
-void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
+bool STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
 
-    // STB.rs485setSlaveAsTgt(brainNo);
+    STB.rs485setSlaveAsTgt(brainNo);
     char msg[16] = "";
     strcpy(msg, keyWords.flagKeyword);
     char noString[3];
@@ -31,6 +31,6 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
         strcat(msg, "0");
     }
     
-    STB.dbgln(msg);
-    // STB.rs485AddToBuffer(msg);
+    STB.rs485AddToBuffer(msg);
+    return STB.rs485SendBuffer(true);
 }
