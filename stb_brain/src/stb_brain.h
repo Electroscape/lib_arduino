@@ -1,21 +1,17 @@
 #pragma once
 
+#include <stb_common.h>
 #include <stb_shared.h>
 
-class stb_brain {
+
+class STB_BRAIN {
     private:
-        keyWords keyWords();
+        KeywordsList Keywords;
         /* data */
     public:
-        flags flags();
-        void receiveInputFlags();
-        stb_brain(/* args */);
-        ~stb_brain();
-};
-
-class flags {
-    public:
-    bool LED = true;
-    bool RFID = true;
-    bool OLED = true;
+        // by default everything is enabled
+        int flags[cmdFlags::AmountOfFlags] = {0};
+        bool receiveFlags(STB STB);
+        STB_BRAIN(/* args */);
+        ~STB_BRAIN();
 };

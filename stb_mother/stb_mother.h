@@ -10,7 +10,7 @@ class STB_MOTHER
     public:
         STB_MOTHER(/* args */);
         ~STB_MOTHER();
-        KeyWords keyWords;
+        KeywordsList keyWords;
 
         bool setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status);
 };

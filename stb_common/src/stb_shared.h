@@ -13,12 +13,14 @@
 enum cmdFlags {
     LED,
     RFID,
-    OLED
+    OLED,
+    // update this everytime you add flags
+    AmountOfFlags = 3
 };
  
 
 // global keywords being used
-class KeyWords {
+class KeywordsList {
     public:
     char flagKeyword[7] = "!Flag_";
 };
