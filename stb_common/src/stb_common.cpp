@@ -252,7 +252,7 @@ bool STB::rs485Receive() {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     //dbgln(rcvd);
-                    rcvd[bufferpos+1] = "\0";
+                    rcvd[bufferpos+1] = '\0';
                     rcvdPtr = strtok(rcvd, "\n"); 
                     return true;
                 }
@@ -301,7 +301,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (strncmp(ACK, rcvdPtr, 4) == 0) { return true; }
+        if (strncmp(ACK, rcvdPtr, strlen(ACK)) == 0) { return true; }
     }
     return false;
 }

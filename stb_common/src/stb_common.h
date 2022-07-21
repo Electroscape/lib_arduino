@@ -32,7 +32,7 @@ class STB {
     char delimiter[2] = "_";
     char relayKeyword[7] = "!Relay";
     char NACK[6] = "!NACK";
-    char eof[6] = "!EOF\0";
+    char eof[6] = "!EOF";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 300;
@@ -43,15 +43,14 @@ class STB {
     void printInfo();
     void rs485Write();
     bool rs485Receive();
-    void rs485setSlaveAsTgt(int slaveNo);
     void printI2cDeviceName(int deviceNo);
     
     public:
     SSD1306AsciiWire defaultOled;
     PCF8574 motherRelay;
 
-    char ACK[7] = "!ACK\0";
-    char slavePollStr[8] = "!Poll9\0";
+    char ACK[7] = "!ACK";
+    char slavePollStr[8] = "!Poll9";
     char rcvdLn[bufferSize] = "";
     char* rcvdPtr;
 
@@ -61,6 +60,7 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
+    void rs485setSlaveAsTgt(int slaveNo);
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
     // ideally it would be an array of which slave number are active...
