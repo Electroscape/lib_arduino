@@ -23,4 +23,5 @@ enum cmdFlags {
 class KeywordsList {
     public:
     char flagKeyword[7] = "!Flag_";
+    char endFlagKeyword[10] = "!FlagsEnd";
 };

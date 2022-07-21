@@ -19,8 +19,9 @@ STB_BRAIN::~STB_BRAIN() {};
  * @brief receives the flags send by the mother
  * @param STB 
  * @return true when flags have been received
+ * Todo: make safety checks
  */
-bool STB_BRAIN::receiveFlags(STB STB) {
+void STB_BRAIN::receiveFlags(STB STB) {
 
     STB.dbgln("receiveflags");
     bool sendAck = false;
@@ -31,10 +32,9 @@ bool STB_BRAIN::receiveFlags(STB STB) {
 
         while (STB.rcvdPtr != NULL) {
 
-            STB.dbg("STB.rcvdPtr is: ");
+            STB.dbgln("STB.rcvdPtr is: ");
             STB.dbgln(STB.rcvdPtr);
 
-            // use the char length to check this
             if (strncmp((char *) Keywords.flagKeyword, STB.rcvdPtr, strlen(Keywords.flagKeyword)) == 0) {
                 
                 STB.rcvdPtr += strlen(Keywords.flagKeyword);
@@ -44,7 +44,6 @@ bool STB_BRAIN::receiveFlags(STB STB) {
                 char* linePtr = strtok(line, "_"); 
                 linePtr = strtok(NULL, "_"); 
                 STB.dbgln("Flagkeyword receivd");
-                // add a safety check here
                 STB.dbgln(linePtr);
             
                 char noString[2];
@@ -61,24 +60,34 @@ bool STB_BRAIN::receiveFlags(STB STB) {
                         break;
                     }
                 }
+
+            } else if (strncmp((char *) Keywords.endFlagKeyword, STB.rcvdPtr, strlen(Keywords.endFlagKeyword)) == 0) {
+                STB.rs485SendAck();
+                STB.dbgln("all flags received");
+                
+                for (int keywordNo=0; keywordNo<cmdFlags::AmountOfFlags; keywordNo++) {
+                    if (flags[keywordNo] > 0) {
+                        STB.dbgln("enabled");
+                    } else {
+                        STB.dbgln("disabled");
+                    }
+                }
+                delay(2000);
+                return;
             }
+
+            if (sendAck) {
+                STB.rs485SendAck();
+                sendAck = false;
+            }
+
             STB.rs485RcvdNextLn();
         }
 
-        if (sendAck) {
-            STB.rs485SendAck();
-            for (int keywordNo=0; keywordNo<cmdFlags::AmountOfFlags; keywordNo++) {
-                if (flags[keywordNo] > 0) {
-                    STB.dbgln("enabled");
-                } else {
-                    STB.dbgln("disabled");
-                }
-            }
-            break;
-        }
+        wdt_reset();
+
     }
     
-
-    return true;
+    return;
 }
 

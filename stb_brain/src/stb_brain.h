@@ -2,6 +2,7 @@
 
 #include <stb_common.h>
 #include <stb_shared.h>
+#include <avr/wdt.h>
 
 
 class STB_BRAIN {
@@ -11,7 +12,7 @@ class STB_BRAIN {
     public:
         // by default everything is enabled
         int flags[cmdFlags::AmountOfFlags] = {0};
-        bool receiveFlags(STB STB);
+        void receiveFlags(STB STB);
         STB_BRAIN(/* args */);
         ~STB_BRAIN();
 };
