@@ -48,7 +48,7 @@ void STB_BRAIN::receiveFlags(STB STB) {
             
                 char noString[2];
 
-                for (int keywordNo=0; keywordNo<cmdFlags::AmountOfFlags; keywordNo++) { 
+                for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) { 
                     sprintf(noString, "%i", keywordNo);
                     if (strncmp(STB.rcvdPtr, noString, 1) == 0) {
                         STB.dbg("correct keyword for: ");
@@ -65,7 +65,7 @@ void STB_BRAIN::receiveFlags(STB STB) {
                 STB.rs485SendAck();
                 STB.dbgln("all flags received");
                 
-                for (int keywordNo=0; keywordNo<cmdFlags::AmountOfFlags; keywordNo++) {
+                for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) {
                     if (flags[keywordNo] > 0) {
                         STB.dbgln("enabled");
                     } else {

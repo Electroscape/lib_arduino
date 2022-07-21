@@ -11,7 +11,7 @@ class STB_BRAIN {
         /* data */
     public:
         // by default everything is enabled
-        int flags[cmdFlags::AmountOfFlags] = {0};
+        int flags[cmdFlags::amountOfFlags] = {0};
         void receiveFlags(STB STB);
         STB_BRAIN(/* args */);
         ~STB_BRAIN();

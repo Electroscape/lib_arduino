@@ -11,11 +11,11 @@
 
 
 enum cmdFlags {
-    LED,
-    RFID,
-    OLED,
+    ledFlag,
+    rfidFlag,
+    oledFlag,
     // update this everytime you add flags
-    AmountOfFlags = 3
+    amountOfFlags = 3
 };
  
 

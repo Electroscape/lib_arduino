@@ -18,7 +18,8 @@ STB_MOTHER::~STB_MOTHER() {}
 
 
 /**
- * @brief sends a single flag to given brain, send flagsCompleted after all flags are send
+ * @brief sends a single flag to given brain, 
+ * send flagsCompleted after all flags are send
  * @param STB 
  * @param brainNo 
  * @param cmdFlag 
@@ -53,7 +54,8 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
 
 
 /**
- * @brief sends a signal to the brain that no more flags are going to be send
+ * @brief sends a signal to the brain that no more flags 
+ * are going to be send and the setup can continue
  * @param STB 
  * @param brainNo 
  */
