@@ -28,7 +28,7 @@ void STB_BRAIN::receiveFlags(STB STB) {
 
     while (true) {
 
-        STB.rs485SlaveRespond();
+        if (!STB.rs485PollingCheck()) {continue;}
 
         while (STB.rcvdPtr != NULL) {
 

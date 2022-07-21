@@ -43,11 +43,11 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
         STB.rs485setSlaveAsTgt(brainNo);
         STB.rs485AddToBuffer(msg);
         if (STB.rs485SendBuffer(true)) {
-            delay(500);
+            //delay(500);
             return;
         }
         wdt_reset();
-        delay(20);
+        // delay(20);
     }
 }
 
@@ -65,6 +65,5 @@ void STB_MOTHER::flagsCompleted(STB STB, int brainNo) {
             return;
         }
         wdt_reset();
-        delay(20);
     }
 }
