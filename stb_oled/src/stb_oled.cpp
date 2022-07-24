@@ -11,6 +11,21 @@
 
 #include "stb_oled.h"
 
+
+void STB_OLED::clearAbove(SSD1306AsciiWire oled, uint8_t row) {
+    // what is an inline fnc?
+    uint8_t i = row;
+    while (i < oled.displayRows()) {
+        oled.setRow(i);
+        oled.clearToEOL();
+        i++;
+    }
+    oled.setRow(row);
+    oled.setCol((uint8_t) 3);
+    delay(5);
+}
+
+
 /**
  * @brief starts the oleds
  * @param oled 
@@ -43,6 +58,7 @@ void STB_OLED::systemPrint(SSD1306AsciiWire oled, String text) {
     oled.print(text);
     Serial.print(text);
 }
+
 
 /**
  * @brief prints to Serial and Oled with newline in the end
