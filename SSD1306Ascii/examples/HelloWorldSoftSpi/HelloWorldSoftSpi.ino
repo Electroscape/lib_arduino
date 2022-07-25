@@ -1,19 +1,22 @@
 // Test for minimum program size.
 
-// pin definitions
-#define OLED_DC    9
-#define OLED_CS   10
-#define OLED_CLK  13
-#define OLED_DATA 11
-
 #include <SPI.h>
 #include "SSD1306Ascii.h"
 #include "SSD1306AsciiSoftSpi.h"
 
+// pin definitions
+#define CS_PIN    7
+#define RST_PIN   8
+#define DC_PIN    9
+#define MOSI_PIN 11
+#define CLK_PIN  13
+
 SSD1306AsciiSoftSpi oled;
 //------------------------------------------------------------------------------
-void setup() {                
-  oled.begin(&Adafruit128x64, OLED_CS, OLED_DC, OLED_CLK, OLED_DATA);
+void setup() {
+  // Use next line if no RST_PIN or reset is not required.
+  // oled.begin(&Adafruit128x64, CS_PIN, DC_PIN, CLK_PIN, MOSI_PIN);  
+  oled.begin(&Adafruit128x64, CS_PIN, DC_PIN, CLK_PIN, MOSI_PIN, RST_PIN);
   oled.setFont(System5x7);
   oled.clear();
   oled.print("Hello world!");

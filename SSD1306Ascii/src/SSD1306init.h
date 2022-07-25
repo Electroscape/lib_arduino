@@ -43,7 +43,7 @@
 #define SSD1306_SETCONTRAST 0x81
 /** Enable or disable charge pump.  Follow with 0X14 enable, 0X10 disable. */
 #define SSD1306_CHARGEPUMP 0x8D
-/** Set Segment Re-map between data column and the segment driver. */ 
+/** Set Segment Re-map between data column and the segment driver. */
 #define SSD1306_SEGREMAP 0xA0
 /** Resume display from GRAM content. */
 #define SSD1306_DISPLAYALLON_RESUME 0xA4
@@ -75,6 +75,8 @@
 #define SSD1306_SETDISPLAYCLOCKDIV 0xD5
 /** Set Pre-charge Period */
 #define SSD1306_SETPRECHARGE 0xD9
+/** Deactivate scroll */
+#define SSD1306_DEACTIVATE_SCROLL 0x2E
 /** No Operation Command. */
 #define SSD1306_NOP 0XE3
 //------------------------------------------------------------------------------
@@ -95,7 +97,7 @@ struct DevType {
   /**
    * Pointer to initialization command bytes.
    */
-  const uint8_t* initcmds; 
+  const uint8_t* initcmds;
   /**
    * Number of initialization bytes.
    */
@@ -108,7 +110,7 @@ struct DevType {
    * Height of the display in pixels.
    */
   const uint8_t lcdHeight;
-  /** 
+  /**
    * Column offset RAM to display.  Used to pick start column of SH1106.
    */
   const uint8_t colOffset;
@@ -120,7 +122,7 @@ static const uint8_t MEM_TYPE MicroOLED64x48init[] = {
     SSD1306_DISPLAYOFF,
     SSD1306_SETDISPLAYCLOCKDIV, 0x80,  // the suggested ratio 0x80
     SSD1306_SETMULTIPLEX, 0x2F,        //
-    SSD1306_SETDISPLAYOFFSET,0x0,      // no offset
+    SSD1306_SETDISPLAYOFFSET, 0x0,     // no offset
     SSD1306_SETSTARTLINE | 0x0,        // line #0
     SSD1306_CHARGEPUMP, 0x14,          // internal vcc
     SSD1306_NORMALDISPLAY,
@@ -130,16 +132,48 @@ static const uint8_t MEM_TYPE MicroOLED64x48init[] = {
     SSD1306_SETCOMPINS, 0x12,          // 0x12 if height > 32 else 0x02
     SSD1306_SETCONTRAST, 0x7F,         // contrast level 127
     SSD1306_SETPRECHARGE, 0xF1,        // pre-charge period (1, 15)
-    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level 
+    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level
     SSD1306_DISPLAYON
 };
-/** Initialize a 64x48 Micro OLED display. */  
+/** Initialize a 64x48 Micro OLED display. */
 static const DevType MEM_TYPE MicroOLED64x48 = {
-  MicroOLED64x48init, 
+  MicroOLED64x48init,
   sizeof(MicroOLED64x48init),
   64,
   48,
   32
+};
+//------------------------------------------------------------------------------
+// this section is based on
+// https://github.com/olikraus/u8g2/blob/master/csrc/u8x8_d_ssd1306_96x16.c
+/** Initialization commands for a 96x16 SSD1306 oled display. */
+static const uint8_t MEM_TYPE SSD1306_96x16init[] = {
+    // Init sequence for Generic 96x16 OLED module
+    SSD1306_DISPLAYOFF,
+    SSD1306_SETDISPLAYCLOCKDIV, 0x80,  // clock divide ratio and osc frequency
+    SSD1306_SETMULTIPLEX, 0x0F,        // multiplex ratio
+    SSD1306_SETDISPLAYOFFSET, 0x0,     // display offset zero
+    SSD1306_SETSTARTLINE | 0x0,        // set display start line to 0
+    SSD1306_CHARGEPUMP, 0x14,          // charge pump setting enable
+    SSD1306_MEMORYMODE, 0x00,          // page addressing mode
+    SSD1306_SEGREMAP | 0xA1,           // segment remap
+    SSD1306_COMSCANDEC,                // scan dir reverse
+    SSD1306_SETCOMPINS, 0x02,          // com pin HW config
+    SSD1306_SETCONTRAST, 0xAF,         // set contrast level 0xaf
+    SSD1306_SETPRECHARGE, 0xF1,        // pre-charge period 0x0f1
+    SSD1306_SETVCOMDETECT, 0x20,       // vcomh deselect level
+    SSD1306_DEACTIVATE_SCROLL,         //  Deactivate scroll
+    SSD1306_DISPLAYALLON_RESUME,
+    SSD1306_NORMALDISPLAY,
+    SSD1306_DISPLAYON
+};
+/** Initialize a 96x16 SSD1306 oled display. */
+static const DevType MEM_TYPE SSD1306_96x16 = {
+  SSD1306_96x16init,
+  sizeof(SSD1306_96x16init),
+  96,
+  16,
+  0
 };
 //------------------------------------------------------------------------------
 // this section is based on https://github.com/adafruit/Adafruit_SSD1306
@@ -149,7 +183,7 @@ static const uint8_t MEM_TYPE Adafruit128x32init[] = {
     SSD1306_DISPLAYOFF,
     SSD1306_SETDISPLAYCLOCKDIV, 0x80,  // the suggested ratio 0x80
     SSD1306_SETMULTIPLEX, 0x1F,        // ratio 32
-    SSD1306_SETDISPLAYOFFSET,0x0,      // no offset
+    SSD1306_SETDISPLAYOFFSET, 0x0,     // no offset
     SSD1306_SETSTARTLINE | 0x0,        // line #0
     SSD1306_CHARGEPUMP, 0x14,          // internal vcc
     SSD1306_MEMORYMODE, 0x02,          // page mode
@@ -158,14 +192,14 @@ static const uint8_t MEM_TYPE Adafruit128x32init[] = {
     SSD1306_SETCOMPINS, 0x02,          // sequential COM pins, disable remap
     SSD1306_SETCONTRAST, 0x7F,         // contrast level 127
     SSD1306_SETPRECHARGE, 0xF1,        // pre-charge period (1, 15)
-    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level 
+    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level
     SSD1306_DISPLAYALLON_RESUME,
     SSD1306_NORMALDISPLAY,
     SSD1306_DISPLAYON
 };
-/** Initialize a 128x32 SSD1306 oled display. */  
+/** Initialize a 128x32 SSD1306 oled display. */
 static const DevType MEM_TYPE Adafruit128x32 = {
-  Adafruit128x32init, 
+  Adafruit128x32init,
   sizeof(Adafruit128x32init),
   128,
   32,
@@ -188,14 +222,14 @@ static const uint8_t MEM_TYPE Adafruit128x64init[] = {
     SSD1306_SETCOMPINS, 0x12,          // alt COM pins, disable remap
     SSD1306_SETCONTRAST, 0x7F,         // contrast level 127
     SSD1306_SETPRECHARGE, 0xF1,        // pre-charge period (1, 15)
-    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level 
+    SSD1306_SETVCOMDETECT, 0x40,       // vcomh regulator level
     SSD1306_DISPLAYALLON_RESUME,
     SSD1306_NORMALDISPLAY,
     SSD1306_DISPLAYON
 };
 /** Initialize a 128x64 oled display. */
 static const DevType MEM_TYPE Adafruit128x64 = {
-  Adafruit128x64init, 
+  Adafruit128x64init,
   sizeof(Adafruit128x64init),
   128,
   64,
@@ -223,7 +257,7 @@ static const uint8_t MEM_TYPE SH1106_128x64init[] = {
 };
 /** Initialize a 128x64 oled SH1106 display. */
 static const DevType MEM_TYPE SH1106_128x64 =  {
-  SH1106_128x64init, 
+  SH1106_128x64init,
   sizeof(SH1106_128x64init),
   128,
   64,
