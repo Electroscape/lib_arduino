@@ -37,8 +37,9 @@ bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) 
     delay(10);
     oled->begin(&SH1106_128x64, oledAddr);
     // oled->set400kHz();
-    oled->setScroll(true);
-    oled->setFont(Verdana12_bold);
+    // TODO: figure out if 
+    oled->setScrollMode(SCROLL_MODE_OFF);
+    setDefaultFont(oled);
     oled->clear();
     // oled->println("  System startup...");
     Serial.println(F("Successful"));
@@ -84,10 +85,10 @@ void STB_OLED::systemPrintln(SSD1306AsciiWire oled, String text) {
  * @param oled 
  * @param text 
  */
-void STB_OLED::writeCenteredLine(SSD1306AsciiWire oled, String text) {
-    size_t size = oled.strWidth(text.c_str());
-    oled.setCol((oled.displayWidth()-size)/2);
-    oled.println(text);
+void STB_OLED::writeCenteredLine(SSD1306AsciiWire *oled, String text) {
+    size_t size = oled->strWidth(text.c_str());
+    oled->setCol((oled->displayWidth()-size)/2);
+    oled->println(text);
 }
 
 /**
@@ -95,11 +96,11 @@ void STB_OLED::writeCenteredLine(SSD1306AsciiWire oled, String text) {
  * @param oled 
  * @param text 
  */
-void STB_OLED::writeHeadline(SSD1306AsciiWire oled, String text) {
-    oled.clear();
-    oled.setFont(Verdana12_bold);
+void STB_OLED::writeHeadline(SSD1306AsciiWire *oled, String text) {
+    oled->clear();
+    oled->setFont(Verdana12_bold);
     writeCenteredLine(oled, text);
-    setDefaultFont(&oled);
+    setDefaultFont(oled);
     // if set to 1 it collides with the smaller followup font
-    oled.setRow((uint8_t) 2);
+    oled->setRow((uint8_t) 2);
 }
