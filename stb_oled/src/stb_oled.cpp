@@ -79,3 +79,18 @@ void STB_OLED::systemPrintln(SSD1306AsciiWire oled, String text) {
     oled.println(text);
     Serial.println(text);
 }
+
+
+/**
+ * @brief clears Oled and writes headline and move to next writeable line
+ * @param oled 
+ * @param text 
+ */
+void STB_OLED::writeHeadline(SSD1306AsciiWire oled, String text) {
+    oled.clear();
+    oled.setFont(Verdana12_bold);
+    oled.println(text);
+    setDefaultFont(&oled);
+    // if set to 1 it collides with the smaller followup font
+    oled.setRow((uint8_t) 2);
+}

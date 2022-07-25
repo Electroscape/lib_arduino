@@ -8,5 +8,6 @@ class STB_OLED {
     static void setDefaultFont(SSD1306AsciiWire *oled);
     static void systemPrint(SSD1306AsciiWire oled, String text);
     static void systemPrintln(SSD1306AsciiWire oled, String text);
+    static void writeHeadline(SSD1306AsciiWire oled, String text);
     static void writeToLine(SSD1306AsciiWire oled, uint8_t row);
 };
