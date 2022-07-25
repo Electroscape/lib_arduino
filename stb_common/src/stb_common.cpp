@@ -24,7 +24,6 @@ STB::STB() {}
 void STB::begin() {
     serialInit();
     STB_OLED::oledInit(&defaultOled , SH1106_128x64);
-    defaultOled.setFont(Adafruit5x7);
     printInfo();
 }
 

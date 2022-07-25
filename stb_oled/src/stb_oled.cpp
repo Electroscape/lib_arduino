@@ -50,6 +50,16 @@ bool STB_OLED::oledInit(SSD1306AsciiWire *oled, DevType oledType, int oledAddr) 
 
 
 /**
+ * @brief sets oled to the default font define here
+ * @param oled 
+ */
+void STB_OLED::setDefaultFont(SSD1306AsciiWire *oled) {
+    oled->setFont(Adafruit5x7);
+    // Verdana12_bold
+}
+
+
+/**
  * @brief prints to Serial and Oled
  * @param oled 
  * @param text 
