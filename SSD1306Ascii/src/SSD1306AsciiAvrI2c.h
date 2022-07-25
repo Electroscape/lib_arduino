@@ -39,15 +39,32 @@ class SSD1306AsciiAvrI2c : public SSD1306Ascii {
    *
    * @param[in] dev A device initialization structure.
    * @param[in] i2cAddr The I2C address of the display controller.
-   * @param[in] fastMode Fast 400 kHz mode if true else standard 100 kHz mode.
    */
-  void begin(const DevType* dev, uint8_t i2cAddr, bool fastMode = true) {
+  void begin(const DevType* dev, uint8_t i2cAddr) {
     m_nData = 0;
     m_i2cAddr = i2cAddr;
 
-    m_i2c.begin(fastMode);
-    init(dev);    
+    m_i2c.begin(AVRI2C_FASTMODE);
+    init(dev);
   }
+  /**
+   * @brief Initialize the display controller.
+   *
+   * @param[in] dev A device initialization structure.
+   * @param[in] i2cAddr The I2C address of the display controller.
+   * @param[in] rst The display controller reset pin.
+   */
+  void begin(const DevType* dev, uint8_t i2cAddr, uint8_t rst) {
+    oledReset(rst);
+    begin(dev, i2cAddr);
+  }
+  /**
+   * @brief Set the I2C bit rate.
+   *
+   * @param[in] frequency Desired frequency in Hz.
+   *            Valid range for a 16 MHz board is about 40 kHz to 444,000 kHz.
+   */
+  void setI2cClock(uint32_t frequency) {m_i2c.setClock(frequency);}
 
  protected:
   void writeDisplay(uint8_t b, uint8_t mode) {
@@ -61,13 +78,14 @@ class SSD1306AsciiAvrI2c : public SSD1306Ascii {
     }
     m_i2c.write(b);
     if (mode == SSD1306_MODE_RAM_BUF) {
-      m_nData++; 
-    }else {      
+      m_nData++;
+    } else {
       m_i2c.stop();
       m_nData = 0;
     }
   }
- private:
+
+ protected:
   AvrI2c m_i2c;
   uint8_t m_i2cAddr;
   uint8_t m_nData;
