@@ -91,6 +91,7 @@ void STB_OLED::writeCenteredLine(SSD1306AsciiWire *oled, String text) {
     oled->println(text);
 }
 
+
 /**
  * @brief clears Oled and writes headline and move to next writeable line
  * @param oled 
@@ -103,4 +104,21 @@ void STB_OLED::writeHeadline(SSD1306AsciiWire *oled, String text) {
     setDefaultFont(oled);
     // if set to 1 it collides with the smaller followup font
     oled->setRow((uint8_t) 2);
+}
+
+
+/**
+ * @brief Writes text in given line, uses println -> clears to EOL 
+ * @param oled 
+ * @param row 
+ * @param text 
+ * @param centered (defaults to uncentered)
+ */
+void STB_OLED::writeToLine(SSD1306AsciiWire *oled, uint8_t row, String text, bool centered) {
+    oled->setRow(row);
+    if (centered) {
+        writeCenteredLine(oled, text);
+    } else {
+        oled->println(text);
+    }
 }
