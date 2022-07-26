@@ -127,6 +127,7 @@ void STB::dbgln(String message) {
  */
 void STB::rs485SetToMaster() {
     // TODO: may need to add a parameter for pins and initvalues
+    defaultOled.setScrollMode(SCROLL_MODE_AUTO);
     isMaster = true;
     int relayPins[8] = {0,1,2,3,4,5,6,7};
     int relayInitVals[8] = {1,1,1,1,1,1,1,1};
