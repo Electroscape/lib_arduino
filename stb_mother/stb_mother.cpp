@@ -111,5 +111,12 @@ void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int valu
  * @param brainNo 
  */
 void STB_MOTHER::settingsCompleted(STB STB, int brainNo) {
-
+    while (true) {
+        STB.rs485setSlaveAsTgt(brainNo);
+        STB.rs485AddToBuffer(keyWords.endSettingKeyword);
+        if (STB.rs485SendBuffer(true)) {
+            return;
+        }
+        wdt_reset();
+    }
 }
