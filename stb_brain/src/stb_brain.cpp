@@ -11,7 +11,11 @@
 
 #include "stb_brain.h"
 
-STB_BRAIN::STB_BRAIN() {};
+STB_BRAIN::STB_BRAIN() {
+    for (int row=0; row<settingsCount; row++) {
+        settings[row][0] = -1;
+    }
+};
 STB_BRAIN::~STB_BRAIN() {};
 
 
@@ -19,7 +23,7 @@ STB_BRAIN::~STB_BRAIN() {};
  * @brief receives the flags send by the mother
  * @param STB 
  * @return true when flags have been received
- * Todo: make safety checks
+ * Todo: make safety checks, cleanup
  */
 void STB_BRAIN::receiveFlags(STB STB) {
 
@@ -91,3 +95,60 @@ void STB_BRAIN::receiveFlags(STB STB) {
     return;
 }
 
+
+/**
+ * @brief receives Settings from the Mother
+ * @param STB 
+ * todo define how many settings can be saved, 
+ * how many values each settings can have
+ */
+void STB_BRAIN::receiveSettings(STB STB) {
+
+    bool sendAck = false;
+    char line[12] = "";
+    char *linePtr;
+    int value;
+    int row = 0;
+
+
+    while (true) {
+
+        if (!STB.rs485PollingCheck()) {continue;}
+        
+        while (STB.rcvdPtr != NULL) {
+            
+            if (strncmp((char *) Keywords.endSettingKeyword, STB.rcvdPtr, strlen(Keywords.endSettingKeyword)) == 0) {  
+                STB.rs485SendAck();
+                return;         
+            }
+
+            if (strncmp((char *) Keywords.settingKeyword, STB.rcvdPtr, strlen(Keywords.settingKeyword)) == 0) {
+                sendAck = true;
+                // doesnt have a trailing "_" hence a +1 to get the value
+                STB.rcvdPtr += strlen(Keywords.settingKeyword) + 1;
+                STB.dbgln(STB.rcvdPtr);
+
+                strcpy(line, STB.rcvdPtr);
+                linePtr = strtok(line, "_"); 
+
+                int col = 0;
+                while (linePtr != NULL && col < 2) {
+                    value = atoi(linePtr);
+                    if (col == 0 && (0 > row || settingsCount <= row)) {break;}
+                    settings[row][col] = value;
+                    col++; row++;
+                    linePtr = strtok(NULL, "\n");
+                }
+
+            }
+
+            if (sendAck) {
+                STB.rs485SendAck();
+                sendAck = false;
+            }
+
+            STB.rs485RcvdNextLn();
+        }
+
+    }
+}
