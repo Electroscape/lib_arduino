@@ -14,8 +14,15 @@ enum cmdFlags {
     ledFlag,
     rfidFlag,
     oledFlag,
-    // update this everytime you add flags
+    // update this everytime you add flags, only count the flags
     amountOfFlags = 3
+};
+
+enum settingCmds {
+    ledCount,
+    rfidAmount,
+    // update this everytime you add flags, only count the cmds
+    amountOfSettings = 2
 };
  
 
@@ -24,4 +31,6 @@ class KeywordsList {
     public:
     char flagKeyword[7] = "!Flag_";
     char endFlagKeyword[10] = "!FlagsEnd";
+    char settingKeyword[6] = "!Sett";
+    char endSettingKeyword[9] = "!SettEnd";
 };
