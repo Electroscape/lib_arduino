@@ -72,7 +72,7 @@ void STB_BRAIN::receiveFlags(STB STB) {
                         STB.dbgln("disabled");
                     }
                 }
-                delay(2000);
+                delay(300);
                 return;
             }
 
