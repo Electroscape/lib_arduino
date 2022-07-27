@@ -9,6 +9,7 @@
 
 #include "stb_led.h"
 
+
 /**
  * @brief 
  * 
@@ -23,17 +24,40 @@
 bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder, int clkSpeed) {
     
     Serial.print(F("\n\nLED init ..."));
-    int ledCnts[STRIPE_CNT] = {0};
+    uint16_t ledCnts[STRIPE_CNT] = {0};
+
+    int row = 0;
+    while (settings[row][0] >= 0 && row < SETTINGS_CNT) {
+        if (settings[row][0] == settingCmds::ledCount) {
+            int stripeNo = settings[row][1];
+            // safety check otherwise we go out of index
+            if (stripeNo < 0 || stripeNo >= STRIPE_CNT) { continue; }
+            ledCnts[stripeNo] = (uint16_t) settings[row][2];
+            Serial.println(String(ledCnts[stripeNo]));
+        }
+        row++;
+    }
     
     delay(10);
+
+    int16_t ledPins[STRIPE_CNT] = {9, 6, 5, 3};
+
     for (int i=0; i<STRIPE_CNT; i++) {
-        neopixels[i] = Adafruit_NeoPixel(ledCnts[i], ledPins[i], (clrOrder + clkSpeed));
-        neopixels[i].begin();
+        if (ledCnts[i] <= 0) { continue; }
+        Serial.print("led count for ");
+        Serial.print(i);
+        Serial.print(" is: ");
+        Serial.println(ledCnts[i]);
+        Serial.print("ledpin is");
+        Serial.println(ledPins[i]);
+        neopixels[0] = Adafruit_NeoPixel((uint16_t) 2, (int16_t) 9, (clrOrder + clkSpeed));
+        neopixels[0].begin();
         STB_LED::setAllStripsToClr(neopixels, 1,  neopixels[i].Color(0, 0, 0));
     }
     delay(40);
     Serial.println(F(" successful"));
     delay(10);
+
     return true;
 }
 

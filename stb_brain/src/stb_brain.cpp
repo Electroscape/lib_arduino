@@ -108,8 +108,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
     char line[12] = "";
     char *linePtr;
     int value;
-    int row = 0;
-
+    int row = 0, col = 0;
 
     while (true) {
 
@@ -123,22 +122,29 @@ void STB_BRAIN::receiveSettings(STB STB) {
             }
 
             if (strncmp((char *) Keywords.settingKeyword, STB.rcvdPtr, strlen(Keywords.settingKeyword)) == 0) {
+
                 sendAck = true;
+                // discard if the rows are used up, we dont want to write out of index
+                if (row >= SETTINGS_CNT) {
+                    STB.dbgln("too many settings\nreceived");
+                    continue;
+                }
+
                 // doesnt have a trailing "_" hence a +1 to get the value
                 STB.rcvdPtr += strlen(Keywords.settingKeyword) + 1;
-                STB.dbgln(STB.rcvdPtr);
 
                 strcpy(line, STB.rcvdPtr);
                 linePtr = strtok(line, "_"); 
-
-                int col = 0;
-                while (linePtr != NULL && col < 2) {
+                col = 0;
+                while (linePtr != NULL && col <= 2) {
                     value = atoi(linePtr);
-                    if (col == 0 && (0 > row || SETTINGS_CNT <= row)) {break;}
+                    STB.dbgln(String(value));
                     settings[row][col] = value;
-                    col++; row++;
-                    linePtr = strtok(NULL, "\n");
+                    STB.dbgln(String(settings[row][col]));
+                    col++;
+                    linePtr = strtok(NULL, "_");
                 }
+                row++;
 
             }
 
