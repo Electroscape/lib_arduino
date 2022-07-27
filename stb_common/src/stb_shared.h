@@ -8,6 +8,12 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#pragma once
+
+
+// defines the passing of settings, particularily how many can the brain receive and store
+#define SETTINGS_CNT 8
+#define SETTINGS_PARAMS 2
 
 
 enum cmdFlags {
@@ -18,13 +24,14 @@ enum cmdFlags {
     amountOfFlags = 3
 };
 
+
 enum settingCmds {
     ledCount,
     rfidAmount,
     // update this everytime you add flags, only count the cmds
     amountOfSettings = 2
 };
- 
+
 
 // global keywords being used
 class KeywordsList {

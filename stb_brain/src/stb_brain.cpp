@@ -12,7 +12,7 @@
 #include "stb_brain.h"
 
 STB_BRAIN::STB_BRAIN() {
-    for (int row=0; row<settingsCount; row++) {
+    for (int row=0; row<SETTINGS_CNT; row++) {
         settings[row][0] = -1;
     }
 };
@@ -134,7 +134,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 int col = 0;
                 while (linePtr != NULL && col < 2) {
                     value = atoi(linePtr);
-                    if (col == 0 && (0 > row || settingsCount <= row)) {break;}
+                    if (col == 0 && (0 > row || SETTINGS_CNT <= row)) {break;}
                     settings[row][col] = value;
                     col++; row++;
                     linePtr = strtok(NULL, "\n");
