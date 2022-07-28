@@ -224,6 +224,7 @@ void STB::rs485Write() {
 
     Serial.print(bufferOut);
     Serial.println(eof);
+    Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     memset(bufferOut, 0, bufferSize);
