@@ -10,13 +10,49 @@
 #include "stb_led.h"
 
 
+STB_LED::STB_LED() {};
+
+
+void STB_LED::begin() {
+    delay(200);
+    Serial.println("STB_LED::begin");
+    uint32_t clrOrder=NEO_BRG; 
+    int clkSpeed=NEO_KHZ800;
+    int i = 0;
+    Strips[i] = Adafruit_NeoPixel(ledMaxCnt, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i].begin();
+    delay(200);
+    Strips[i].setPixelColor(0, Strips[0].Color(0, 0, 255));
+    Strips[i].setPixelColor(1, Strips[0].Color(0, 0, 0));
+    Strips[i].setPixelColor(2, Strips[0].Color(59, 0, 0));
+    Strips[i].show();
+    delay(100);
+
+};
+
+
+void STB_LED::enableStrip0() {
+    delay(10);
+    Serial.println("STB_LED::begin");
+    uint32_t clrOrder=NEO_BRG; 
+    int clkSpeed=NEO_KHZ800;
+    int i = 1;
+    Strips[i] = Adafruit_NeoPixel((uint16_t) 3, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i].begin();
+    delay(10);
+    Strips[i].setPixelColor(0, Strips[0].Color(90, 0, 0));
+    Strips[i].setPixelColor(2, Strips[0].Color(0, 50, 0));
+    Strips[i].setPixelColor(1, Strips[0].Color(50, 0, 99));
+    Strips[i].show();
+}
+
 /**
  * @brief 
  * 
  * @param neopixel array of type Adafruit_NeoPixel
  * @param ledCnts int array delcaring how many leds are on said strip
  * @param pins  int array with the pins to be used
- * @param clrOrder defaults to NEO_RGB
+ * @param clrOrder defaults to NEO_BRG
  * @param clkSpeed defaults to NEO_KHZ800
  * @return true 
  * @return false 
@@ -40,7 +76,7 @@ bool STB_LED::ledInit(Adafruit_NeoPixel neopixels[], int settings[SETTINGS_CNT][
     
     delay(10);
 
-    int16_t ledPins[STRIPE_CNT] = {9, 6, 5, 3};
+    int16_t ledPins[STRIPE_CNT] = {9}; // ,  6, 5, 3
 
     for (int i=0; i<STRIPE_CNT; i++) {
         if (ledCnts[i] <= 0) { continue; }
@@ -97,6 +133,6 @@ void STB_LED::setStripToClrs(Adafruit_NeoPixel &neopixel, uint32_t  clrs[], int 
  */
 void STB_LED::setAllStripsToClr(Adafruit_NeoPixel neopixels[], int stripeCount, long int clr) {
     for (int i=0; i<stripeCount; i++) {
-        STB_LED::setStripToClr(neopixels[i], clr);
+        setStripToClr(neopixels[i], clr);
     }
 }
