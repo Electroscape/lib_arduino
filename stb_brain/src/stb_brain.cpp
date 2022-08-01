@@ -136,7 +136,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 strcpy(line, STB.rcvdPtr);
                 linePtr = strtok(line, "_"); 
                 col = 0;
-                while (linePtr != NULL && col <= 2) {
+                while (linePtr != NULL && col < 3) {
                     value = atoi(linePtr);
                     STB.dbgln(String(value));
                     settings[row][col] = value;
