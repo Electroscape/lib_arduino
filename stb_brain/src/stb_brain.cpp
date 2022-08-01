@@ -23,7 +23,7 @@ STB_BRAIN::~STB_BRAIN() {};
  * @brief receives the flags send by the mother
  * @param STB 
  * @return true when flags have been received
- * Todo: make safety checks, cleanup
+ * Todo: make safety checks, cleanup FIX!
  */
 void STB_BRAIN::receiveFlags(STB STB) {
 

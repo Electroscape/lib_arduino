@@ -5,7 +5,7 @@
 
 #define STRIPE_CNT 4
 // due to complile time requirements we cannot dynamically allocate the amount
-#define ledMaxCnt 60
+#define LED_MAX_CNT 60
 
 class STB_LED {
     private:

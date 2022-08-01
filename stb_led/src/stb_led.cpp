@@ -10,6 +10,13 @@
 #include "stb_led.h"
 
 
+/*
+    Todo:
+    cleanups
+    passing of clr order and freq to enableStrips 
+*/
+
+
 STB_LED::STB_LED() {};
 
 
@@ -24,12 +31,14 @@ void STB_LED::enableStrip0() {
     uint32_t clrOrder=NEO_BRG; 
     int clkSpeed=NEO_KHZ800;
     int i = 0;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) ledMaxCnt, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
+    /*
     Strips[i].setPixelColor(0, Strips[0].Color(0,0,0));
     Strips[i].setPixelColor(2, Strips[0].Color(50, 150, 50));
     Strips[i].setPixelColor(1, Strips[0].Color(100, 0, 0));
     Strips[i].show();
+    */
     delay(10);
 }
 
@@ -40,7 +49,7 @@ void STB_LED::enableStrip1() {
     uint32_t clrOrder=NEO_BRG; 
     int clkSpeed=NEO_KHZ800;
     int i = 1;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) ledMaxCnt, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
@@ -52,7 +61,7 @@ void STB_LED::enableStrip2() {
     uint32_t clrOrder=NEO_BRG; 
     int clkSpeed=NEO_KHZ800;
     int i = 2;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) ledMaxCnt, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
@@ -64,18 +73,11 @@ void STB_LED::enableStrip3() {
     uint32_t clrOrder=NEO_BRG; 
     int clkSpeed=NEO_KHZ800;
     int i = 3;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) ledMaxCnt, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
 
-
-/*
-    Strips[i].setPixelColor(0, Strips[0].Color(90, 0, 0));
-    Strips[i].setPixelColor(2, Strips[0].Color(0, 50, 0));
-    Strips[i].setPixelColor(1, Strips[0].Color(50, 0, 99));
-    Strips[i].show();
-*/
 
 /**
  * @brief 
@@ -87,51 +89,49 @@ void STB_LED::enableStrip3() {
  * @param clkSpeed defaults to NEO_KHZ800
  * @return true 
  * @return false 
+ * Todo: prevent this from possibly being stuck when wrong data is rcvd
  */
 bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder, int clkSpeed) {
     
     Serial.print(F("\n\nLED init ..."));
-    uint16_t ledCnts[STRIPE_CNT] = {0};
-    activeLeds[0] = 3;   
-    activeLeds[1] = 5;    
-
-
-    /*
+ 
     int row = 0;
-    while (settings[row][0] >= 0 && row < SETTINGS_CNT) {
+    while (row < SETTINGS_CNT) {
         if (settings[row][0] == settingCmds::ledCount) {
             int stripeNo = settings[row][1];
-            // safety check otherwise we go out of index
+            // safety checks otherwise we go out of index
             if (stripeNo < 0 || stripeNo >= STRIPE_CNT) { continue; }
-            ledCnts[stripeNo] = (uint16_t) settings[row][2];
-            Serial.println(String(ledCnts[stripeNo]));
+            // if (LED_MAX_CNT < settings[row][2]) { continue; }
+
+            activeLeds[stripeNo] = (uint16_t) settings[row][2];
+        // check & exit if we ran through all passed settings
+        } else if (settings[row][0] < 0) {
+            break;
         }
         row++;
     }
-    */
-    
-    delay(10);
-    enableStrip0();
 
-    int16_t ledPins[STRIPE_CNT] = {9}; // ,  6, 5, 3
 
     for (int i=0; i<STRIPE_CNT; i++) {
-        if (ledCnts[i] <= 0) { continue; }
-        /*
-        Serial.print("led count for ");
-        Serial.print(i);
-        Serial.print(" is: ");
-        Serial.println(ledCnts[i]);
-        Serial.print("ledpin is");
-        Serial.println(ledPins[i]);
-        neopixels[0] = Adafruit_NeoPixel((uint16_t) 2, (int16_t) 9, (clrOrder + clkSpeed));
-        neopixels[0].begin();
-        STB_LED::setAllStripsToClr(neopixels, 1,  neopixels[i].Color(0, 0, 0));
-        */
+        if (activeLeds[i] <= 0) { continue; }
+        switch (i) {
+            case 0: enableStrip0(); break;
+            case 1: enableStrip1(); break;
+            case 2: enableStrip2(); break;
+            case 3: enableStrip3(); break;
+        }
     }
-    delay(40);
+    setAllStripsToClr(Strips[0].Color(0,0,0));
     Serial.println(F(" successful"));
-    delay(10);
+
+    Serial.print("enabled so many leds: ");
+    Serial.print(String(activeLeds[0]));
+    Serial.print(" ");
+    Serial.print(String(activeLeds[1]));
+    Serial.print(" ");
+    Serial.print(String(activeLeds[2]));
+    Serial.print(" ");
+    Serial.print(String(activeLeds[3]));
 
     return true;
 }
@@ -142,6 +142,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
  * @param clr 
  */
 void STB_LED::setStripToClr(int stripNo, long int clr) {
+    Serial.println(String(activeLeds[stripNo]));
     if ((int) activeLeds[stripNo] <= 0) { return; }
     Serial.print("setting stripNo ");
     Serial.println(String(stripNo));
@@ -172,7 +173,7 @@ void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
  * @param clr 
  */
 void STB_LED::setAllStripsToClr(long int clr) {
-    int stripeCount = 4;
+    Serial.println("STB_LED::setAllStripsToClr");
     for (int i=0; i<STRIPE_CNT; i++) {
         // the check if the strip is activated is done in the following fnc
         setStripToClr(i, clr);
