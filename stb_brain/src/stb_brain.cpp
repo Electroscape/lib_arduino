@@ -104,11 +104,13 @@ void STB_BRAIN::receiveFlags(STB STB) {
  */
 void STB_BRAIN::receiveSettings(STB STB) {
 
+    int f = 0;
+
     bool sendAck = false;
     char line[12] = "";
     char *linePtr;
-    int value;
     int row = 0, col = 0;
+    STB.dbgln("STB_BRAIN::receiveSettings");
 
     while (true) {
 
@@ -118,6 +120,10 @@ void STB_BRAIN::receiveSettings(STB STB) {
             
             if (strncmp((char *) Keywords.endSettingKeyword, STB.rcvdPtr, strlen(Keywords.endSettingKeyword)) == 0) {  
                 STB.rs485SendAck();
+
+                Serial.print("row is ");
+                Serial.println(String(row));
+
                 return;         
             }
 
@@ -136,16 +142,12 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 strcpy(line, STB.rcvdPtr);
                 linePtr = strtok(line, "_"); 
                 col = 0;
-                while (linePtr != NULL && col < 3) {
-                    value = atoi(linePtr);
-                    STB.dbgln(String(value));
-                    settings[row][col] = value;
-                    STB.dbgln(String(settings[row][col]));
-                    col++;
+                while (linePtr != NULL && col < SETTINGS_PARAMS) {
+                    settings[row][col] = atoi(linePtr);
                     linePtr = strtok(NULL, "_");
+                    col++;
                 }
                 row++;
-
             }
 
             if (sendAck) {
@@ -157,4 +159,5 @@ void STB_BRAIN::receiveSettings(STB STB) {
         }
 
     }
+
 }

@@ -254,7 +254,12 @@ bool STB::rs485Receive() {
                 if (eofIndex == 4) { 
                     //dbgln(rcvd);
                     rcvd[bufferpos+1] = '\0';
-                    rcvdPtr = strtok(rcvd, "\n"); 
+                    rcvdPtr = strtok(rcvd, "\n");
+                    // with the first call of strtok Null we should get the first line
+                    rs485RcvdNextLn();
+                    dbgln("rcvdPtr is: "); 
+                    dbgln(rcvdPtr); 
+                    // possible probllem here 
                     return true;
                 }
             } else {

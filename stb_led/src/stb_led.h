@@ -22,7 +22,6 @@ class STB_LED {
     public:
     Adafruit_NeoPixel Strips[STRIPE_CNT];
     STB_LED();
-    void begin();
 
     bool ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder=NEO_RGB, int clkSpeed=NEO_KHZ800);
     void setStripToClr(int stripNo, long int clr);

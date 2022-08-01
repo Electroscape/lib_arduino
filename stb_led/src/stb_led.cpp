@@ -20,11 +20,6 @@
 STB_LED::STB_LED() {};
 
 
-void STB_LED::begin() {
-    delay(200);
-};
-
-
 void STB_LED::enableStrip0() {
     delay(10);
     Serial.println("STB_LED::enableStrip0");
@@ -33,12 +28,6 @@ void STB_LED::enableStrip0() {
     int i = 0;
     Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
-    /*
-    Strips[i].setPixelColor(0, Strips[0].Color(0,0,0));
-    Strips[i].setPixelColor(2, Strips[0].Color(50, 150, 50));
-    Strips[i].setPixelColor(1, Strips[0].Color(100, 0, 0));
-    Strips[i].show();
-    */
     delay(10);
 }
 
@@ -96,7 +85,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     Serial.print(F("\n\nLED init ..."));
  
     int row = 0;
-    while (row < SETTINGS_CNT) {
+    while (row < SETTINGS_CNT && settings[row][0] >= 0) {
         if (settings[row][0] == settingCmds::ledCount) {
             int stripeNo = settings[row][1];
             // safety checks otherwise we go out of index
@@ -104,9 +93,6 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
             // if (LED_MAX_CNT < settings[row][2]) { continue; }
 
             activeLeds[stripeNo] = (uint16_t) settings[row][2];
-        // check & exit if we ran through all passed settings
-        } else if (settings[row][0] < 0) {
-            break;
         }
         row++;
     }
