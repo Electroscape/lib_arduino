@@ -11,7 +11,11 @@
 
 #include "stb_brain.h"
 
-STB_BRAIN::STB_BRAIN() {};
+STB_BRAIN::STB_BRAIN() {
+    for (int row=0; row<SETTINGS_CNT; row++) {
+        settings[row][0] = -1;
+    }
+};
 STB_BRAIN::~STB_BRAIN() {};
 
 
@@ -19,7 +23,7 @@ STB_BRAIN::~STB_BRAIN() {};
  * @brief receives the flags send by the mother
  * @param STB 
  * @return true when flags have been received
- * Todo: make safety checks
+ * Todo: make safety checks, cleanup FIX!
  */
 void STB_BRAIN::receiveFlags(STB STB) {
 
@@ -62,7 +66,10 @@ void STB_BRAIN::receiveFlags(STB STB) {
                 }
 
             } else if (strncmp((char *) Keywords.endFlagKeyword, STB.rcvdPtr, strlen(Keywords.endFlagKeyword)) == 0) {
+                
                 STB.rs485SendAck();
+
+                /*
                 STB.dbgln("all flags received");
                 
                 for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) {
@@ -73,6 +80,8 @@ void STB_BRAIN::receiveFlags(STB STB) {
                     }
                 }
                 delay(300);
+                */
+
                 return;
             }
 
@@ -91,3 +100,70 @@ void STB_BRAIN::receiveFlags(STB STB) {
     return;
 }
 
+
+/**
+ * @brief receives Settings from the Mother
+ * @param STB 
+ * todo define how many settings can be saved, 
+ * how many values each settings can have
+ */
+void STB_BRAIN::receiveSettings(STB STB) {
+
+    int f = 0;
+
+    bool sendAck = false;
+    char line[12] = "";
+    char *linePtr;
+    int row = 0, col = 0;
+    STB.dbgln("STB_BRAIN::receiveSettings");
+
+    while (true) {
+
+        if (!STB.rs485PollingCheck()) {continue;}
+        
+        while (STB.rcvdPtr != NULL) {
+            
+            if (strncmp((char *) Keywords.endSettingKeyword, STB.rcvdPtr, strlen(Keywords.endSettingKeyword)) == 0) {  
+                STB.rs485SendAck();
+
+                Serial.print("row is ");
+                Serial.println(String(row));
+
+                return;         
+            }
+
+            if (strncmp((char *) Keywords.settingKeyword, STB.rcvdPtr, strlen(Keywords.settingKeyword)) == 0) {
+
+                sendAck = true;
+                // discard if the rows are used up, we dont want to write out of index
+                if (row >= SETTINGS_CNT) {
+                    STB.dbgln("too many settings\nreceived");
+                    continue;
+                }
+
+                // doesnt have a trailing "_" hence a +1 to get the value
+                STB.rcvdPtr += strlen(Keywords.settingKeyword) + 1;
+
+                strcpy(line, STB.rcvdPtr);
+                linePtr = strtok(line, "_"); 
+                col = 0;
+                
+                while (linePtr != NULL && col < SETTINGS_PARAMS) {
+                    settings[row][col] = atoi(linePtr);
+                    linePtr = strtok(NULL, "_");
+                    col++;
+                }
+                row++;
+            }
+
+            if (sendAck) {
+                STB.rs485SendAck();
+                sendAck = false;
+            }
+
+            STB.rs485RcvdNextLn();
+        }
+
+    }
+
+}

@@ -8,20 +8,37 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#pragma once
+
+
+// defines the passing of settings, particularily how many settings the brain receive and store
+#define SETTINGS_CNT 8
+// col in the settings matrix, 
+#define SETTINGS_PARAMS 3
 
 
 enum cmdFlags {
     ledFlag,
     rfidFlag,
     oledFlag,
-    // update this everytime you add flags
+    // update this everytime you add flags, only count the flags
     amountOfFlags = 3
 };
- 
+
+
+enum settingCmds {
+    ledCount,
+    rfidAmount,
+    // update this everytime you add flags, only count the cmds
+    amountOfSettings = 2
+};
+
 
 // global keywords being used
 class KeywordsList {
     public:
     char flagKeyword[7] = "!Flag_";
     char endFlagKeyword[10] = "!FlagsEnd";
+    char settingKeyword[6] = "!Sett";
+    char endSettingKeyword[9] = "!SettEnd";
 };

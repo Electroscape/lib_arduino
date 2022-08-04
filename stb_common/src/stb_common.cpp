@@ -224,6 +224,7 @@ void STB::rs485Write() {
 
     Serial.print(bufferOut);
     Serial.println(eof);
+    Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     memset(bufferOut, 0, bufferSize);
@@ -248,12 +249,20 @@ bool STB::rs485Receive() {
             
             rcvd[bufferpos] = Serial.read();
 
+            /*
+            rcvdPtr = rcvd;
+            if (memcmp(rcvdPtr[bufferpos-strlen(eof)] ) == 0) {
+
+            }
+            */
+           
             if (rcvd[bufferpos] == eof[eofIndex]) {
                 eofIndex++;
                 if (eofIndex == 4) { 
-                    //dbgln(rcvd);
                     rcvd[bufferpos+1] = '\0';
-                    rcvdPtr = strtok(rcvd, "\n"); 
+                    rcvdPtr = strtok(rcvd, "\n");
+                    dbgln(rcvdPtr);
+                    // possible problem here 
                     return true;
                 }
             } else {
@@ -301,7 +310,10 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (strncmp(ACK, rcvdPtr, strlen(ACK)) == 0) { return true; }
+        if (memcmp(ACK, rcvdPtr, strlen(ACK)) == 0) { 
+            dbgln("Ack rcvd");
+            return true; 
+        }
     }
     return false;
 }

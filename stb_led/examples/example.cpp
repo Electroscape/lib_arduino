@@ -6,7 +6,7 @@
 #define RFID_1_LED_PIN          9 
 
 int ledCnts[STRIPE_CNT] = {100};
-int ledPins[STRIPE_CNT] = {RFID_1_LED_PIN};
+int ledPins[STRIPE_CNT] = {LED_PIN_1};
 
 Adafruit_NeoPixel LED_Strips[STRIPE_CNT];
 const long int someClr = LED_Strips[0].Color(0,255,0);

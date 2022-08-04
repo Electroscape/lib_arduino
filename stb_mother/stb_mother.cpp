@@ -69,3 +69,54 @@ void STB_MOTHER::flagsCompleted(STB STB, int brainNo) {
         wdt_reset();
     }
 }
+
+
+/**
+ * @brief sends a given setting to the brain
+ * @param STB 
+ * @param brainNo 
+ * @param setting 
+ * @param values 
+ */
+void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int values[], int amountOfValues) {
+ 
+    char msg[32] = "";
+    char noString[8];
+
+    strcpy(msg, keyWords.settingKeyword);
+    strcat(msg, "_");
+    sprintf(noString, "%d", setting);
+    strcat(msg, noString);
+
+    for (int index; index < amountOfValues; index++) {
+        strcat(msg, "_");
+        sprintf(noString, "%d", values[index]);
+        strcat(msg, noString);
+    }
+
+    while (true) {
+        STB.rs485setSlaveAsTgt(brainNo);
+        STB.rs485AddToBuffer(msg);
+        if (STB.rs485SendBuffer(true)) {
+            return;
+        }
+        wdt_reset();
+    }
+}
+
+
+/**
+ * @brief sends a message to the brain to no longer wait for settings
+ * @param STB 
+ * @param brainNo 
+ */
+void STB_MOTHER::settingsCompleted(STB STB, int brainNo) {
+    while (true) {
+        STB.rs485setSlaveAsTgt(brainNo);
+        STB.rs485AddToBuffer(keyWords.endSettingKeyword);
+        if (STB.rs485SendBuffer(true)) {
+            return;
+        }
+        wdt_reset();
+    }
+}

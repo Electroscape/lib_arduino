@@ -51,7 +51,6 @@ class STB {
 
     char ACK[7] = "!ACK";
     char slavePollStr[8] = "!Poll9";
-    char rcvdLn[bufferSize] = "";
     char* rcvdPtr;
 
     STB();
