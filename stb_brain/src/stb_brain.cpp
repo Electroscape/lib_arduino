@@ -66,7 +66,10 @@ void STB_BRAIN::receiveFlags(STB STB) {
                 }
 
             } else if (strncmp((char *) Keywords.endFlagKeyword, STB.rcvdPtr, strlen(Keywords.endFlagKeyword)) == 0) {
+                
                 STB.rs485SendAck();
+
+                /*
                 STB.dbgln("all flags received");
                 
                 for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) {
@@ -76,7 +79,9 @@ void STB_BRAIN::receiveFlags(STB STB) {
                         STB.dbgln("disabled");
                     }
                 }
-                delay(2000);
+                delay(300);
+                */
+
                 return;
             }
 
@@ -142,6 +147,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 strcpy(line, STB.rcvdPtr);
                 linePtr = strtok(line, "_"); 
                 col = 0;
+                
                 while (linePtr != NULL && col < SETTINGS_PARAMS) {
                     settings[row][col] = atoi(linePtr);
                     linePtr = strtok(NULL, "_");

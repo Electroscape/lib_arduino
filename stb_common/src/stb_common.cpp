@@ -249,17 +249,20 @@ bool STB::rs485Receive() {
             
             rcvd[bufferpos] = Serial.read();
 
+            /*
+            rcvdPtr = rcvd;
+            if (memcmp(rcvdPtr[bufferpos-strlen(eof)] ) == 0) {
+
+            }
+            */
+           
             if (rcvd[bufferpos] == eof[eofIndex]) {
                 eofIndex++;
                 if (eofIndex == 4) { 
-                    //dbgln(rcvd);
                     rcvd[bufferpos+1] = '\0';
                     rcvdPtr = strtok(rcvd, "\n");
-                    // with the first call of strtok Null we should get the first line
-                    rs485RcvdNextLn();
-                    dbgln("rcvdPtr is: "); 
-                    dbgln(rcvdPtr); 
-                    // possible probllem here 
+                    dbgln(rcvdPtr);
+                    // possible problem here 
                     return true;
                 }
             } else {
@@ -307,7 +310,10 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (strncmp(ACK, rcvdPtr, strlen(ACK)) == 0) { return true; }
+        if (memcmp(ACK, rcvdPtr, strlen(ACK)) == 0) { 
+            dbgln("Ack rcvd");
+            return true; 
+        }
     }
     return false;
 }
