@@ -122,6 +122,16 @@ void STB::dbgln(String message) {
 }
 
 
+int STB::rs485getPolledSlave() {
+    return polledSlave;
+}
+
+
+int STB::rs485getSlaveCnt() {
+    return slaveCount;
+}
+
+
 /**
  * @brief sets Master along with relay initialisation
  */

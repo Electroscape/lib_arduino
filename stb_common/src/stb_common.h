@@ -59,6 +59,8 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
+    int rs485getPolledSlave();
+    int rs485getSlaveCnt();
     void rs485setSlaveAsTgt(int slaveNo);
     void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
