@@ -41,4 +41,6 @@ class KeywordsList {
     char endFlagKeyword[10] = "!FlagsEnd";
     char settingKeyword[6] = "!Sett";
     char endSettingKeyword[9] = "!SettEnd";
+    char rfidKeyword[7] = "!RFID_";
+    char ledKeyword[6] = "!LED_";
 };
