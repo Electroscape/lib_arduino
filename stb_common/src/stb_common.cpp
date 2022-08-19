@@ -52,6 +52,7 @@ void STB::printInfo() {
     defaultOled.println(F("|    Electroscape    |"));
     defaultOled.println(F("+--------------------+"));
 
+    /*
     printWithHeader("!header_begin");
     #ifdef title
         printWithHeader(title);
@@ -64,10 +65,13 @@ void STB::printInfo() {
     #endif
     printWithHeader("!header_end");
     printWithHeader("!setup_begin");
+    */
 
     delay(300);
 }
 
+
+#ifdef True
 /**
  * legacy at this point, also does not handle bus clearance
  * 
@@ -87,15 +91,16 @@ void STB::printWithHeader(String message, String source) {
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
+#endif
 
 
 /**
  * @brief prints a setup end to serial
  */
 void STB::printSetupEnd() {
-    printWithHeader("!setup_end");
-    Serial.println();
-    Serial.flush(); 
+    // printWithHeader("!setup_end");
+    // Serial.println();
+    /// Serial.flush(); 
     dbgln("\n===START===\n");
 }
 
