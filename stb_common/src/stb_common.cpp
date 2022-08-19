@@ -397,17 +397,16 @@ bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
  */
 bool STB::i2cScanner() {
     Serial.println();
-    dbgln("   I2C Scanner:");
+    defaultOled.clear();
     String hexAddr = "";
     for (byte i = 8; i < 120; i++) {
         Wire.beginTransmission(i);
         if (Wire.endTransmission() == 0) {
-            dbg("Found: ");
-            dbg(" (0x");
+            dbg(F("0x"));
             hexAddr = String(i, HEX);
             hexAddr.toUpperCase();
             dbg(hexAddr);
-            dbgln(")  ");
+            dbg(F(" "));
             printI2cDeviceName(i);
             delay(1);  
         }              
