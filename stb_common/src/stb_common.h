@@ -10,22 +10,19 @@
 #define MAX485_WRITE HIGH
 #define MAX485_READ LOW
 
-#ifndef RELAY_I2C_ADD
-    #define RELAY_I2C_ADD 0x3F
-#endif 
-
 #define i2cClkSpeed 100000
 #define bufferSize 64
 
 class STB {
 
     private:
-    int slaveCount = 8;
+
     long rs485timeout = 10;
-    bool isMaster = false;
     int slaveAddr = 0;
-    // start at -1 to start with slave 0 since we do the increment in the beginning
     int polledSlave = -1;
+    int slaveCount = 8;
+    // start at -1 to start with slave 0 since we do the increment in the beginning
+    
     // instead of generating better store that String to look for
     char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
@@ -47,7 +44,7 @@ class STB {
     
     public:
     SSD1306AsciiWire defaultOled;
-    PCF8574 motherRelay;
+    
 
     char ACK[7] = "!ACK";
     char slavePollStr[8] = "!Poll9";
@@ -60,9 +57,7 @@ class STB {
     void dbg(String message);
     void dbgln(String message);
     int rs485getPolledSlave();
-    int rs485getSlaveCnt();
     void rs485setSlaveAsTgt(int slaveNo);
-    void rs485SetToMaster();
     void rs485SetSlaveAddr(int no);
     // ideally it would be an array of which slave number are active...
     void rs485SetSlaveCount(int count);
@@ -76,6 +71,4 @@ class STB {
     bool rs485SendCmdToSlave(int slaveNo, char* message);
     bool i2cScanner();
     static void softwareReset();
-    
-    bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 };

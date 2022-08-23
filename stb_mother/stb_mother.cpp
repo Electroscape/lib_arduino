@@ -71,6 +71,39 @@ void STB_MOTHER::flagsCompleted(STB STB, int brainNo) {
 }
 
 
+int STB_MOTHER::rs485getPolledSlave() {
+    return polledSlave;
+}
+
+
+int STB_MOTHER::rs485getSlaveCnt() {
+    return slaveCount;
+}
+
+
+/**
+ * @brief defines how many slaves are being polled
+ * @param count 
+ */
+void STB_MOTHER::rs485SetSlaveCount(int count) {
+    slaveCount = count;
+}
+
+
+#ifdef true
+/**
+ * @brief sets Master along with relay initialisation
+ */
+void STB_MOTHER::rs485SetToMaster() {
+    // TODO: may need to add a parameter for pins and initvalues
+    defaultOled.setScrollMode(SCROLL_MODE_AUTO);
+    int relayPins[8] = {0,1,2,3,4,5,6,7};
+    int relayInitVals[8] = {1,1,1,1,1,1,1,1};
+    relayInit(motherRelay, relayPins, relayInitVals);
+}
+#endif 
+
+
 /**
  * @brief sends a given setting to the brain
  * @param STB 
@@ -119,4 +152,29 @@ void STB_MOTHER::settingsCompleted(STB STB, int brainNo) {
         }
         wdt_reset();
     }
+}
+
+
+/**
+ * @brief initializes the given relay along with init states
+ * @param relay (PCF8574) relay instance
+ * @param pins (int) pin numbers
+ * @param initvals (int) init value
+ * @param amount (int) amount of relays to be initialized
+ * @return bool
+ */
+bool STB_MOTHER::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
+    String relayString = String(RELAY_I2C_ADD, HEX);
+    relayString.toUpperCase();
+    // dbgln("relayinit on " + relayString); 
+
+    relay.begin(RELAY_I2C_ADD);
+    
+    for (int i = 0; i < amount; i++) {
+        relay.pinMode(pins[i], OUTPUT);
+        relay.digitalWrite(pins[i], initvals[i]);
+        // dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
+    }
+    delay(500);
+    return true;
 }
