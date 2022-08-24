@@ -43,4 +43,10 @@ class KeywordsList {
     char endSettingKeyword[9] = "!SettEnd";
     char rfidKeyword[7] = "!RFID_";
     char ledKeyword[6] = "!LED_";
+    char pollStr[6] = "!Poll";
+    char ACK[7] = "!ACK";
+    char delimiter[2] = "_";
+    char relayKeyword[7] = "!Relay";
+    char NACK[6] = "!NACK";
+    char eof[6] = "!EOF";
 };

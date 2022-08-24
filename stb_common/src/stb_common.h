@@ -23,13 +23,7 @@ class STB {
     int slaveCount = 8;
     // start at -1 to start with slave 0 since we do the increment in the beginning
     
-    // instead of generating better store that String to look for
-    char pollStr[6] = "!Poll";
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    char delimiter[2] = "_";
-    char relayKeyword[7] = "!Relay";
-    char NACK[6] = "!NACK";
-    char eof[6] = "!EOF";
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 300;
@@ -45,9 +39,6 @@ class STB {
     public:
     SSD1306AsciiWire defaultOled;
     
-
-    char ACK[7] = "!ACK";
-    char slavePollStr[8] = "!Poll9";
     char* rcvdPtr;
 
     STB();
