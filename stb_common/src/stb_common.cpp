@@ -128,43 +128,6 @@ void STB::dbgln(String message) {
 
 
 /**
- * @brief sets slaveNo and creates a pollstring to respond to
- * @param no 
- */
-void STB::rs485SetSlaveAddr(int no) {
-    slaveAddr = no;
-    dbgln("Slave responds to"); 
-    char noString[2];
-    sprintf(noString, "%d", no);
-    strcpy(slavePollStr, pollStr);
-    strcat(slavePollStr, noString);
-    Serial.println(slavePollStr);
-    delay(2000);
-}
-
-
-/**
- * @brief polls the bus slaves and forwards the input to cmdInterpreter
- */
-void STB::rs485PerformPoll() {
-    polledSlave++;
-    if (polledSlave >= slaveCount) {
-        polledSlave = 0;
-    }
-
-    rs485setSlaveAsTgt(polledSlave);
-    // message.concat("line1\n2\n3\nlastline");
-    rs485Write();
-    rs485Receive();
-
-    if (strlen(rcvd) > 0) {
-        // TODO: new input receive here
-        dbgln(rcvd);
-    }
-}
-
-
-/**
  * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
  * @return if place was available in the bufferOut
@@ -260,21 +223,6 @@ bool STB::rs485Receive() {
 
 
 /**
- * @brief WIP adds string of slave to be polled into the buffer
- * @param slaveNo 
- */
-void STB::rs485setSlaveAsTgt(int slaveNo) {
-    // there should not be other data left here anyways, alternativle use strCat
-    strcpy(bufferOut, pollStr);
-    char slaveNoStr[3];
-    sprintf(slaveNoStr, "%i", slaveNo);
-    strcat(bufferOut, slaveNoStr);
-    strcat(bufferOut, "\n");
-    // this will put the slaveStr in beginning of the buffer
-};
-
-
-/**
  * @brief sends the acknowledge msg
  */
 void STB::rs485SendAck() {
@@ -344,23 +292,6 @@ bool STB::rs485RcvdNextLn() {
     rcvdPtr = strtok(NULL, "\n");
     return (rcvdPtr != NULL);
 }
-
-
-/**
- * @brief send the given message to the designated slave
- * @param slaveNo 
- * @param message 
- * @return if message got acknowled
- */
-bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
-    rs485setSlaveAsTgt(slaveNo);
-    // newline is handled by teh aboive so nothing to worry
-    strcat(bufferOut, message);
-    dbgln("cmd to slave");
-    dbgln(bufferOut);
-    rs485SendBuffer();
-    return true;
-};
 
 
 /**

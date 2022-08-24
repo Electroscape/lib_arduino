@@ -57,18 +57,16 @@ class STB {
     void dbg(String message);
     void dbgln(String message);
     int rs485getPolledSlave();
-    void rs485setSlaveAsTgt(int slaveNo);
+    
     void rs485SetSlaveAddr(int no);
     // ideally it would be an array of which slave number are active...
     void rs485SetSlaveCount(int count);
-    void rs485PerformPoll();
     bool rs485AddToBuffer(String message);
     bool rs485SlaveRespond();
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485PollingCheck();
     bool rs485RcvdNextLn();
-    bool rs485SendCmdToSlave(int slaveNo, char* message);
     bool i2cScanner();
     static void softwareReset();
 };

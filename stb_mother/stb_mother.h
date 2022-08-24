@@ -25,6 +25,9 @@ class STB_MOTHER
         void flagsCompleted(STB STB, int brainNo);
         int rs485getPolledSlave();
         int rs485getSlaveCnt();
+        void rs485PerformPoll();
+        bool rs485SendCmdToSlave(int slaveNo, char* message);
+        void rs485setSlaveAsTgt(int slaveNo);
         void rs485SetSlaveCount(int count);
         
         // TODO: Evaluate if this may simply be moved into the constructor

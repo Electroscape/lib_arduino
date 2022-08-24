@@ -41,7 +41,7 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
     }
 
     while (true) {
-        STB.rs485setSlaveAsTgt(brainNo);
+        rs485setSlaveAsTgt(brainNo);
         STB.rs485AddToBuffer(msg);
         if (STB.rs485SendBuffer(true)) {
             //delay(500);
@@ -61,7 +61,7 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
  */
 void STB_MOTHER::flagsCompleted(STB STB, int brainNo) {
     while (true) {
-        STB.rs485setSlaveAsTgt(brainNo);
+        rs485setSlaveAsTgt(brainNo);
         STB.rs485AddToBuffer(keyWords.endFlagKeyword);
         if (STB.rs485SendBuffer(true)) {
             return;
@@ -79,6 +79,68 @@ int STB_MOTHER::rs485getPolledSlave() {
 int STB_MOTHER::rs485getSlaveCnt() {
     return slaveCount;
 }
+
+
+/**
+ * @brief polls the bus slaves and forwards the input to cmdInterpreter
+ */
+void STB_MOTHER::rs485PerformPoll() {
+    polledSlave++;
+    if (polledSlave >= slaveCount) {
+        polledSlave = 0;
+    }
+
+    rs485setSlaveAsTgt(polledSlave);
+    // TODO: reenable this once STB cleanup proceeded 
+    /*
+    rs485Write();
+    rs485Receive();
+
+    if (strlen(rcvd) > 0) {
+        // TODO: new input receive here
+        dbgln(rcvd);
+    }
+    */
+}
+
+
+/**
+ * @brief send the given message to the designated slave
+ * @param slaveNo 
+ * @param message 
+ * @return if message got acknowled
+ */
+bool STB_MOTHER::rs485SendCmdToSlave(int slaveNo, char* message) {
+    /*
+    TODO: reenable once STB clean proceede
+
+    rs485setSlaveAsTgt(slaveNo);
+    // newline is handled by teh aboive so nothing to worry
+    strcat(bufferOut, message);
+    dbgln("cmd to slave");
+    dbgln(bufferOut);
+    rs485SendBuffer();
+    */
+    return true;
+};
+
+
+/**
+ * @brief WIP adds string of slave to be polled into the buffer
+ * @param slaveNo 
+ */
+void STB_MOTHER::rs485setSlaveAsTgt(int slaveNo) {
+    /*
+    TODO: reenable once STB clean proceeded 
+    // there should not be other data left here anyways, alternativle use strCat
+    strcpy(bufferOut, pollStr);
+    char slaveNoStr[3];
+    sprintf(slaveNoStr, "%i", slaveNo);
+    strcat(bufferOut, slaveNoStr);
+    strcat(bufferOut, "\n");
+    // this will put the slaveStr in beginning of the buffer
+    */
+};
 
 
 /**
@@ -128,7 +190,7 @@ void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int valu
     }
 
     while (true) {
-        STB.rs485setSlaveAsTgt(brainNo);
+        rs485setSlaveAsTgt(brainNo);
         STB.rs485AddToBuffer(msg);
         if (STB.rs485SendBuffer(true)) {
             return;
@@ -145,7 +207,7 @@ void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int valu
  */
 void STB_MOTHER::settingsCompleted(STB STB, int brainNo) {
     while (true) {
-        STB.rs485setSlaveAsTgt(brainNo);
+        rs485setSlaveAsTgt(brainNo);
         STB.rs485AddToBuffer(keyWords.endSettingKeyword);
         if (STB.rs485SendBuffer(true)) {
             return;
