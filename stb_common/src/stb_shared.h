@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <Arduino.h>
 
 // defines the passing of settings, particularily how many settings the brain receive and store
 #define SETTINGS_CNT 8
@@ -37,16 +38,16 @@ enum settingCmds {
 // global keywords being used
 class KeywordsList {
     public:
-    char flagKeyword[7] = "!Flag_";
-    char endFlagKeyword[10] = "!FlagsEnd";
-    char settingKeyword[6] = "!Sett";
-    char endSettingKeyword[9] = "!SettEnd";
-    char rfidKeyword[7] = "!RFID_";
-    char ledKeyword[6] = "!LED_";
-    char pollStr[6] = "!Poll";
-    char ACK[7] = "!ACK";
-    char delimiter[2] = "_";
-    char relayKeyword[7] = "!Relay";
-    char NACK[6] = "!NACK";
-    char eof[6] = "!EOF";
+    static const String flagKeyword;
+    static const String endFlagKeyword;
+    static const String settingKeyword;
+    static const String endSettingKeyword;
+    static const String rfidKeyword;
+    static const String ledKeyword;
+    static const String pollStr;
+    static const String ACK;
+    static const String delimiter;
+    static const String relayKeyword;
+    static const String NACK;
+    static const String eof;
 };
