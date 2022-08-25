@@ -4,6 +4,7 @@
 #include <PCF8574.h> /* I2C Port Expander  */
 #include <Wire.h>    /* I2C library */
 #include <stb_oled.h>
+#include <stb_shared.h>
 
 // Defined by hardware
 #define MAX_CTRL_PIN A0
@@ -16,13 +17,8 @@
 class STB {
 
     private:
-
     long rs485timeout = 10;
-    int slaveAddr = 0;
-    int polledSlave = -1;
-    int slaveCount = 8;
     // start at -1 to start with slave 0 since we do the increment in the beginning
-    
     // maybe change this name to keep things less confusing sine mother uses slaveStr
     unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
@@ -47,16 +43,13 @@ class STB {
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
-    int rs485getPolledSlave();
     
-    void rs485SetSlaveAddr(int no);
+    
     // ideally it would be an array of which slave number are active...
-    void rs485SetSlaveCount(int count);
     bool rs485AddToBuffer(String message);
-    bool rs485SlaveRespond();
+    
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);
-    bool rs485PollingCheck();
     bool rs485RcvdNextLn();
     bool i2cScanner();
     static void softwareReset();

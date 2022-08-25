@@ -12,7 +12,9 @@
 #include "stb_mother.h"
 
 
-STB_MOTHER::STB_MOTHER(/* args */) {}
+STB_MOTHER::STB_MOTHER(/* args */) {
+    STB.begin();
+}
 
 STB_MOTHER::~STB_MOTHER() {}
 
@@ -25,10 +27,10 @@ STB_MOTHER::~STB_MOTHER() {}
  * @param cmdFlag 
  * @param status 
  */
-void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
+void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
 
     char msg[16] = "";
-    strcpy(msg, keyWords.flagKeyword);
+    strcpy(msg, KeywordsList::flagKeyword);
     char noString[3];
     sprintf(noString, "%d", cmdFlag);
     strcat(msg, noString);
@@ -59,10 +61,10 @@ void STB_MOTHER::setFlag(STB STB, int brainNo, cmdFlags cmdFlag, bool status) {
  * @param STB 
  * @param brainNo 
  */
-void STB_MOTHER::flagsCompleted(STB STB, int brainNo) {
+void STB_MOTHER::flagsCompleted(int brainNo) {
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(keyWords.endFlagKeyword);
+        STB.rs485AddToBuffer(KeywordsList::endFlagKeyword);
         if (STB.rs485SendBuffer(true)) {
             return;
         }
@@ -96,6 +98,7 @@ void STB_MOTHER::rs485PerformPoll() {
     rs485Write();
     rs485Receive();
 
+    // needs to be modified
     if (strlen(rcvd) > 0) {
         // TODO: new input receive here
         dbgln(rcvd);
@@ -173,12 +176,12 @@ void STB_MOTHER::rs485SetToMaster() {
  * @param setting 
  * @param values 
  */
-void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int values[], int amountOfValues) {
+void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int amountOfValues) {
  
     char msg[32] = "";
     char noString[8];
 
-    strcpy(msg, keyWords.settingKeyword);
+    strcpy(msg, KeywordsList::settingKeyword);
     strcat(msg, "_");
     sprintf(noString, "%d", setting);
     strcat(msg, noString);
@@ -205,10 +208,10 @@ void STB_MOTHER::sendSetting(STB STB, int brainNo, settingCmds setting, int valu
  * @param STB 
  * @param brainNo 
  */
-void STB_MOTHER::settingsCompleted(STB STB, int brainNo) {
+void STB_MOTHER::settingsCompleted(int brainNo) {
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(keyWords.endSettingKeyword);
+        STB.rs485AddToBuffer(KeywordsList::endSettingKeyword);
         if (STB.rs485SendBuffer(true)) {
             return;
         }

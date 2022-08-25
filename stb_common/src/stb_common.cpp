@@ -101,7 +101,7 @@ void STB::printSetupEnd() {
     // printWithHeader("!setup_end");
     // Serial.println();
     /// Serial.flush(); 
-    dbgln("\n===START===\n");
+    dbgln(F("\n===START===\n"));
 }
 
 
@@ -143,22 +143,6 @@ bool STB::rs485AddToBuffer(String message) {
 
 
 /**
- * @brief slave checks if being polled and responds with the buffer 
- * @return if bufferOut could be send 
- */
-bool STB::rs485SlaveRespond() {
-
-    if (!rs485PollingCheck()) {
-        Serial.println("no buffer clearnce");
-        return false;
-    }
-
-    rs485Write();
-    return true;
-}
-
-
-/**
  * @brief 
  * todo check if message gets too long including EOF
  * @param message 
@@ -167,9 +151,8 @@ bool STB::rs485SlaveRespond() {
 void STB::rs485Write() {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-
     Serial.print(bufferOut);
-    Serial.println(eof);
+    Serial.println(KeywordsList::eof);
     Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
@@ -202,7 +185,7 @@ bool STB::rs485Receive() {
             }
             */
            
-            if (rcvd[bufferpos] == eof[eofIndex]) {
+            if (rcvd[bufferpos] == KeywordsList::eof[eofIndex]) {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     rcvd[bufferpos+1] = '\0';
@@ -226,7 +209,7 @@ bool STB::rs485Receive() {
  * @brief sends the acknowledge msg
  */
 void STB::rs485SendAck() {
-    rs485AddToBuffer(ACK);
+    rs485AddToBuffer(KeywordsList::ACK);
     rs485Write();
 }
 
@@ -241,43 +224,10 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (memcmp(ACK, rcvdPtr, strlen(ACK)) == 0) { 
+        if (memcmp(KeywordsList::ACK, rcvdPtr, KeywordsList::ACK.length()) == 0) { 
             dbgln("Ack rcvd");
             return true; 
         }
-    }
-    return false;
-}
-
-
-/**
- * @brief checks if being polled and message is complete, msg stored in rcvd
- * @param message 
- * @return if slave is being polled and can send
- */
-bool STB::rs485PollingCheck() {
-
-    int index = 0;
-    unsigned long startTime = millis();
-
-    while ((millis() - startTime) < maxPollingWait) {
-
-        if (Serial.available()) {
-
-            if (slavePollStr[index] == Serial.read()) {
-                index++;
-                if (index > 5) {
-                    if (rs485Receive()) {
-                        // slave interpretation here alternatively resend request in else loop
-                    }
-                    delay(1);
-                    return true;
-                }
-            } else {
-                index = 0;
-            }
-        }
-        
     }
     return false;
 }

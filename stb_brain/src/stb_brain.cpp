@@ -12,6 +12,7 @@
 #include "stb_brain.h"
 
 STB_BRAIN::STB_BRAIN() {
+    STB.begin();
     for (int row=0; row<SETTINGS_CNT; row++) {
         settings[row][0] = -1;
     }
@@ -21,27 +22,26 @@ STB_BRAIN::~STB_BRAIN() {};
 
 /**
  * @brief receives the flags send by the mother
- * @param STB 
  * @return true when flags have been received
  * Todo: make safety checks, cleanup FIX!
  */
-void STB_BRAIN::receiveFlags(STB STB) {
+void STB_BRAIN::receiveFlags() {
 
     STB.dbgln("receiveflags");
     bool sendAck = false;
 
     while (true) {
 
-        if (!STB.rs485PollingCheck()) {continue;}
+        if (!rs485PollingCheck()) {continue;}
 
         while (STB.rcvdPtr != NULL) {
 
             STB.dbgln("STB.rcvdPtr is: ");
             STB.dbgln(STB.rcvdPtr);
 
-            if (strncmp((char *) Keywords.flagKeyword, STB.rcvdPtr, strlen(Keywords.flagKeyword)) == 0) {
+            if (strncmp(KeywordsList::flagKeyword, STB.rcvdPtr, strlen(KeywordsList::flagKeyword)) == 0) {
                 
-                STB.rcvdPtr += strlen(Keywords.flagKeyword);
+                STB.rcvdPtr += strlen(KeywordsList::flagKeyword);
                 STB.dbgln(STB.rcvdPtr);
 
                 char line[16] = "";
@@ -65,7 +65,7 @@ void STB_BRAIN::receiveFlags(STB STB) {
                     }
                 }
 
-            } else if (strncmp((char *) Keywords.endFlagKeyword, STB.rcvdPtr, strlen(Keywords.endFlagKeyword)) == 0) {
+            } else if (strncmp(KeywordsList::endFlagKeyword, STB.rcvdPtr, KeywordsList::endFlagKeyword.length()) == 0) {
                 
                 STB.rs485SendAck();
 
@@ -103,11 +103,10 @@ void STB_BRAIN::receiveFlags(STB STB) {
 
 /**
  * @brief receives Settings from the Mother
- * @param STB 
  * todo define how many settings can be saved, 
  * how many values each settings can have
  */
-void STB_BRAIN::receiveSettings(STB STB) {
+void STB_BRAIN::receiveSettings() {
 
     int f = 0;
 
@@ -119,11 +118,11 @@ void STB_BRAIN::receiveSettings(STB STB) {
 
     while (true) {
 
-        if (!STB.rs485PollingCheck()) {continue;}
+        if (!rs485PollingCheck()) {continue;}
         
         while (STB.rcvdPtr != NULL) {
             
-            if (strncmp((char *) Keywords.endSettingKeyword, STB.rcvdPtr, strlen(Keywords.endSettingKeyword)) == 0) {  
+            if (strncmp(KeywordsList::endSettingKeyword, STB.rcvdPtr, strlen(KeywordsList::endSettingKeyword)) == 0) {  
                 STB.rs485SendAck();
 
                 Serial.print("row is ");
@@ -132,7 +131,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 return;         
             }
 
-            if (strncmp((char *) Keywords.settingKeyword, STB.rcvdPtr, strlen(Keywords.settingKeyword)) == 0) {
+            if (strncmp(KeywordsList::settingKeyword, STB.rcvdPtr, strlen(KeywordsList::settingKeyword)) == 0) {
 
                 sendAck = true;
                 // discard if the rows are used up, we dont want to write out of index
@@ -142,7 +141,7 @@ void STB_BRAIN::receiveSettings(STB STB) {
                 }
 
                 // doesnt have a trailing "_" hence a +1 to get the value
-                STB.rcvdPtr += strlen(Keywords.settingKeyword) + 1;
+                STB.rcvdPtr += strlen(KeywordsList::settingKeyword) + 1;
 
                 strcpy(line, STB.rcvdPtr);
                 linePtr = strtok(line, "_"); 
@@ -167,3 +166,69 @@ void STB_BRAIN::receiveSettings(STB STB) {
     }
 
 }
+
+
+/**
+ * @brief sets slaveNo and creates a pollstring to respond to
+ * @param no 
+ */
+void STB_BRAIN::rs485SetSlaveAddr(int no) {
+    slaveAddr = no;
+    STB::dbgln(F("Slave responds to")); 
+    char noString[2];
+    sprintf(noString, "%d", no);
+    strcpy(slavePollStr, KeywordsList::pollStr);
+    strcat(slavePollStr, noString);
+    Serial.println(slavePollStr);
+    delay(2000);
+}
+
+
+/**
+ * @brief checks if being polled and message is complete, msg stored in rcvd
+ * @param message 
+ * @return if slave is being polled and can send
+ */
+bool STB_BRAIN::rs485PollingCheck() {
+
+    int index = 0;
+    unsigned long startTime = millis();
+
+    while ((millis() - startTime) < maxPollingWait) {
+
+        if (Serial.available()) {
+
+            if (slavePollStr[index] == Serial.read()) {
+                index++;
+                if (index > 5) {
+                    if (STB.rs485Receive()) {
+                        // slave interpretation here alternatively resend request in else loop
+                    }
+                    delay(1);
+                    return true;
+                }
+            } else {
+                index = 0;
+            }
+        }
+        
+    }
+    return false;
+}
+
+
+/**
+ * @brief slave checks if being polled and responds with the buffer 
+ * @return if bufferOut could be send 
+ */
+bool STB_BRAIN::rs485SlaveRespond() {
+
+    if (!rs485PollingCheck()) {
+        Serial.println(F("no buffer clearnce"));
+        return false;
+    }
+
+    STB.rs485SendBuffer();
+    return true;
+}
+
