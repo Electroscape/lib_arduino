@@ -41,7 +41,7 @@ void STB_BRAIN::receiveFlags() {
             STB_.dbgln("STB_.rcvdPtr is: ");
             STB_.dbgln(STB_.rcvdPtr);
 
-            if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.lenght()) == 0) {
+            if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.length()) == 0) {
                 
                 STB_.rcvdPtr += strlen(KeywordsList::flagKeyword);
                 STB_.dbgln(STB_.rcvdPtr);

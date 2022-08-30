@@ -224,7 +224,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (memcmp(KeywordsList::ACK, rcvdPtr, KeywordsList::ACK.length()) == 0) { 
+        if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0) { 
             dbgln("Ack rcvd");
             return true; 
         }
