@@ -13,13 +13,13 @@ class STB_BRAIN {
         int slaveAddr = 0;
         char slavePollStr[8] = "!Poll9";
         // by default everything is enabled
-        void rs485SetSlaveAddr(int no);
-        bool rs485PollingCheck();
+        void setSlaveAddr(int no);
+        bool pollingCheck();
         int flags[cmdFlags::amountOfFlags] = {0};
         int settings[SETTINGS_CNT][SETTINGS_PARAMS] = {};
         void receiveFlags();
         void receiveSettings();
-        bool rs485SlaveRespond();
+        bool slaveRespond();
         void softwareReset() {STB_.softwareReset(); };
         
         void dbgln(String message) { STB_.dbgln(message); };

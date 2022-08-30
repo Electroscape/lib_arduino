@@ -34,7 +34,7 @@ void STB_BRAIN::receiveFlags() {
 
     while (true) {
 
-        if (!rs485PollingCheck()) {continue;}
+        if (!pollingCheck()) {continue;}
 
         while (STB_.rcvdPtr != NULL) {
 
@@ -118,7 +118,7 @@ void STB_BRAIN::receiveSettings() {
 
     while (true) {
 
-        if (!rs485PollingCheck()) {continue;}
+        if (!pollingCheck()) {continue;}
         
         while (STB_.rcvdPtr != NULL) {
             
@@ -172,7 +172,7 @@ void STB_BRAIN::receiveSettings() {
  * @brief sets slaveNo and creates a pollstring to respond to
  * @param no 
  */
-void STB_BRAIN::rs485SetSlaveAddr(int no) {
+void STB_BRAIN::setSlaveAddr(int no) {
     slaveAddr = no;
     STB_.dbgln(F("Slave responds to")); 
     char noString[2];
@@ -189,7 +189,7 @@ void STB_BRAIN::rs485SetSlaveAddr(int no) {
  * @param message 
  * @return if slave is being polled and can send
  */
-bool STB_BRAIN::rs485PollingCheck() {
+bool STB_BRAIN::pollingCheck() {
 
     int index = 0;
     unsigned long startTime = millis();
@@ -221,9 +221,9 @@ bool STB_BRAIN::rs485PollingCheck() {
  * @brief slave checks if being polled and responds with the buffer 
  * @return if bufferOut could be send 
  */
-bool STB_BRAIN::rs485SlaveRespond() {
+bool STB_BRAIN::slaveRespond() {
 
-    if (!rs485PollingCheck()) {
+    if (!pollingCheck()) {
         Serial.println(F("no buffer clearnce"));
         return false;
     }
