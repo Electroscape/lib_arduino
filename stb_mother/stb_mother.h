@@ -14,11 +14,13 @@ class STB_MOTHER
     private:
         int slaveCount = 8;
         int polledSlave = -1;
-        PCF8574 motherRelay;
     public:
+        PCF8574 motherRelay;
         STB STB_;
         STB_MOTHER();
         ~STB_MOTHER();
+
+        void begin();
 
         // settings & flags
         void setFlag(int brainNo, cmdFlags cmdFlag, bool status);
