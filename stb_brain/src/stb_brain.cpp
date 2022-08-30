@@ -11,8 +11,10 @@
 
 #include "stb_brain.h"
 
-STB_BRAIN::STB_BRAIN() {
-    STB.begin();
+STB_BRAIN::STB_BRAIN(): STB_(){
+    STB_.begin();
+    STB_.i2cScanner();
+    STB_.defaultOled.setScrollMode(SCROLL_MODE_AUTO);
     for (int row=0; row<SETTINGS_CNT; row++) {
         settings[row][0] = -1;
     }
@@ -27,56 +29,56 @@ STB_BRAIN::~STB_BRAIN() {};
  */
 void STB_BRAIN::receiveFlags() {
 
-    STB.dbgln("receiveflags");
+    STB_.dbgln("receiveflags");
     bool sendAck = false;
 
     while (true) {
 
         if (!rs485PollingCheck()) {continue;}
 
-        while (STB.rcvdPtr != NULL) {
+        while (STB_.rcvdPtr != NULL) {
 
-            STB.dbgln("STB.rcvdPtr is: ");
-            STB.dbgln(STB.rcvdPtr);
+            STB_.dbgln("STB_.rcvdPtr is: ");
+            STB_.dbgln(STB_.rcvdPtr);
 
-            if (strncmp(KeywordsList::flagKeyword, STB.rcvdPtr, strlen(KeywordsList::flagKeyword)) == 0) {
+            if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.lenght()) == 0) {
                 
-                STB.rcvdPtr += strlen(KeywordsList::flagKeyword);
-                STB.dbgln(STB.rcvdPtr);
+                STB_.rcvdPtr += strlen(KeywordsList::flagKeyword);
+                STB_.dbgln(STB_.rcvdPtr);
 
                 char line[16] = "";
                 char* linePtr = strtok(line, "_"); 
                 linePtr = strtok(NULL, "_"); 
-                STB.dbgln("Flagkeyword receivd");
-                STB.dbgln(linePtr);
+                STB_.dbgln("Flagkeyword receivd");
+                STB_.dbgln(linePtr);
             
                 char noString[2];
 
                 for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) { 
                     sprintf(noString, "%i", keywordNo);
-                    if (strncmp(STB.rcvdPtr, noString, 1) == 0) {
-                        STB.dbg("correct keyword for: ");
-                        STB.dbgln(String(keywordNo));
-                        STB.rcvdPtr += 2;
+                    if (strncmp(STB_.rcvdPtr, noString, 1) == 0) {
+                        STB_.dbg("correct keyword for: ");
+                        STB_.dbgln(String(keywordNo));
+                        STB_.rcvdPtr += 2;
                         sprintf(noString, "%i", 1);
-                        flags[keywordNo] = (strncmp(STB.rcvdPtr, noString, 1) == 0);
+                        flags[keywordNo] = (strncmp(STB_.rcvdPtr, noString, 1) == 0);
                         sendAck = true;
                         break;
                     }
                 }
 
-            } else if (strncmp(KeywordsList::endFlagKeyword, STB.rcvdPtr, KeywordsList::endFlagKeyword.length()) == 0) {
+            } else if (strncmp(KeywordsList::endFlagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::endFlagKeyword.length()) == 0) {
                 
-                STB.rs485SendAck();
+                STB_.rs485SendAck();
 
                 /*
-                STB.dbgln("all flags received");
+                STB_.dbgln("all flags received");
                 
                 for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) {
                     if (flags[keywordNo] > 0) {
-                        STB.dbgln("enabled");
+                        STB_.dbgln("enabled");
                     } else {
-                        STB.dbgln("disabled");
+                        STB_.dbgln("disabled");
                     }
                 }
                 delay(300);
@@ -86,11 +88,11 @@ void STB_BRAIN::receiveFlags() {
             }
 
             if (sendAck) {
-                STB.rs485SendAck();
+                STB_.rs485SendAck();
                 sendAck = false;
             }
 
-            STB.rs485RcvdNextLn();
+            STB_.rs485RcvdNextLn();
         }
 
         wdt_reset();
@@ -114,16 +116,16 @@ void STB_BRAIN::receiveSettings() {
     char line[12] = "";
     char *linePtr;
     int row = 0, col = 0;
-    STB.dbgln("STB_BRAIN::receiveSettings");
+    STB_.dbgln("STB_BRAIN::receiveSettings");
 
     while (true) {
 
         if (!rs485PollingCheck()) {continue;}
         
-        while (STB.rcvdPtr != NULL) {
+        while (STB_.rcvdPtr != NULL) {
             
-            if (strncmp(KeywordsList::endSettingKeyword, STB.rcvdPtr, strlen(KeywordsList::endSettingKeyword)) == 0) {  
-                STB.rs485SendAck();
+            if (strncmp(KeywordsList::endSettingKeyword.c_str(), STB_.rcvdPtr, strlen(KeywordsList::endSettingKeyword)) == 0) {  
+                STB_.rs485SendAck();
 
                 Serial.print("row is ");
                 Serial.println(String(row));
@@ -131,19 +133,19 @@ void STB_BRAIN::receiveSettings() {
                 return;         
             }
 
-            if (strncmp(KeywordsList::settingKeyword, STB.rcvdPtr, strlen(KeywordsList::settingKeyword)) == 0) {
+            if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, strlen(KeywordsList::settingKeyword)) == 0) {
 
                 sendAck = true;
                 // discard if the rows are used up, we dont want to write out of index
                 if (row >= SETTINGS_CNT) {
-                    STB.dbgln("too many settings\nreceived");
+                    STB_.dbgln("too many settings\nreceived");
                     continue;
                 }
 
                 // doesnt have a trailing "_" hence a +1 to get the value
-                STB.rcvdPtr += strlen(KeywordsList::settingKeyword) + 1;
+                STB_.rcvdPtr += strlen(KeywordsList::settingKeyword) + 1;
 
-                strcpy(line, STB.rcvdPtr);
+                strcpy(line, STB_.rcvdPtr);
                 linePtr = strtok(line, "_"); 
                 col = 0;
                 
@@ -156,11 +158,11 @@ void STB_BRAIN::receiveSettings() {
             }
 
             if (sendAck) {
-                STB.rs485SendAck();
+                STB_.rs485SendAck();
                 sendAck = false;
             }
 
-            STB.rs485RcvdNextLn();
+            STB_.rs485RcvdNextLn();
         }
 
     }
@@ -201,7 +203,7 @@ bool STB_BRAIN::rs485PollingCheck() {
             if (slavePollStr[index] == Serial.read()) {
                 index++;
                 if (index > 5) {
-                    if (STB.rs485Receive()) {
+                    if (STB_.rs485Receive()) {
                         // slave interpretation here alternatively resend request in else loop
                     }
                     delay(1);
@@ -228,7 +230,7 @@ bool STB_BRAIN::rs485SlaveRespond() {
         return false;
     }
 
-    STB.rs485SendBuffer();
+    STB_.rs485SendBuffer();
     return true;
 }
 

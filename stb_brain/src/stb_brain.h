@@ -7,9 +7,9 @@
 
 class STB_BRAIN {
     private:
-        STB STB;
         /* data */
     public:
+        STB STB_;
         int slaveAddr = 0;
         char slavePollStr[8] = "!Poll9";
         // by default everything is enabled
@@ -20,6 +20,12 @@ class STB_BRAIN {
         void receiveFlags();
         void receiveSettings();
         bool rs485SlaveRespond();
-        STB_BRAIN(/* args */);
+        void softwareReset() {STB_.softwareReset(); };
+        
+        void dbgln(String message) { STB_.dbgln(message); };
+        void dbg(String message) { STB_.dbg(message); };
+        
+        
+        STB_BRAIN();
         ~STB_BRAIN();
 };
