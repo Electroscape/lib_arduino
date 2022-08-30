@@ -39,7 +39,7 @@ class STB {
 
     STB();
     void begin();
-    static void printWithHeader(String message, String source=String("SYS"));
+    void printWithHeader(String message, String source=String("SYS"));
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
@@ -52,5 +52,5 @@ class STB {
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485RcvdNextLn();
     bool i2cScanner();
-    static void softwareReset();
+    void softwareReset();
 };
