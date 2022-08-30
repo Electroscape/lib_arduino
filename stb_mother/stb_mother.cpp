@@ -158,20 +158,6 @@ void STB_MOTHER::rs485SetSlaveCount(int count) {
 }
 
 
-#ifdef true
-/**
- * @brief sets Master along with relay initialisation
- */
-void STB_MOTHER::rs485SetToMaster() {
-    // TODO: may need to add a parameter for pins and initvalues
-    defaultOled.setScrollMode(SCROLL_MODE_AUTO);
-    int relayPins[8] = {0,1,2,3,4,5,6,7};
-    int relayInitVals[8] = {1,1,1,1,1,1,1,1};
-    relayInit(motherRelay, relayPins, relayInitVals);
-}
-#endif 
-
-
 /**
  * @brief sends a given setting to the brain
  * @param STB 

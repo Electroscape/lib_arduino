@@ -31,9 +31,7 @@ class STB_MOTHER
         bool rs485SendCmdToSlave(int slaveNo, char* message);
         void rs485setSlaveAsTgt(int slaveNo);
         void rs485SetSlaveCount(int count);
-        
-        // TODO: Evaluate if this may simply be moved into the constructor
-        // void rs485SetToMaster(int count);
+    
         
         void sendSetting(int brainNo, settingCmds setting, int values[], int amountOfValues);
         void settingsCompleted(int brainNo);
