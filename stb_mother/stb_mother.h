@@ -12,7 +12,7 @@
 class STB_MOTHER
 {
     private:
-        STB STB;
+        STB STB_;
         int slaveCount = 8;
         int polledSlave = -1;
         PCF8574 motherRelay;
@@ -37,6 +37,9 @@ class STB_MOTHER
         void settingsCompleted(int brainNo);
 
         bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
+
+        void dbgln(String message) { STB_.dbgln(message); };
+        void dbg(String message) { STB_.dbg(message); };
 };
 
 

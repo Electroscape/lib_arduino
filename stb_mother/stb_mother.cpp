@@ -13,7 +13,8 @@
 
 
 STB_MOTHER::STB_MOTHER(/* args */) {
-    STB.begin();
+    STB_.begin();
+    STB_.i2cScanner();
 }
 
 STB_MOTHER::~STB_MOTHER() {}
@@ -44,8 +45,8 @@ void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
 
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(msg);
-        if (STB.rs485SendBuffer(true)) {
+        STB_.rs485AddToBuffer(msg);
+        if (STB_.rs485SendBuffer(true)) {
             //delay(500);
             return;
         }
@@ -64,8 +65,8 @@ void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
 void STB_MOTHER::flagsCompleted(int brainNo) {
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(KeywordsList::endFlagKeyword);
-        if (STB.rs485SendBuffer(true)) {
+        STB_.rs485AddToBuffer(KeywordsList::endFlagKeyword);
+        if (STB_.rs485SendBuffer(true)) {
             return;
         }
         wdt_reset();
@@ -194,8 +195,8 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
 
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(msg);
-        if (STB.rs485SendBuffer(true)) {
+        STB_.rs485AddToBuffer(msg);
+        if (STB_.rs485SendBuffer(true)) {
             return;
         }
         wdt_reset();
@@ -211,8 +212,8 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
 void STB_MOTHER::settingsCompleted(int brainNo) {
     while (true) {
         rs485setSlaveAsTgt(brainNo);
-        STB.rs485AddToBuffer(KeywordsList::endSettingKeyword);
-        if (STB.rs485SendBuffer(true)) {
+        STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
+        if (STB_.rs485SendBuffer(true)) {
             return;
         }
         wdt_reset();
