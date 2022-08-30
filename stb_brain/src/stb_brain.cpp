@@ -43,7 +43,7 @@ void STB_BRAIN::receiveFlags() {
 
             if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.length()) == 0) {
                 
-                STB_.rcvdPtr += strlen(KeywordsList::flagKeyword);
+                STB_.rcvdPtr += KeywordsList::flagKeyword.length();
                 STB_.dbgln(STB_.rcvdPtr);
 
                 char line[16] = "";
@@ -110,8 +110,6 @@ void STB_BRAIN::receiveFlags() {
  */
 void STB_BRAIN::receiveSettings() {
 
-    int f = 0;
-
     bool sendAck = false;
     char line[12] = "";
     char *linePtr;
@@ -124,7 +122,7 @@ void STB_BRAIN::receiveSettings() {
         
         while (STB_.rcvdPtr != NULL) {
             
-            if (strncmp(KeywordsList::endSettingKeyword.c_str(), STB_.rcvdPtr, strlen(KeywordsList::endSettingKeyword)) == 0) {  
+            if (strncmp(KeywordsList::endSettingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::endSettingKeyword.length()) == 0) {  
                 STB_.rs485SendAck();
 
                 Serial.print("row is ");
@@ -133,7 +131,7 @@ void STB_BRAIN::receiveSettings() {
                 return;         
             }
 
-            if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, strlen(KeywordsList::settingKeyword)) == 0) {
+            if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::settingKeyword.length()) == 0) {
 
                 sendAck = true;
                 // discard if the rows are used up, we dont want to write out of index
@@ -143,7 +141,7 @@ void STB_BRAIN::receiveSettings() {
                 }
 
                 // doesnt have a trailing "_" hence a +1 to get the value
-                STB_.rcvdPtr += strlen(KeywordsList::settingKeyword) + 1;
+                STB_.rcvdPtr += KeywordsList::settingKeyword.length() + 1;
 
                 strcpy(line, STB_.rcvdPtr);
                 linePtr = strtok(line, "_"); 
@@ -176,10 +174,10 @@ void STB_BRAIN::receiveSettings() {
  */
 void STB_BRAIN::rs485SetSlaveAddr(int no) {
     slaveAddr = no;
-    STB::dbgln(F("Slave responds to")); 
+    STB_.dbgln(F("Slave responds to")); 
     char noString[2];
     sprintf(noString, "%d", no);
-    strcpy(slavePollStr, KeywordsList::pollStr);
+    strcpy(slavePollStr, KeywordsList::pollStr.c_str());
     strcat(slavePollStr, noString);
     Serial.println(slavePollStr);
     delay(2000);
@@ -196,7 +194,7 @@ bool STB_BRAIN::rs485PollingCheck() {
     int index = 0;
     unsigned long startTime = millis();
 
-    while ((millis() - startTime) < maxPollingWait) {
+    while ((millis() - startTime) < STB_.maxPollingWait) {
 
         if (Serial.available()) {
 

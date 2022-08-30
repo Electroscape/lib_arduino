@@ -20,7 +20,6 @@ class STB {
     long rs485timeout = 10;
     // start at -1 to start with slave 0 since we do the increment in the beginning
     // maybe change this name to keep things less confusing sine mother uses slaveStr
-    unsigned long maxPollingWait = 300;
     // time the master waits for  the slave to respond
     unsigned long maxResponseTime = 300;
     char rcvd[bufferSize] = "";
@@ -29,10 +28,11 @@ class STB {
     bool serialInit();
     void printInfo();
     void rs485Write();
-    bool rs485Receive();
     void printI2cDeviceName(int deviceNo);
     
     public:
+    bool rs485Receive();
+    unsigned long maxPollingWait = 300;
     SSD1306AsciiWire defaultOled;
     
     char* rcvdPtr;
@@ -52,5 +52,5 @@ class STB {
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485RcvdNextLn();
     bool i2cScanner();
-    void softwareReset();
+    static void softwareReset();
 };
