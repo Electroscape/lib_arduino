@@ -31,7 +31,7 @@ STB_MOTHER::~STB_MOTHER() {}
 void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
 
     char msg[16] = "";
-    strcpy(msg, KeywordsList::flagKeyword);
+    strcpy(msg, KeywordsList::flagKeyword.c_str());
     char noString[3];
     sprintf(noString, "%d", cmdFlag);
     strcat(msg, noString);
@@ -182,7 +182,7 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
     char msg[32] = "";
     char noString[8];
 
-    strcpy(msg, KeywordsList::settingKeyword);
+    strcpy(msg, KeywordsList::settingKeyword.c_str());
     strcat(msg, "_");
     sprintf(noString, "%d", setting);
     strcat(msg, noString);

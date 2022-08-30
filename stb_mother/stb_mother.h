@@ -12,11 +12,11 @@
 class STB_MOTHER
 {
     private:
-        STB STB_;
         int slaveCount = 8;
         int polledSlave = -1;
         PCF8574 motherRelay;
     public:
+        STB STB_;
         STB_MOTHER();
         ~STB_MOTHER();
 
@@ -38,8 +38,13 @@ class STB_MOTHER
 
         bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 
+        // linking functions to shorten code
         void dbgln(String message) { STB_.dbgln(message); };
         void dbg(String message) { STB_.dbg(message); };
+        void oledClear() {STB_.defaultOled.clear();};
+        void addToBuffer(String message) {STB_.rs485AddToBuffer(message);};
+        void sendAck() {STB_.rs485SendAck();};
+        bool nextRcvdLn() {return STB_.rs485RcvdNextLn();};
 };
 
 
