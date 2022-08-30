@@ -218,23 +218,23 @@ void STB_MOTHER::settingsCompleted(int brainNo) {
  * @return bool
  */
 bool STB_MOTHER::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
+    
     String relayString = String(RELAY_I2C_ADD, HEX);
     relayString.toUpperCase();
-    STB_OLED::writeHeadline(&STB_.defaultOled, "Relay" + relayString);
-    
+    STB_OLED::writeHeadline(&STB_.defaultOled, "Relay " + relayString);
     relay.begin(RELAY_I2C_ADD);
+    String pinStr = ""; 
+    String valueStr = "";
 
     for (int i = 0; i < amount; i++) {
         relay.pinMode(pins[i], OUTPUT);
         relay.digitalWrite(pins[i], initvals[i]);
-        STB_.defaultOled.print(String(pins[i]));
-        STB_.defaultOled.setCol(STB_.defaultOled.col() + 1);
-        STB_.defaultOled.print(String(initvals[i]));
-        STB_.defaultOled.setCol(STB_.defaultOled.col() - 1);
+        pinStr += String(pins[i]) + " ";
+        valueStr += String(initvals[i]) + " ";
         // dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
     }
-    STB_.defaultOled.setCol(STB_.defaultOled.col() + 1);
-    STB_.defaultOled.println();
+    STB_OLED::writeToLine(&STB_.defaultOled, 2, pinStr);
+    STB_OLED::writeToLine(&STB_.defaultOled, 3, valueStr);
     delay(500);
     return true;
 }
