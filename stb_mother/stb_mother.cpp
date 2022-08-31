@@ -136,16 +136,16 @@ bool STB_MOTHER::rs485SendCmdToSlave(int slaveNo, char* message) {
  * @param slaveNo 
  */
 void STB_MOTHER::rs485setSlaveAsTgt(int slaveNo) {
-    /*
-    TODO: reenable once STB clean proceeded 
+
+    char message[16];
     // there should not be other data left here anyways, alternativle use strCat
-    strcpy(bufferOut, pollStr);
+    strcpy(message,  KeywordsList::pollStr.c_str());
     char slaveNoStr[3];
     sprintf(slaveNoStr, "%i", slaveNo);
-    strcat(bufferOut, slaveNoStr);
-    strcat(bufferOut, "\n");
-    // this will put the slaveStr in beginning of the buffer
-    */
+    strcat(message, slaveNoStr);
+    strcat(message, "\n");
+
+    STB_.rs485AddToBuffer(message);
 };
 
 
