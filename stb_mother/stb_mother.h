@@ -28,8 +28,8 @@ class STB_MOTHER
         int rs485getPolledSlave();
         int rs485getSlaveCnt();
         void rs485PerformPoll();
-        bool rs485SendCmdToSlave(int slaveNo, char* message);
-        void rs485setSlaveAsTgt(int slaveNo);
+        bool sendCmdToSlave(int slaveNo, char* message);
+        void setSlaveAsTgt(int slaveNo);
         void rs485SetSlaveCount(int count);
     
         
