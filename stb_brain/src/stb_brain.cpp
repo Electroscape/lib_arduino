@@ -11,6 +11,7 @@
 
 #include "stb_brain.h"
 
+
 STB_BRAIN::STB_BRAIN() {
     for (int row=0; row<SETTINGS_CNT; row++) {
         settings[row][0] = -1;

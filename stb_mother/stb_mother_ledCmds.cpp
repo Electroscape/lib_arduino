@@ -5,20 +5,20 @@ constexpr int LED_CMDS::clrWhite[3];
 constexpr int LED_CMDS::clrRed[3];
 constexpr int LED_CMDS::clrGreen[3];
 constexpr int LED_CMDS::clrBlack[3];
-constexpr char LED_CMDS::ledCmdString[16];
 
 
 /**
  * @brief sets the given brain to the given clr
- * @param STB 
+ * @param STB_MOTHER 
  * @param brainNo 
  * @param clr 
  * @param ledCnt default is all Leds
  */
-void LED_CMDS::setToClr(STB &STB, int brainNo, const int clr[3], int brightness=100, int ledCnt) {
+void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt) {
     
     char msg[32] = "";
-    strcpy(msg, ledCmdString);
+    Mother.setSlaveAsTgt(brainNo);
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
 
     for (int i=0; i<3; i++) {
         char intStr[3];
@@ -28,8 +28,8 @@ void LED_CMDS::setToClr(STB &STB, int brainNo, const int clr[3], int brightness=
     }
 
     while (true) {
-        STB.rs485AddToBuffer(msg);
-        if (STB.rs485SendBuffer(true)) { break;}
+        Mother.STB_.rs485AddToBuffer(msg);
+        if (Mother.STB_.rs485SendBuffer(true)) { break;}
         wdt_reset();
     }
 }
@@ -37,10 +37,10 @@ void LED_CMDS::setToClr(STB &STB, int brainNo, const int clr[3], int brightness=
 
 /**
  * @brief switches off the LEDs on the given brain
- * @param STB 
+ * @param STB_MOTHER
  * @param brainNo 
  * @param ledCnt default is all Leds
  */
-void LED_CMDS::turnOff(STB &STB, int brainNo, int ledCnt) {
-    setToClr(STB, brainNo, clrBlack, int(100), ledCnt);
+void LED_CMDS::turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt) {
+    setToClr(Mother, brainNo, clrBlack, int(100), ledCnt);
 }
