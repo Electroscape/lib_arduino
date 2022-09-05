@@ -11,15 +11,22 @@
 
 #include "stb_brain.h"
 
-STB_BRAIN::STB_BRAIN(): STB_(){
-    STB_.begin();
-    STB_.i2cScanner();
-    STB_.defaultOled.setScrollMode(SCROLL_MODE_AUTO);
+STB_BRAIN::STB_BRAIN() {
     for (int row=0; row<SETTINGS_CNT; row++) {
         settings[row][0] = -1;
     }
 };
 STB_BRAIN::~STB_BRAIN() {};
+
+
+/**
+ * @brief calls the STB startup fncs like STB.Begin and I2Cscanner
+ */
+void STB_BRAIN::begin() {
+    STB_.begin();
+    STB_.i2cScanner();
+    STB_.defaultOled.setScrollMode(SCROLL_MODE_AUTO);
+}
 
 
 /**
