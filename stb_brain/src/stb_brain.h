@@ -7,14 +7,30 @@
 
 class STB_BRAIN {
     private:
-        KeywordsList Keywords;
         /* data */
     public:
+        STB STB_;
+        int slaveAddr = 0;
+        char slavePollStr[8] = "!Poll9";
         // by default everything is enabled
+        void begin();
+        void setSlaveAddr(int no);
+        bool pollingCheck();
         int flags[cmdFlags::amountOfFlags] = {0};
         int settings[SETTINGS_CNT][SETTINGS_PARAMS] = {};
-        void receiveFlags(STB STB);
-        void receiveSettings(STB STB);
-        STB_BRAIN(/* args */);
+        void receiveFlags();
+        void receiveSettings();
+        bool slaveRespond();
+        void softwareReset() {STB_.softwareReset(); };
+        
+        // linking functions to shorten code
+        void dbgln(String message) { STB_.dbgln(message); };
+        void dbg(String message) { STB_.dbg(message); };
+        void oledClear() {STB_.defaultOled.clear();};
+        void addToBuffer(String message) {STB_.rs485AddToBuffer(message);};
+        void sendAck() {STB_.rs485SendAck();};
+        bool nextRcvdLn() {return STB_.rs485RcvdNextLn();};
+
+        STB_BRAIN();
         ~STB_BRAIN();
 };

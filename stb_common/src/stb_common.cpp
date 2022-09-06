@@ -52,6 +52,7 @@ void STB::printInfo() {
     defaultOled.println(F("|    Electroscape    |"));
     defaultOled.println(F("+--------------------+"));
 
+    /*
     printWithHeader("!header_begin");
     #ifdef title
         printWithHeader(title);
@@ -64,10 +65,13 @@ void STB::printInfo() {
     #endif
     printWithHeader("!header_end");
     printWithHeader("!setup_begin");
+    */
 
     delay(300);
 }
 
+
+#ifdef True
 /**
  * legacy at this point, also does not handle bus clearance
  * 
@@ -87,16 +91,17 @@ void STB::printWithHeader(String message, String source) {
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
 }
+#endif
 
 
 /**
  * @brief prints a setup end to serial
  */
 void STB::printSetupEnd() {
-    printWithHeader("!setup_end");
-    Serial.println();
-    Serial.flush(); 
-    dbgln("\n===START===\n");
+    // printWithHeader("!setup_end");
+    // Serial.println();
+    /// Serial.flush(); 
+    dbgln(F("\n===START===\n"));
 }
 
 
@@ -122,75 +127,6 @@ void STB::dbgln(String message) {
 }
 
 
-int STB::rs485getPolledSlave() {
-    return polledSlave;
-}
-
-
-int STB::rs485getSlaveCnt() {
-    return slaveCount;
-}
-
-
-/**
- * @brief sets Master along with relay initialisation
- */
-void STB::rs485SetToMaster() {
-    // TODO: may need to add a parameter for pins and initvalues
-    defaultOled.setScrollMode(SCROLL_MODE_AUTO);
-    isMaster = true;
-    int relayPins[8] = {0,1,2,3,4,5,6,7};
-    int relayInitVals[8] = {1,1,1,1,1,1,1,1};
-    relayInit(motherRelay, relayPins, relayInitVals);
-}
-
-
-/**
- * @brief sets slaveNo and creates a pollstring to respond to
- * @param no 
- */
-void STB::rs485SetSlaveAddr(int no) {
-    slaveAddr = no;
-    dbgln("Slave responds to"); 
-    char noString[2];
-    sprintf(noString, "%d", no);
-    strcpy(slavePollStr, pollStr);
-    strcat(slavePollStr, noString);
-    Serial.println(slavePollStr);
-    delay(2000);
-}
-
-
-/**
- * @brief defines how many slaves are being polled
- * @param count 
- */
-void STB::rs485SetSlaveCount(int count) {
-    slaveCount = count;
-}
-
-
-/**
- * @brief polls the bus slaves and forwards the input to cmdInterpreter
- */
-void STB::rs485PerformPoll() {
-    polledSlave++;
-    if (polledSlave >= slaveCount) {
-        polledSlave = 0;
-    }
-
-    rs485setSlaveAsTgt(polledSlave);
-    // message.concat("line1\n2\n3\nlastline");
-    rs485Write();
-    rs485Receive();
-
-    if (strlen(rcvd) > 0) {
-        // TODO: new input receive here
-        dbgln(rcvd);
-    }
-}
-
-
 /**
  * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
@@ -207,22 +143,6 @@ bool STB::rs485AddToBuffer(String message) {
 
 
 /**
- * @brief slave checks if being polled and responds with the buffer 
- * @return if bufferOut could be send 
- */
-bool STB::rs485SlaveRespond() {
-
-    if (!rs485PollingCheck()) {
-        Serial.println("no buffer clearnce");
-        return false;
-    }
-
-    rs485Write();
-    return true;
-}
-
-
-/**
  * @brief 
  * todo check if message gets too long including EOF
  * @param message 
@@ -231,9 +151,8 @@ bool STB::rs485SlaveRespond() {
 void STB::rs485Write() {
 
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-
     Serial.print(bufferOut);
-    Serial.println(eof);
+    Serial.println(KeywordsList::eof);
     Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
@@ -266,7 +185,7 @@ bool STB::rs485Receive() {
             }
             */
            
-            if (rcvd[bufferpos] == eof[eofIndex]) {
+            if (rcvd[bufferpos] == KeywordsList::eof[eofIndex]) {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     rcvd[bufferpos+1] = '\0';
@@ -287,25 +206,10 @@ bool STB::rs485Receive() {
 
 
 /**
- * @brief WIP adds string of slave to be polled into the buffer
- * @param slaveNo 
- */
-void STB::rs485setSlaveAsTgt(int slaveNo) {
-    // there should not be other data left here anyways, alternativle use strCat
-    strcpy(bufferOut, pollStr);
-    char slaveNoStr[3];
-    sprintf(slaveNoStr, "%i", slaveNo);
-    strcat(bufferOut, slaveNoStr);
-    strcat(bufferOut, "\n");
-    // this will put the slaveStr in beginning of the buffer
-};
-
-
-/**
  * @brief sends the acknowledge msg
  */
 void STB::rs485SendAck() {
-    rs485AddToBuffer(ACK);
+    rs485AddToBuffer(KeywordsList::ACK);
     rs485Write();
 }
 
@@ -320,43 +224,10 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (rs485RcvdNextLn()) {
         dbgln(rcvdPtr);
-        if (memcmp(ACK, rcvdPtr, strlen(ACK)) == 0) { 
+        if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0) { 
             dbgln("Ack rcvd");
             return true; 
         }
-    }
-    return false;
-}
-
-
-/**
- * @brief checks if being polled and message is complete, msg stored in rcvd
- * @param message 
- * @return if slave is being polled and can send
- */
-bool STB::rs485PollingCheck() {
-
-    int index = 0;
-    unsigned long startTime = millis();
-
-    while ((millis() - startTime) < maxPollingWait) {
-
-        if (Serial.available()) {
-
-            if (slavePollStr[index] == Serial.read()) {
-                index++;
-                if (index > 5) {
-                    if (rs485Receive()) {
-                        // slave interpretation here alternatively resend request in else loop
-                    }
-                    delay(1);
-                    return true;
-                }
-            } else {
-                index = 0;
-            }
-        }
-        
     }
     return false;
 }
@@ -371,23 +242,6 @@ bool STB::rs485RcvdNextLn() {
     rcvdPtr = strtok(NULL, "\n");
     return (rcvdPtr != NULL);
 }
-
-
-/**
- * @brief send the given message to the designated slave
- * @param slaveNo 
- * @param message 
- * @return if message got acknowled
- */
-bool STB::rs485SendCmdToSlave(int slaveNo, char* message) {
-    rs485setSlaveAsTgt(slaveNo);
-    // newline is handled by teh aboive so nothing to worry
-    strcat(bufferOut, message);
-    dbgln("cmd to slave");
-    dbgln(bufferOut);
-    rs485SendBuffer();
-    return true;
-};
 
 
 /**
@@ -447,31 +301,6 @@ void STB::softwareReset() {
         delay(100);
     }
     asm volatile ("  jmp 0");
-}
-
-
-/**
- * @brief initializes the given relay along with init states
- * @param relay (PCF8574) relay instance
- * @param pins (int) pin numbers
- * @param initvals (int) init value
- * @param amount (int) amount of relays to be initialized
- * @return bool
- */
-bool STB::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
-    String relayString = String(RELAY_I2C_ADD, HEX);
-    relayString.toUpperCase();
-    dbgln("relayinit on " + relayString); 
-
-    relay.begin(RELAY_I2C_ADD);
-    
-    for (int i = 0; i < amount; i++) {
-        relay.pinMode(pins[i], OUTPUT);
-        relay.digitalWrite(pins[i], initvals[i]);
-        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
-    }
-    delay(500);
-    return true;
 }
 
 
