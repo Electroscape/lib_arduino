@@ -22,8 +22,9 @@ enum cmdFlags {
     ledFlag,
     rfidFlag,
     oledFlag,
+    keypadFlag,
     // update this everytime you add flags, only count the flags
-    amountOfFlags = 3
+    amountOfFlags = 4
 };
 
 
@@ -41,6 +42,7 @@ class KeywordsList {
     static const String flagKeyword;
     static const String endFlagKeyword;
     static const String settingKeyword;
+    static const String keypadKeyword;
     static const String endSettingKeyword;
     static const String rfidKeyword;
     static const String ledKeyword;

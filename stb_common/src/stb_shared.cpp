@@ -10,8 +10,9 @@ const String  KeywordsList::rfidKeyword = "!RFID_";
 const String  KeywordsList::ledKeyword = "!LED_";
 const String  KeywordsList::pollStr = "!Poll";
 const String  KeywordsList::delimiter = "_";
-const String  KeywordsList::relayKeyword = "!Relay";
+const String  KeywordsList::relayKeyword = "!Rel";
 const String  KeywordsList::ACK = "!ACK";
 const String  KeywordsList::NACK = "!NACK";
 const String  KeywordsList::eof = "!EOF";
+const String  KeywordsList::keypadKeyword = "!KeyP";
 
