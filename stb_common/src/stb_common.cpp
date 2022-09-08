@@ -278,14 +278,14 @@ bool STB::i2cScanner() {
  */
 void STB::printI2cDeviceName (int deviceNo) {
     switch (deviceNo) {
-        case 56: dbgln("Keypad (default)"); break;  //  0x38
-        case 58: dbgln("Keypad/IO"); break;         //  0x39
-        case 57: dbgln("Keypad/IO"); break;         //  0x3A
-        case 59: dbgln("Keypad/IO"); break;         //  0x3B
-        case 60: dbgln("Oled  (default)"); break;   //  0x3C
-        case 61: dbgln("Oled"); break;              //  0x3D
-        case 63: dbgln("Relay"); break;             //  0x3F
-        default: dbgln("Unknown"); break;
+        case 56: dbgln(F("Keypad (default)")); break;  //  0x38
+        case 57: dbgln(F("Keypad/IO")); break;         //  0x3A
+        case 58: dbgln(F("Keypad/IO")); break;         //  0x39
+        case 59: dbgln(F("Keypad/IO")); break;         //  0x3B
+        case 60: dbgln(F("Oled  (default)")); break;   //  0x3C
+        case 61: dbgln(F("Oled")); break;              //  0x3D
+        case 63: dbgln(F("Relay")); break;             //  0x3F
+        default: dbgln(F("Unknown")); break;
     }
 }
 
