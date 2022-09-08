@@ -15,4 +15,5 @@ const String  KeywordsList::ACK = "!ACK";
 const String  KeywordsList::NACK = "!NACK";
 const String  KeywordsList::eof = "!EOF";
 const String  KeywordsList::keypadKeyword = "!KeyP";
+const String  KeywordsList::oledHKeyword = "!Header";
 

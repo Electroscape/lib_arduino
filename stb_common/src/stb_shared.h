@@ -52,4 +52,5 @@ class KeywordsList {
     static const String relayKeyword;
     static const String NACK;
     static const String eof;
+    static const String oledHKeyword;
 };
