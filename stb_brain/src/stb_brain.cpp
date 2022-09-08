@@ -21,6 +21,19 @@ STB_BRAIN::~STB_BRAIN() {};
 
 
 /**
+ * @brief adds given message to buffer
+ * @param message 
+ * @param containsCmd wether the message is send without control flow or send with a ack before being cleared from buffer
+ */
+void STB_BRAIN::addToBuffer(String message, bool containsCmd) {
+    if (containsCmd) {
+        outgoingCmd=true;
+    }; 
+    STB_.rs485AddToBuffer(message);
+}
+
+
+/**
  * @brief calls the STB startup fncs like STB.Begin and I2Cscanner
  */
 void STB_BRAIN::begin() {
@@ -232,7 +245,11 @@ bool STB_BRAIN::pollingCheck() {
  */
 bool STB_BRAIN::slaveRespond() {
 
-    if (!pollingCheck()) {
+    if (outgoingCmd) {
+        while (!pollingCheck()) {
+            wdt_reset();
+        }
+    } else if (!pollingCheck()) {
         // Serial.println(F("no buffer clearnce"));
         return false;
     }

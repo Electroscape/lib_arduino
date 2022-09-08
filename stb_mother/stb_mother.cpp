@@ -117,7 +117,7 @@ bool STB_MOTHER::sendCmdToSlave(int slaveNo, char* message) {
 
     setSlaveAsTgt(slaveNo);
     STB_.rs485AddToBuffer(message);
-    STB_.rs485SendBuffer();
+    STB_.rs485SendBuffer(true);
     return true;
 };
 
