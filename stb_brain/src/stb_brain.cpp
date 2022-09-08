@@ -57,7 +57,7 @@ void STB_BRAIN::receiveFlags() {
                 char line[16] = "";
                 char* linePtr = strtok(line, "_"); 
                 linePtr = strtok(NULL, "_"); 
-                STB_.dbgln("Flagkeyword receivd");
+                STB_.dbgln(F("Flagkeyword receivd"));
                 STB_.dbgln(linePtr);
             
                 char noString[2];
@@ -122,7 +122,7 @@ void STB_BRAIN::receiveSettings() {
     char line[12] = "";
     char *linePtr;
     int row = 0, col = 0;
-    STB_.dbgln("STB_BRAIN::receiveSettings");
+    STB_.dbg(F("receiveing Settings..."));
 
     while (true) {
 
@@ -132,10 +132,11 @@ void STB_BRAIN::receiveSettings() {
             
             if (strncmp(KeywordsList::endSettingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::endSettingKeyword.length()) == 0) {  
                 STB_.rs485SendAck();
-
+                /*
                 Serial.print("row is ");
                 Serial.println(String(row));
-
+                */
+                STB_.dbg(F("Ok!"));
                 return;         
             }
 
@@ -144,7 +145,7 @@ void STB_BRAIN::receiveSettings() {
                 sendAck = true;
                 // discard if the rows are used up, we dont want to write out of index
                 if (row >= SETTINGS_CNT) {
-                    STB_.dbgln("too many settings\nreceived");
+                    STB_.dbgln(F("overflow!"));
                     continue;
                 }
 
@@ -232,7 +233,7 @@ bool STB_BRAIN::pollingCheck() {
 bool STB_BRAIN::slaveRespond() {
 
     if (!pollingCheck()) {
-        Serial.println(F("no buffer clearnce"));
+        // Serial.println(F("no buffer clearnce"));
         return false;
     }
 
