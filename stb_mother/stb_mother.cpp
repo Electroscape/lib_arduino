@@ -108,12 +108,15 @@ void STB_MOTHER::rs485PerformPoll() {
 
 
 /**
- * @brief send the given message to the designated slave
+ * @brief send the given message to the designated slave, by default this will be the polledSlave
  * @param slaveNo 
  * @param message 
  * @return if message got acknowled
  */
-bool STB_MOTHER::sendCmdToSlave(int slaveNo, char* message) {
+bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
+    if (slaveNo < 0) {
+        slaveNo = polledSlave;
+    }
 
     setSlaveAsTgt(slaveNo);
     STB_.rs485AddToBuffer(message);
