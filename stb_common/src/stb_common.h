@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <PCF8574.h> /* I2C Port Expander  */
 #include <Wire.h>    /* I2C library */
 #include <stb_oled.h>
 #include <stb_shared.h>
