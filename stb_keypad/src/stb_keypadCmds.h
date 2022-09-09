@@ -8,9 +8,10 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include <stb_shared.h>
+#pragma once
+#include <Arduino.h>
 
-static const String keypadCmdKeyword;
+const String keypadCmd = "!KeyCmd";
 
 enum KeypadCmds {
     post,
