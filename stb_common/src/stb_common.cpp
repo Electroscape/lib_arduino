@@ -128,6 +128,15 @@ void STB::dbgln(String message) {
 
 
 /**
+ * @brief  clears the outgoing buffer
+ * 
+*/
+void STB::clearBuffer() {
+    memset(bufferOut, 0, bufferSize);
+}
+
+
+/**
  * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
  * @return if place was available in the bufferOut
@@ -143,21 +152,21 @@ bool STB::rs485AddToBuffer(String message) {
 
 
 /**
- * @brief 
- * todo check if message gets too long including EOF
- * @param message 
- * @return if message was written or bus clearance didnt occur
- */
-void STB::rs485Write() {
-
+ * @brief  simply writes bufferout, persistent determine if its cleared or not after the msg
+ * 
+ * @param persistent 
+*/
+void STB::rs485Write(bool persistent) {
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.print(bufferOut);
     Serial.println(KeywordsList::eof);
+    // extra newline for readaility when monitoring, to tell different senders apart
     Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
-    memset(bufferOut, 0, bufferSize);
-
+    if (!persistent) {
+        clearBuffer();
+    }
 }
 
 
@@ -219,17 +228,19 @@ void STB::rs485SendAck() {
  * @return if ack was received, if not a cmd returns true
  */
 bool STB::rs485SendBuffer(bool isCmd) {
-    rs485Write();
+    rs485Write(isCmd);
     if (!isCmd) {return true;}
     rs485Receive();
-    while (rs485RcvdNextLn()) {
-        dbgln(rcvdPtr);
+    while (true) {
+        Serial.println(rcvdPtr);
         if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0) { 
-            dbgln("Ack rcvd");
+            // Serial.println("Ack rcvd");
+            clearBuffer();
             return true; 
         }
+        if (!rs485RcvdNextLn()) {return false;}
     }
-    return false;
+    
 }
 
 

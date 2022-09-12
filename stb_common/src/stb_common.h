@@ -26,7 +26,7 @@ class STB {
 
     bool serialInit();
     void printInfo();
-    void rs485Write();
+    void rs485Write(bool persistent=false);
     void printI2cDeviceName(int deviceNo);
     
     public:
@@ -46,6 +46,7 @@ class STB {
     
     // ideally it would be an array of which slave number are active...
     bool rs485AddToBuffer(String message);
+    void clearBuffer();
     
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);

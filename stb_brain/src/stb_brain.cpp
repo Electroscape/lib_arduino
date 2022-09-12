@@ -50,7 +50,7 @@ void STB_BRAIN::begin() {
  */
 void STB_BRAIN::receiveFlags() {
 
-    STB_.dbgln("receiveflags");
+    STB_.dbgln(F("receiveflags"));
     bool sendAck = false;
 
     while (true) {
@@ -245,6 +245,8 @@ bool STB_BRAIN::pollingCheck() {
  */
 bool STB_BRAIN::slaveRespond() {
 
+    // Serial.println(F("slaveRespond"));
+
     if (outgoingCmd) {
         while (!pollingCheck()) {
             wdt_reset();
@@ -254,7 +256,11 @@ bool STB_BRAIN::slaveRespond() {
         return false;
     }
 
-    STB_.rs485SendBuffer();
+    if (STB_.rs485SendBuffer(outgoingCmd)) {
+        STB_.clearBuffer();
+        outgoingCmd = false;
+    }
+
     return true;
 }
 
