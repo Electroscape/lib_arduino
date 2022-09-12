@@ -137,8 +137,7 @@ void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
     char slaveNoStr[3];
     sprintf(slaveNoStr, "%i", slaveNo);
     strcat(message, slaveNoStr);
-    strcat(message, "\n");
-
+    
     STB_.rs485AddToBuffer(message);
 };
 
