@@ -214,6 +214,11 @@ bool STB::rs485Receive() {
 }
 
 
+bool STB::checkAck() {
+    return (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0);
+}
+
+
 /**
  * @brief sends the acknowledge msg
  */
@@ -233,7 +238,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (true) {
         Serial.println(rcvdPtr);
-        if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0) { 
+        if (checkAck()) { 
             // Serial.println("Ack rcvd");
             clearBuffer();
             return true; 
