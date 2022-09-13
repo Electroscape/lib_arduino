@@ -198,8 +198,9 @@ bool STB::rs485Receive() {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     rcvd[bufferpos+1] = '\0';
+                    // rcvdPtr = &rcvd[0];
                     rcvdPtr = strtok(rcvd, "\n");
-                    dbgln(rcvdPtr);
+                    // dbgln(rcvdPtr);
                     // possible problem here 
                     return true;
                 }

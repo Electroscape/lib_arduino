@@ -101,9 +101,11 @@ void STB_MOTHER::rs485PerformPoll() {
     STB_.rs485Receive();
 
     // needs to be modified
+    /*
     if (strlen(STB_.rcvdPtr) > 0) {
-        dbgln(STB_.rcvdPtr);
+       dbgln(STB_.rcvdPtr);
     }
+    */
 }
 
 
