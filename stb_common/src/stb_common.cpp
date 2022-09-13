@@ -253,7 +253,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
 /**
  * @brief return the next line in the rcvd buffer
  * @param line 
- * @return if rcvd buffer is empty
+ * @return if rcvd buffer is empty, TODO: make sure this also picks up empty lines
  */
 bool STB::rs485RcvdNextLn() {
     rcvdPtr = strtok(NULL, "\n");

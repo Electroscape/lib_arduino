@@ -97,7 +97,7 @@ void STB_MOTHER::rs485PerformPoll() {
 
     setSlaveAsTgt(polledSlave);
    
-    STB_.rs485SendBuffer();
+    // STB_.rs485SendBuffer();
     STB_.rs485Receive();
 
     // needs to be modified
