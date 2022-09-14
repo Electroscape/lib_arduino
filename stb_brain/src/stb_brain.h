@@ -13,10 +13,11 @@ class STB_BRAIN {
         bool outgoingCmd = false;
         int slaveAddr = 0;
         char slavePollStr[8] = "!Poll9";
+        char slavePushStr[8] = "";
         // by default everything is enabled
         void begin();
         void setSlaveAddr(int no);
-        bool pollingCheck();
+        int pollingCheck();
         int flags[cmdFlags::amountOfFlags] = {0};
         int settings[SETTINGS_CNT][SETTINGS_PARAMS] = {};
         void receiveFlags();

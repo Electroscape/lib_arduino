@@ -201,7 +201,10 @@ void STB_BRAIN::setSlaveAddr(int no) {
     sprintf(noString, "%d", no);
     strcpy(slavePollStr, KeywordsList::pollStr.c_str());
     strcat(slavePollStr, noString);
+    strcpy(slavePushStr, KeywordsList::pushStr.c_str());
+    strcat(slavePushStr, noString);
     Serial.println(slavePollStr);
+    Serial.println(slavePushStr);
     delay(2000);
 }
 
