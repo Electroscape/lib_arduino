@@ -220,15 +220,12 @@ int STB_BRAIN::pollingCheck() {
     int indexPoll = 0;
     int indexPush = 0;
     unsigned long startTime = millis();
-    char in;
 
     while ((millis() - startTime) < STB_.maxPollingWait) {
 
         if (Serial.available()) {
 
-            in = Serial.read();
-
-            if (slavePollStr[indexPoll] == in) {
+            if (slavePollStr[indexPoll] == Serial.read()) {
                 indexPoll++;
                 if (indexPoll <= 5) { continue; }
                 STB_.rs485Receive();
@@ -238,7 +235,8 @@ int STB_BRAIN::pollingCheck() {
                 indexPoll = 0;
             }
 
-            if (slavePushStr[indexPush] == in) {
+            if (slavePushStr[indexPush] == Serial.read()) {
+                indexPush++;
                 if (indexPush <= 5) { continue; } 
                 STB_.rs485Receive();
                 delay(1);
@@ -256,26 +254,22 @@ int STB_BRAIN::pollingCheck() {
 
 /**
  * @brief slave checks if being polled and responds with the buffer 
- * @return if bufferOut could be send 
+ * @return true if slave is being pushed and needs to evaluate
  */
 bool STB_BRAIN::slaveRespond() {
 
-    // Serial.println(F("slaveRespond"));
+    int res = pollingCheck();
 
-    if (outgoingCmd) {
-        while (!pollingCheck()) {
-            wdt_reset();
-        }
-    } else if (!pollingCheck()) {
-        // Serial.println(F("no buffer clearnce"));
-        return false;
+    if ( res == 0 ) {
+        return true;
     }
 
-    if (STB_.rs485SendBuffer(outgoingCmd)) {
-        STB_.clearBuffer();
+    if (res == 1 && STB_.rs485SendBuffer(outgoingCmd)) {
+        // Serial.println(F("cmd send clearing"));
+        // STB_.clearBuffer();
         outgoingCmd = false;
     }
 
-    return true;
+    return false;
 }
 

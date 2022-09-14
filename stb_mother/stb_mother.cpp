@@ -137,7 +137,7 @@ void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
 
     char message[16];
     // there should not be other data left here anyways, alternativle use strCat
-    strcpy(message,  KeywordsList::pollStr.c_str());
+    strcpy(message,  KeywordsList::pushStr.c_str());
     char slaveNoStr[3];
     sprintf(slaveNoStr, "%i", slaveNo);
     strcat(message, slaveNoStr);
