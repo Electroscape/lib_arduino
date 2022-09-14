@@ -221,26 +221,32 @@ int STB_BRAIN::pollingCheck() {
     int indexPush = 0;
     unsigned long startTime = millis();
 
+    char read;
+
     while ((millis() - startTime) < STB_.maxPollingWait) {
 
         if (Serial.available()) {
+            
+            read = Serial.read();
 
-            if (slavePollStr[indexPoll] == Serial.read()) {
+            if (slavePollStr[indexPoll] == read) {
                 indexPoll++;
-                if (indexPoll <= 5) { continue; }
-                STB_.rs485Receive();
-                delay(1);
-                return 1;
+                if (indexPoll == 5) {
+                    STB_.rs485Receive();
+                    delay(1);
+                    return 1;
+                }
             } else {
                 indexPoll = 0;
             }
 
-            if (slavePushStr[indexPush] == Serial.read()) {
+            if (slavePushStr[indexPush] == read) {
                 indexPush++;
-                if (indexPush <= 5) { continue; } 
-                STB_.rs485Receive();
-                delay(1);
-                return 0;
+                if (indexPush == 5) {
+                    STB_.rs485Receive();
+                    delay(1);
+                    return 0;
+                } 
             } else {
                 indexPush = 0;
             }
