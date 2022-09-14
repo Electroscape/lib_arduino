@@ -212,33 +212,45 @@ void STB_BRAIN::setSlaveAddr(int no) {
 /**
  * @brief checks if being polled and message is complete, msg stored in rcvd
  * @param message 
- * @return if slave is being polled and can send
+ * @return -1 if slave didnt get any message 0 for incoming cmd and 1 for being polled
+ * TODO: may need to check how bool handles -1 0 and 1
  */
-bool STB_BRAIN::pollingCheck() {
+int STB_BRAIN::pollingCheck() {
 
-    int index = 0;
+    int indexPoll = 0;
+    int indexPush = 0;
     unsigned long startTime = millis();
+    char in;
 
     while ((millis() - startTime) < STB_.maxPollingWait) {
 
         if (Serial.available()) {
 
-            if (slavePollStr[index] == Serial.read()) {
-                index++;
-                if (index > 5) {
-                    if (STB_.rs485Receive()) {
-                        // slave interpretation here alternatively resend request in else loop
-                    }
-                    delay(1);
-                    return true;
-                }
+            in = Serial.read();
+
+            if (slavePollStr[indexPoll] == in) {
+                indexPoll++;
+                if (indexPoll <= 5) { continue; }
+                STB_.rs485Receive();
+                delay(1);
+                return 1;
             } else {
-                index = 0;
+                indexPoll = 0;
             }
+
+            if (slavePushStr[indexPush] == in) {
+                if (indexPush <= 5) { continue; } 
+                STB_.rs485Receive();
+                delay(1);
+                return 0;
+            } else {
+                indexPush = 0;
+            }
+
         }
         
     }
-    return false;
+    return -1;
 }
 
 
