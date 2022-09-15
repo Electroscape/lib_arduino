@@ -95,9 +95,15 @@ void STB_MOTHER::rs485PerformPoll() {
         polledSlave = 0;
     }
 
-    setSlaveAsTgt(polledSlave);
-   
-    // STB_.rs485SendBuffer();
+    char message[16];
+    // there should not be other data left here anyways, alternativle use strCat
+    strcpy(message,  KeywordsList::pollStr.c_str());
+    char slaveNoStr[3];
+    sprintf(slaveNoStr, "%i", polledSlave);
+    strcat(message, slaveNoStr);
+    
+    STB_.rs485AddToBuffer(message);
+    STB_.rs485SendBuffer();
     STB_.rs485Receive();
 
     // needs to be modified
@@ -124,6 +130,8 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
     STB_.rs485AddToBuffer(message);
     while (!STB_.rs485SendBuffer(true)) {
         wdt_reset();
+        // maybe spamming too much aint teh best idea
+        delay(5);
     }
     return true;
 };
