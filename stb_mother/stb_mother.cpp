@@ -45,15 +45,15 @@ void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
         strcat(msg, "0");
     }
 
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(msg);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(msg);
         if (STB_.rs485SendBuffer(true)) {
-            //delay(500);
             return;
         }
+        delay(5);
         wdt_reset();
-        // delay(20);
     }
 }
 
@@ -186,12 +186,14 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
         strcat(msg, noString);
     }
 
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(msg);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(msg);
         if (STB_.rs485SendBuffer(true)) {
             return;
         }
+        delay(5);
         wdt_reset();
     }
 }
@@ -203,12 +205,15 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
  * @param brainNo 
  */
 void STB_MOTHER::settingsCompleted(int brainNo) {
+
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
         if (STB_.rs485SendBuffer(true)) {
             return;
         }
+        delay(5);
         wdt_reset();
     }
 }
