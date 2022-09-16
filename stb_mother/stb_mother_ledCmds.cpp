@@ -26,10 +26,10 @@ void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int b
         strcat(msg, intStr);
         if (i<2) {strcat(msg, "_");}
     }
+    Mother.STB_.rs485AddToBuffer(msg);
 
     while (true) {
-        Mother.STB_.rs485AddToBuffer(msg);
-        if (Mother.STB_.rs485SendBuffer(true)) { break;}
+        if (Mother.STB_.rs485SendBuffer(true)) { return; }
         wdt_reset();
     }
 }
