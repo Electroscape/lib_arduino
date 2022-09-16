@@ -110,6 +110,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     setAllStripsToClr(Strips[0].Color(0,0,0));
     Serial.println(F(" successful"));
 
+    /*
     Serial.print("enabled so many leds: ");
     Serial.print(String(activeLeds[0]));
     Serial.print(" ");
@@ -118,6 +119,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     Serial.print(String(activeLeds[2]));
     Serial.print(" ");
     Serial.print(String(activeLeds[3]));
+    */
 
     return true;
 }
@@ -159,7 +161,6 @@ void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
  * @param clr 
  */
 void STB_LED::setAllStripsToClr(long int clr) {
-    Serial.println("STB_LED::setAllStripsToClr");
     for (int i=0; i<STRIPE_CNT; i++) {
         // the check if the strip is activated is done in the following fnc
         setStripToClr(i, clr);
