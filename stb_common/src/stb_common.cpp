@@ -132,7 +132,7 @@ void STB::dbgln(String message) {
  * 
 */
 void STB::clearBuffer() {
-    memset(bufferOut, 0, bufferSize);
+    bufferOut[0] = '\0';
 }
 
 
@@ -198,10 +198,8 @@ bool STB::rs485Receive() {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     rcvd[bufferpos+1] = '\0';
-                    // rcvdPtr = &rcvd[0];
-                    rcvdPtr = strtok(rcvd, "\n");
-                    // dbgln(rcvdPtr);
-                    // possible problem here 
+                    rcvdPtr = &rcvd[0];
+                    bufferSplit = false;
                     return true;
                 }
             } else {
@@ -256,7 +254,12 @@ bool STB::rs485SendBuffer(bool isCmd) {
  * @return if rcvd buffer is empty, TODO: make sure this also picks up empty lines
  */
 bool STB::rs485RcvdNextLn() {
-    rcvdPtr = strtok(NULL, "\n");
+    if (bufferSplit) {
+        rcvdPtr = strtok(NULL, "\n");
+    } else {
+        rcvdPtr = strtok(rcvd, "\n");
+        bufferSplit = true;
+    }
     return (rcvdPtr != NULL);
 }
 

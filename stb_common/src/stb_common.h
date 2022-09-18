@@ -23,6 +23,7 @@ class STB {
     unsigned long maxResponseTime = 300;
     char rcvd[bufferSize] = "";
     char bufferOut[bufferSize] = "";
+    bool bufferSplit = false;
 
     bool serialInit();
     void printInfo();
