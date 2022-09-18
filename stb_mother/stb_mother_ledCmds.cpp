@@ -17,6 +17,9 @@ constexpr int LED_CMDS::clrBlack[3];
 void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt) {
     
     char msg[32] = "";
+    Mother.STB_.clearBuffer();
+    // Mother.STB_.rs485AddToBuffer("Sync up bitch");
+    Mother.setSlaveAsTgt(brainNo);
     strcpy(msg, KeywordsList::ledKeyword.c_str());
 
     for (int i=0; i<3; i++) {
