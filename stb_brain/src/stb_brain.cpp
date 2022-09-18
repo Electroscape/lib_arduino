@@ -263,7 +263,9 @@ int STB_BRAIN::pollingCheck() {
  */
 bool STB_BRAIN::slaveRespond() {
 
+    delay(1);
     int res = pollingCheck();
+    delay(1);
 
     if ( res == 0 ) {
         return true;
