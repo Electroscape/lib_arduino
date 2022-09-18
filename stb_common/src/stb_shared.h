@@ -46,10 +46,14 @@ class KeywordsList {
     static const String endSettingKeyword;
     static const String rfidKeyword;
     static const String ledKeyword;
+    // pollStr is used to poll, get information from the brain
     static const String pollStr;
+    // pushStr is used to send messaged to the brain
+    static const String pushStr;
     static const String ACK;
+    // static const String NACK;
     static const String delimiter;
     static const String relayKeyword;
-    static const String NACK;
     static const String eof;
+    static const String oledHKeyword;
 };

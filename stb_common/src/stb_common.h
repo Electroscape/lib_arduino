@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <PCF8574.h> /* I2C Port Expander  */
 #include <Wire.h>    /* I2C library */
 #include <stb_oled.h>
 #include <stb_shared.h>
@@ -24,10 +23,11 @@ class STB {
     unsigned long maxResponseTime = 300;
     char rcvd[bufferSize] = "";
     char bufferOut[bufferSize] = "";
+    bool bufferSplit = false;
 
     bool serialInit();
     void printInfo();
-    void rs485Write();
+    void rs485Write(bool persistent=false);
     void printI2cDeviceName(int deviceNo);
     
     public:
@@ -47,7 +47,9 @@ class STB {
     
     // ideally it would be an array of which slave number are active...
     bool rs485AddToBuffer(String message);
+    void clearBuffer();
     
+    bool checkAck();
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485RcvdNextLn();

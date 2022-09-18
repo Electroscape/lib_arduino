@@ -12,8 +12,12 @@
 #include "stb_oled.h"
 
 
+/**
+ * @brief  
+ * @param oled 
+ * @param row 
+*/
 void STB_OLED::clearAbove(SSD1306AsciiWire oled, uint8_t row) {
-    // what is an inline fnc?
     uint8_t i = row;
     while (i < oled.displayRows()) {
         oled.setRow(i);

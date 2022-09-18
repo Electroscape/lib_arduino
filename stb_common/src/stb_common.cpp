@@ -128,6 +128,15 @@ void STB::dbgln(String message) {
 
 
 /**
+ * @brief  clears the outgoing buffer
+ * 
+*/
+void STB::clearBuffer() {
+    bufferOut[0] = '\0';
+}
+
+
+/**
  * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
  * @return if place was available in the bufferOut
@@ -143,21 +152,21 @@ bool STB::rs485AddToBuffer(String message) {
 
 
 /**
- * @brief 
- * todo check if message gets too long including EOF
- * @param message 
- * @return if message was written or bus clearance didnt occur
- */
-void STB::rs485Write() {
-
+ * @brief  simply writes bufferout, persistent determine if its cleared or not after the msg
+ * 
+ * @param persistent 
+*/
+void STB::rs485Write(bool persistent) {
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
     Serial.print(bufferOut);
     Serial.println(KeywordsList::eof);
+    // extra newline for readaility when monitoring, to tell different senders apart
     Serial.println();
     Serial.flush();
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
-    memset(bufferOut, 0, bufferSize);
-
+    if (!persistent) {
+        clearBuffer();
+    }
 }
 
 
@@ -189,9 +198,8 @@ bool STB::rs485Receive() {
                 eofIndex++;
                 if (eofIndex == 4) { 
                     rcvd[bufferpos+1] = '\0';
-                    rcvdPtr = strtok(rcvd, "\n");
-                    dbgln(rcvdPtr);
-                    // possible problem here 
+                    rcvdPtr = &rcvd[0];
+                    bufferSplit = false;
                     return true;
                 }
             } else {
@@ -202,6 +210,11 @@ bool STB::rs485Receive() {
     }
 
     return false;
+}
+
+
+bool STB::checkAck() {
+    return (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0);
 }
 
 
@@ -219,27 +232,34 @@ void STB::rs485SendAck() {
  * @return if ack was received, if not a cmd returns true
  */
 bool STB::rs485SendBuffer(bool isCmd) {
-    rs485Write();
+    rs485Write(isCmd);
     if (!isCmd) {return true;}
     rs485Receive();
-    while (rs485RcvdNextLn()) {
-        dbgln(rcvdPtr);
-        if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0) { 
-            dbgln("Ack rcvd");
+    while (true) {
+        Serial.println(rcvdPtr);
+        if (checkAck()) { 
+            // Serial.println("Ack rcvd");
+            clearBuffer();
             return true; 
         }
+        if (!rs485RcvdNextLn()) {return false;}
     }
-    return false;
+    
 }
 
 
 /**
  * @brief return the next line in the rcvd buffer
  * @param line 
- * @return if rcvd buffer is empty
+ * @return if rcvd buffer is empty, TODO: make sure this also picks up empty lines
  */
 bool STB::rs485RcvdNextLn() {
-    rcvdPtr = strtok(NULL, "\n");
+    if (bufferSplit) {
+        rcvdPtr = strtok(NULL, "\n");
+    } else {
+        rcvdPtr = strtok(rcvd, "\n");
+        bufferSplit = true;
+    }
     return (rcvdPtr != NULL);
 }
 
@@ -278,14 +298,14 @@ bool STB::i2cScanner() {
  */
 void STB::printI2cDeviceName (int deviceNo) {
     switch (deviceNo) {
-        case 56: dbgln("Keypad (default)"); break;  //  0x38
-        case 58: dbgln("Keypad/IO"); break;         //  0x39
-        case 57: dbgln("Keypad/IO"); break;         //  0x3A
-        case 59: dbgln("Keypad/IO"); break;         //  0x3B
-        case 60: dbgln("Oled  (default)"); break;   //  0x3C
-        case 61: dbgln("Oled"); break;              //  0x3D
-        case 63: dbgln("Relay"); break;             //  0x3F
-        default: dbgln("Unknown"); break;
+        case 56: dbgln(F("Keypad (default)")); break;  //  0x38
+        case 57: dbgln(F("Keypad/IO")); break;         //  0x3A
+        case 58: dbgln(F("Keypad/IO")); break;         //  0x39
+        case 59: dbgln(F("Keypad/IO")); break;         //  0x3B
+        case 60: dbgln(F("Oled  (default)")); break;   //  0x3C
+        case 61: dbgln(F("Oled")); break;              //  0x3D
+        case 63: dbgln(F("Relay")); break;             //  0x3F
+        default: dbgln(F("Unknown")); break;
     }
 }
 

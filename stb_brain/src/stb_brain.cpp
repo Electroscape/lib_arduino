@@ -21,6 +21,19 @@ STB_BRAIN::~STB_BRAIN() {};
 
 
 /**
+ * @brief adds given message to buffer
+ * @param message 
+ * @param containsCmd wether the message is send without control flow or send with a ack before being cleared from buffer
+ */
+void STB_BRAIN::addToBuffer(String message, bool containsCmd) {
+    if (containsCmd) {
+        outgoingCmd=true;
+    }; 
+    STB_.rs485AddToBuffer(message);
+}
+
+
+/**
  * @brief calls the STB startup fncs like STB.Begin and I2Cscanner
  */
 void STB_BRAIN::begin() {
@@ -37,7 +50,7 @@ void STB_BRAIN::begin() {
  */
 void STB_BRAIN::receiveFlags() {
 
-    STB_.dbgln("receiveflags");
+    STB_.dbgln(F("receiveflags"));
     bool sendAck = false;
 
     while (true) {
@@ -188,7 +201,10 @@ void STB_BRAIN::setSlaveAddr(int no) {
     sprintf(noString, "%d", no);
     strcpy(slavePollStr, KeywordsList::pollStr.c_str());
     strcat(slavePollStr, noString);
+    strcpy(slavePushStr, KeywordsList::pushStr.c_str());
+    strcat(slavePushStr, noString);
     Serial.println(slavePollStr);
+    Serial.println(slavePushStr);
     delay(2000);
 }
 
@@ -196,48 +212,71 @@ void STB_BRAIN::setSlaveAddr(int no) {
 /**
  * @brief checks if being polled and message is complete, msg stored in rcvd
  * @param message 
- * @return if slave is being polled and can send
+ * @return -1 if slave didnt get any message 0 for incoming cmd and 1 for being polled
+ * TODO: may need to check how bool handles -1 0 and 1
  */
-bool STB_BRAIN::pollingCheck() {
+int STB_BRAIN::pollingCheck() {
 
-    int index = 0;
+    int indexPoll = 0;
+    int indexPush = 0;
     unsigned long startTime = millis();
+
+    char read;
 
     while ((millis() - startTime) < STB_.maxPollingWait) {
 
         if (Serial.available()) {
+            
+            read = Serial.read();
 
-            if (slavePollStr[index] == Serial.read()) {
-                index++;
-                if (index > 5) {
-                    if (STB_.rs485Receive()) {
-                        // slave interpretation here alternatively resend request in else loop
-                    }
+            if (slavePollStr[indexPoll] == read) {
+                indexPoll++;
+                if (indexPoll == 5) {
                     delay(1);
-                    return true;
+                    return 1;
                 }
             } else {
-                index = 0;
+                indexPoll = 0;
             }
+
+            if (slavePushStr[indexPush] == read) {
+                indexPush++;
+                if (indexPush == 5) {
+                    STB_.rs485Receive();
+                    delay(1);
+                    return 0;
+                } 
+            } else {
+                indexPush = 0;
+            }
+
         }
         
     }
-    return false;
+    return -1;
 }
 
 
 /**
  * @brief slave checks if being polled and responds with the buffer 
- * @return if bufferOut could be send 
+ * @return true if slave is being pushed and needs to evaluate
  */
 bool STB_BRAIN::slaveRespond() {
 
-    if (!pollingCheck()) {
-        // Serial.println(F("no buffer clearnce"));
-        return false;
+    delay(1);
+    int res = pollingCheck();
+    delay(1);
+
+    if ( res == 0 ) {
+        return true;
     }
 
-    STB_.rs485SendBuffer();
-    return true;
+    if (res == 1 && STB_.rs485SendBuffer(outgoingCmd)) {
+        // Serial.println(F("cmd send clearing"));
+        // STB_.clearBuffer();
+        outgoingCmd = false;
+    }
+
+    return false;
 }
 

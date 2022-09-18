@@ -10,12 +10,14 @@ class STB_BRAIN {
         /* data */
     public:
         STB STB_;
+        bool outgoingCmd = false;
         int slaveAddr = 0;
         char slavePollStr[8] = "!Poll9";
+        char slavePushStr[8] = "";
         // by default everything is enabled
         void begin();
         void setSlaveAddr(int no);
-        bool pollingCheck();
+        int pollingCheck();
         int flags[cmdFlags::amountOfFlags] = {0};
         int settings[SETTINGS_CNT][SETTINGS_PARAMS] = {};
         void receiveFlags();
@@ -27,7 +29,7 @@ class STB_BRAIN {
         void dbgln(String message) { STB_.dbgln(message); };
         void dbg(String message) { STB_.dbg(message); };
         void oledClear() {STB_.defaultOled.clear();};
-        void addToBuffer(String message) {STB_.rs485AddToBuffer(message);};
+        void addToBuffer(String message, bool containsCmd=false);
         void sendAck() {STB_.rs485SendAck();};
         bool nextRcvdLn() {return STB_.rs485RcvdNextLn();};
 

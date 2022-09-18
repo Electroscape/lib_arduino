@@ -17,6 +17,8 @@ constexpr int LED_CMDS::clrBlack[3];
 void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt) {
     
     char msg[32] = "";
+    Mother.STB_.clearBuffer();
+    // Mother.STB_.rs485AddToBuffer("Sync up bitch");
     Mother.setSlaveAsTgt(brainNo);
     strcpy(msg, KeywordsList::ledKeyword.c_str());
 
@@ -26,11 +28,15 @@ void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int b
         strcat(msg, intStr);
         if (i<2) {strcat(msg, "_");}
     }
+    
+    Mother.STB_.clearBuffer();
+    Mother.setSlaveAsTgt(brainNo);
+    Mother.STB_.rs485AddToBuffer(msg);
 
     while (true) {
-        Mother.STB_.rs485AddToBuffer(msg);
-        if (Mother.STB_.rs485SendBuffer(true)) { break;}
+        if (Mother.STB_.rs485SendBuffer(true)) { return; }
         wdt_reset();
+        delay(5);
     }
 }
 

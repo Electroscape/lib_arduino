@@ -45,15 +45,15 @@ void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
         strcat(msg, "0");
     }
 
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(msg);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(msg);
         if (STB_.rs485SendBuffer(true)) {
-            //delay(500);
             return;
         }
+        delay(5);
         wdt_reset();
-        // delay(20);
     }
 }
 
@@ -95,29 +95,44 @@ void STB_MOTHER::rs485PerformPoll() {
         polledSlave = 0;
     }
 
-    setSlaveAsTgt(polledSlave);
-   
+    char message[16];
+    // there should not be other data left here anyways, alternativle use strCat
+    strcpy(message,  KeywordsList::pollStr.c_str());
+    char slaveNoStr[3];
+    sprintf(slaveNoStr, "%i", polledSlave);
+    strcat(message, slaveNoStr);
+    
+    STB_.rs485AddToBuffer(message);
     STB_.rs485SendBuffer();
     STB_.rs485Receive();
 
     // needs to be modified
+    /*
     if (strlen(STB_.rcvdPtr) > 0) {
-        dbgln(STB_.rcvdPtr);
+       dbgln(STB_.rcvdPtr);
     }
+    */
 }
 
 
 /**
- * @brief send the given message to the designated slave
+ * @brief send the given message to the designated slave, by default this will be the polledSlave
  * @param slaveNo 
  * @param message 
  * @return if message got acknowled
  */
-bool STB_MOTHER::sendCmdToSlave(int slaveNo, char* message) {
+bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
+    if (slaveNo < 0) {
+        slaveNo = polledSlave;
+    }
 
     setSlaveAsTgt(slaveNo);
     STB_.rs485AddToBuffer(message);
-    STB_.rs485SendBuffer();
+    while (!STB_.rs485SendBuffer(true)) {
+        wdt_reset();
+        // maybe spamming too much aint teh best idea
+        delay(5);
+    }
     return true;
 };
 
@@ -130,12 +145,11 @@ void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
 
     char message[16];
     // there should not be other data left here anyways, alternativle use strCat
-    strcpy(message,  KeywordsList::pollStr.c_str());
+    strcpy(message,  KeywordsList::pushStr.c_str());
     char slaveNoStr[3];
     sprintf(slaveNoStr, "%i", slaveNo);
     strcat(message, slaveNoStr);
-    strcat(message, "\n");
-
+    
     STB_.rs485AddToBuffer(message);
 };
 
@@ -172,12 +186,14 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
         strcat(msg, noString);
     }
 
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(msg);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(msg);
         if (STB_.rs485SendBuffer(true)) {
             return;
         }
+        delay(5);
         wdt_reset();
     }
 }
@@ -189,12 +205,15 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
  * @param brainNo 
  */
 void STB_MOTHER::settingsCompleted(int brainNo) {
+
+    setSlaveAsTgt(brainNo);
+    STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
+
     while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
         if (STB_.rs485SendBuffer(true)) {
             return;
         }
+        delay(5);
         wdt_reset();
     }
 }
