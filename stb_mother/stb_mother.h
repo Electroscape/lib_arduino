@@ -24,7 +24,6 @@ class STB_MOTHER
 
         // settings & flags
         void setFlag(int brainNo, cmdFlags cmdFlag, bool status);
-        void flagsCompleted(int brainNo);
         int rs485getPolledSlave();
         int rs485getSlaveCnt();
         void rs485PerformPoll();
@@ -34,7 +33,7 @@ class STB_MOTHER
     
         
         void sendSetting(int brainNo, settingCmds setting, int values[], int amountOfValues);
-        void settingsCompleted(int brainNo);
+        void setupComplete(int brainNo);
 
         bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
 

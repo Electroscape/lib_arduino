@@ -19,7 +19,6 @@ STB_BRAIN::STB_BRAIN() {
 };
 STB_BRAIN::~STB_BRAIN() {};
 
-
 /**
  * @brief adds given message to buffer
  * @param message 
@@ -75,7 +74,7 @@ void STB_BRAIN::receiveFlags() {
             
                 char noString[2];
 
-                for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) { 
+                for (int keywordNo=1; keywordNo<sizeof(cmdFlags); keywordNo << 1) { 
                     sprintf(noString, "%i", keywordNo);
                     if (strncmp(STB_.rcvdPtr, noString, 1) == 0) {
                         STB_.dbg("correct keyword for: ");
@@ -88,38 +87,14 @@ void STB_BRAIN::receiveFlags() {
                     }
                 }
 
-            } else if (strncmp(KeywordsList::endFlagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::endFlagKeyword.length()) == 0) {
-                
-                STB_.rs485SendAck();
-
-                /*
-                STB_.dbgln("all flags received");
-                
-                for (int keywordNo=0; keywordNo<cmdFlags::amountOfFlags; keywordNo++) {
-                    if (flags[keywordNo] > 0) {
-                        STB_.dbgln("enabled");
-                    } else {
-                        STB_.dbgln("disabled");
-                    }
-                }
-                delay(300);
-                */
-
-                return;
-            }
-
             if (sendAck) {
                 STB_.rs485SendAck();
                 sendAck = false;
             }
 
             STB_.rs485RcvdNextLn();
-        }
-
         wdt_reset();
-
     }
-    
     return;
 }
 

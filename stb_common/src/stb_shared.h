@@ -19,12 +19,11 @@
 
 
 enum cmdFlags {
-    ledFlag,
-    rfidFlag,
-    oledFlag,
-    keypadFlag,
+    ledFlag=1,
+    rfidFlag=2,
+    oledFlag=4,
+    keypadFlag=8,
     // update this everytime you add flags, only count the flags
-    amountOfFlags = 4
 };
 
 
@@ -40,8 +39,7 @@ enum settingCmds {
 class KeywordsList {
     public:
     static const String flagKeyword;
-    static const String endFlagKeyword;
-    static const String settingKeyword;
+    static const String beginKeyword;
     static const String keypadKeyword;
     static const String endSettingKeyword;
     static const String rfidKeyword;

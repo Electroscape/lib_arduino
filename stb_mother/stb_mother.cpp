@@ -23,27 +23,19 @@ void STB_MOTHER::begin() {
 
 
 /**
- * @brief sends a single flag to given brain, 
- * send flagsCompleted after all flags are send
+ * @brief sends all flags to be active in as binary, any flag not added to flags is inactive
  * @param STB 
  * @param brainNo 
- * @param cmdFlag 
+ * @param flags being a sum of multiple flags, those flags add up binary due to 2^n numbering
  * @param status 
  */
-void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
+void STB_MOTHER::setFlags(int brainNo, int flags) {
 
     char msg[16] = "";
     strcpy(msg, KeywordsList::flagKeyword.c_str());
-    char noString[3];
-    sprintf(noString, "%d", cmdFlag);
+    char noString[8];
+    sprintf(noString, "%d", flags);
     strcat(msg, noString);
-    strcat(msg, "_");
-
-    if (status) {
-        strcat(msg, "1");
-    } else {
-        strcat(msg, "0");
-    }
 
     setSlaveAsTgt(brainNo);
     STB_.rs485AddToBuffer(msg);
@@ -53,24 +45,6 @@ void STB_MOTHER::setFlag(int brainNo, cmdFlags cmdFlag, bool status) {
             return;
         }
         delay(5);
-        wdt_reset();
-    }
-}
-
-
-/**
- * @brief sends a signal to the brain that no more flags 
- * are going to be send and the setup can continue
- * @param STB 
- * @param brainNo 
- */
-void STB_MOTHER::flagsCompleted(int brainNo) {
-    while (true) {
-        setSlaveAsTgt(brainNo);
-        STB_.rs485AddToBuffer(KeywordsList::endFlagKeyword);
-        if (STB_.rs485SendBuffer(true)) {
-            return;
-        }
         wdt_reset();
     }
 }
@@ -200,14 +174,14 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
 
 
 /**
- * @brief sends a message to the brain to no longer wait for settings
+ * @brief signals brain to into the mainloop after all flags/settings have been passed
  * @param STB 
  * @param brainNo 
  */
-void STB_MOTHER::settingsCompleted(int brainNo) {
+void STB_MOTHER::setupComplete(int brainNo) {
 
     setSlaveAsTgt(brainNo);
-    STB_.rs485AddToBuffer(KeywordsList::endSettingKeyword);
+    STB_.rs485AddToBuffer(KeywordsList::beginKeyword);
 
     while (true) {
         if (STB_.rs485SendBuffer(true)) {
