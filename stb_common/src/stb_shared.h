@@ -39,9 +39,9 @@ enum settingCmds {
 class KeywordsList {
     public:
     static const String flagKeyword;
+    static const String settingKeyword;
     static const String beginKeyword;
     static const String keypadKeyword;
-    static const String endSettingKeyword;
     static const String rfidKeyword;
     static const String ledKeyword;
     // pollStr is used to poll, get information from the brain

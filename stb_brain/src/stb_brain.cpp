@@ -44,58 +44,23 @@ void STB_BRAIN::begin() {
 
 /**
  * @brief receives the flags send by the mother
- * @return true when flags have been received
- * Todo: make safety checks, cleanup FIX!
  */
-void STB_BRAIN::receiveFlags() {
+bool STB_BRAIN::receiveFlags() {
 
-    STB_.dbgln(F("receiveflags"));
-    bool sendAck = false;
+    if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.length()) != 0) {
+        return false;
+    }     
+    Serial.print("flags rcv: ");
+    Serial.println(STB_.rcvdPtr);
+    STB_.rcvdPtr += KeywordsList::flagKeyword.length();
 
-    while (true) {
+    if (!STB_.rcvdPtr) { return false; };
 
-        if (!pollingCheck()) {continue;}
-
-        while (STB_.rcvdPtr != NULL) {
-
-            STB_.dbgln("STB_.rcvdPtr is: ");
-            STB_.dbgln(STB_.rcvdPtr);
-
-            if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.length()) == 0) {
-                
-                STB_.rcvdPtr += KeywordsList::flagKeyword.length();
-                STB_.dbgln(STB_.rcvdPtr);
-
-                char line[16] = "";
-                char* linePtr = strtok(line, "_"); 
-                linePtr = strtok(NULL, "_"); 
-                STB_.dbgln(F("Flagkeyword receivd"));
-                STB_.dbgln(linePtr);
-            
-                char noString[2];
-
-                for (int keywordNo=1; keywordNo<sizeof(cmdFlags); keywordNo << 1) { 
-                    sprintf(noString, "%i", keywordNo);
-                    if (strncmp(STB_.rcvdPtr, noString, 1) == 0) {
-                        STB_.dbg("correct keyword for: ");
-                        STB_.dbgln(String(keywordNo));
-                        STB_.rcvdPtr += 2;
-                        sprintf(noString, "%i", 1);
-                        flags[keywordNo] = (strncmp(STB_.rcvdPtr, noString, 1) == 0);
-                        sendAck = true;
-                        break;
-                    }
-                }
-
-            if (sendAck) {
-                STB_.rs485SendAck();
-                sendAck = false;
-            }
-
-            STB_.rs485RcvdNextLn();
-        wdt_reset();
-    }
-    return;
+    STB_.rs485SendAck();
+    flags = atoi(STB_.rcvdPtr);
+    Serial.print("flags are: ");
+    Serial.println(flags);
+    return true;
 }
 
 
@@ -104,64 +69,48 @@ void STB_BRAIN::receiveFlags() {
  * todo define how many settings can be saved, 
  * how many values each settings can have
  */
-void STB_BRAIN::receiveSettings() {
+bool STB_BRAIN::receiveSetting() {
+
+    /*
 
     bool sendAck = false;
     char line[12] = "";
     char *linePtr;
     int row = 0, col = 0;
-    STB_.dbg(F("receiveing Settings..."));
 
-    while (true) {
-
-        if (!pollingCheck()) {continue;}
-        
-        while (STB_.rcvdPtr != NULL) {
-            
-            if (strncmp(KeywordsList::endSettingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::endSettingKeyword.length()) == 0) {  
-                STB_.rs485SendAck();
-                /*
-                Serial.print("row is ");
-                Serial.println(String(row));
-                */
-                STB_.dbg(F("Ok!"));
-                return;         
-            }
-
-            if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::settingKeyword.length()) == 0) {
-
-                sendAck = true;
-                // discard if the rows are used up, we dont want to write out of index
-                if (row >= SETTINGS_CNT) {
-                    STB_.dbgln(F("overflow!"));
-                    continue;
-                }
-
-                // doesnt have a trailing "_" hence a +1 to get the value
-                STB_.rcvdPtr += KeywordsList::settingKeyword.length() + 1;
-
-                strcpy(line, STB_.rcvdPtr);
-                linePtr = strtok(line, "_"); 
-                col = 0;
-                
-                while (linePtr != NULL && col < SETTINGS_PARAMS) {
-                    settings[row][col] = atoi(linePtr);
-                    linePtr = strtok(NULL, "_");
-                    col++;
-                }
-                row++;
-            }
-
-            if (sendAck) {
-                STB_.rs485SendAck();
-                sendAck = false;
-            }
-
-            STB_.rs485RcvdNextLn();
-        }
-
+    if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::settingKeyword.length()) != 0) {
+        return;
     }
 
+    // discard if the rows are used up, we dont want to write out of index
+    if (row >= SETTINGS_CNT) {
+        STB_.dbgln(F("overflow!"));
+        continue;
+    }
+
+        // doesnt have a trailing "_" hence a +1 to get the value
+        STB_.rcvdPtr += KeywordsList::settingKeyword.length() + 1;
+
+        strcpy(line, STB_.rcvdPtr);
+        linePtr = strtok(line, "_"); 
+        col = 0;
+        
+        while (linePtr != NULL && col < SETTINGS_PARAMS) {
+            settings[row][col] = atoi(linePtr);
+            linePtr = strtok(NULL, "_");
+            col++;
+        }
+        row++;
+    }
+
+    if (sendAck) {
+        STB_.rs485SendAck();
+        sendAck = false;
+    }
+
+    STB_.rs485RcvdNextLn();
+    */
+    return true;
 }
 
 

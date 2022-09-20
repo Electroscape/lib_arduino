@@ -3,6 +3,7 @@
 
 
 const String  KeywordsList::flagKeyword = "!Flag_";
+const String  KeywordsList::settingKeyword = "!Sett";
 const String  KeywordsList::beginKeyword = "!Begin";
 const String  KeywordsList::rfidKeyword = "!RFID_";
 const String  KeywordsList::ledKeyword = "!LED_";

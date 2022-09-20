@@ -23,7 +23,7 @@ class STB_MOTHER
         void begin();
 
         // settings & flags
-        void setFlag(int brainNo, cmdFlags cmdFlag, bool status);
+        void setFlags(int brainNo, int flags);
         int rs485getPolledSlave();
         int rs485getSlaveCnt();
         void rs485PerformPoll();
