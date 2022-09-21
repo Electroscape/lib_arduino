@@ -35,7 +35,7 @@ class STB_MOTHER
         void sendSetting(int brainNo, settingCmds setting, int values[], int amountOfValues);
         void setupComplete(int brainNo);
 
-        bool relayInit(PCF8574 &relay, int pins[], int initvals[], int amount=8);
+        bool relayInit(int pins[], int initvals[], int amount=8);
 
         // linking functions to shorten code
         void dbgln(String message) { STB_.dbgln(message); };

@@ -201,18 +201,18 @@ void STB_MOTHER::setupComplete(int brainNo) {
  * @param amount (int) amount of relays to be initialized
  * @return bool
  */
-bool STB_MOTHER::relayInit(PCF8574 &relay, int pins[], int initvals[], int amount) {
+bool STB_MOTHER::relayInit(int pins[], int initvals[], int amount) {
     
     String relayString = String(RELAY_I2C_ADD, HEX);
     relayString.toUpperCase();
     STB_OLED::writeHeadline(&STB_.defaultOled, "Relay " + relayString);
-    relay.begin(RELAY_I2C_ADD);
+    motherRelay.begin(RELAY_I2C_ADD);
     String pinStr = ""; 
     String valueStr = "";
 
     for (int i = 0; i < amount; i++) {
-        relay.pinMode(pins[i], OUTPUT);
-        relay.digitalWrite(pins[i], initvals[i]);
+        motherRelay.pinMode(pins[i], OUTPUT);
+        motherRelay.digitalWrite(pins[i], initvals[i]);
         pinStr += String(pins[i]) + " ";
         valueStr += String(initvals[i]) + " ";
         // dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
