@@ -8,6 +8,15 @@ constexpr int LED_CMDS::clrBlack[3];
 
 
 /**
+ * @brief  checks for the LED keywords in buffer, moves past the delimiter
+ * @param Mother 
+ * @return if led keyword was mentioned
+*/
+bool LED_CMDS::hasKeyword(STB_MOTHER &Mother) {
+
+}
+
+/**
  * @brief sets the given brain to the given clr
  * @param STB_MOTHER 
  * @param brainNo 
@@ -40,6 +49,13 @@ void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int b
     }
 }
 
+
+void LED_CMDS::setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], int brainNo) {
+    if (brainNo < 0) {
+        brainNo = Mother.rs485getPolledSlave();
+    }
+    
+}
 
 /**
  * @brief switches off the LEDs on the given brain
