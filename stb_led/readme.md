@@ -1,1 +1,1 @@
-helper library to simplyfy and standartize usage of the Adafruit neopixel library across projects
+helper library to simplyfy and standartize usage of the Adafruit neopixel library across projects, this library is to be used on the Brain

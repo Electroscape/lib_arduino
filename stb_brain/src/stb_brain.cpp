@@ -155,7 +155,7 @@ int STB_BRAIN::pollingCheck() {
 
             if (slavePollStr[indexPoll] == read) {
                 indexPoll++;
-                if (indexPoll == 5) {
+                if (indexPoll == 6) {
                     delay(1);
                     return 1;
                 }
@@ -165,7 +165,7 @@ int STB_BRAIN::pollingCheck() {
 
             if (slavePushStr[indexPush] == read) {
                 indexPush++;
-                if (indexPush == 5) {
+                if (indexPush == 6) {
                     STB_.rs485Receive();
                     delay(1);
                     return 0;

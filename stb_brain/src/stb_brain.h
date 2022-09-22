@@ -12,8 +12,8 @@ class STB_BRAIN {
         STB STB_;
         bool outgoingCmd = false;
         int slaveAddr = 0;
-        char slavePollStr[8] = "";
-        char slavePushStr[8] = "";
+        char slavePollStr[7];
+        char slavePushStr[7];
         // by default everything is enabled
         void begin();
         void setSlaveAddr(int no);
