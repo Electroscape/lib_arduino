@@ -144,7 +144,7 @@ void STB_LED::setStripToClr(int stripNo, long int clr) {
  * @param neopixel 
  * @param clrs 
  */
-void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
+void STB_LED::setStripToClrs(int stripNo, uint32_t clrs[], int size) {
     for (int ledNr=0; ledNr<size; ledNr++) {
         Strips[stripNo].setPixelColor(ledNr, clrs[ledNr]);
         Strips[stripNo].show();
