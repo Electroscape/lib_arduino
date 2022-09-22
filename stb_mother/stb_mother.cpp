@@ -96,6 +96,7 @@ void STB_MOTHER::rs485PerformPoll() {
  * @return if message got acknowled
  */
 bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
+    delay(1);
     if (slaveNo < 0) {
         slaveNo = polledSlave;
     }

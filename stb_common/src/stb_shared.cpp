@@ -1,7 +1,6 @@
 #include <stb_shared.h>
 
 
-
 const String  KeywordsList::flagKeyword = "!Flag_";
 const String  KeywordsList::settingKeyword = "!Sett";
 const String  KeywordsList::beginKeyword = "!Begin";
