@@ -30,7 +30,7 @@ constexpr int LED_CMDS::clrBlack[3];
 void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int ledCnt) {
     char msg[32] = "";
     char noString[3] = "";
-    sprintf(noString, "%i", ledCmds::setPixel);
+    sprintf(noString, "%i", ledCmds::setAll);
     
     strcpy(msg, KeywordsList::ledKeyword.c_str());
     strcat(msg, noString);
@@ -62,9 +62,12 @@ void LED_CMDS::setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], in
 
     char msg[32] = "";
     char noString[3] = "";
-    sprintf(noString, "%i", ledCmds::setAll);
+    sprintf(noString, "%i", ledCmds::setPixel);
 
     strcpy(msg, KeywordsList::ledKeyword.c_str());
+    strcat(msg, noString);
+    strcat(msg, KeywordsList::delimiter.c_str());
+    sprintf(noString, "%i", pixel);
     strcat(msg, noString);
     strcat(msg, KeywordsList::delimiter.c_str());
 

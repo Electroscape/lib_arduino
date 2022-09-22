@@ -4,17 +4,14 @@
  * @brief 
  * @version 0.1
  * @date 2022-04-01
- * 
+ * TODO: 
+ * - only works for single digits of pixels, evaluation fnc need reevaluation
+ * - passing of clr order and freq to enableStrips 
  */
+
 
 #include "stb_led.h"
 
-
-/*
-    Todo:
-    cleanups
-    passing of clr order and freq to enableStrips 
-*/
 
 
 STB_LED::STB_LED() {};
@@ -23,8 +20,8 @@ STB_LED::STB_LED() {};
 void STB_LED::enableStrip0() {
     delay(10);
     Serial.println("STB_LED::enableStrip0");
-    uint32_t clrOrder=NEO_BRG; 
-    int clkSpeed=NEO_KHZ800;
+    // uint32_t clrOrder=NEO_BRG; 
+    // int clkSpeed=NEO_KHZ800;
     int i = 0;
     Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
@@ -35,8 +32,8 @@ void STB_LED::enableStrip0() {
 void STB_LED::enableStrip1() {
     delay(10);
     Serial.println("STB_LED::enableStrip1");
-    uint32_t clrOrder=NEO_BRG; 
-    int clkSpeed=NEO_KHZ800;
+    // uint32_t clrOrder=NEO_BRG; 
+    // int clkSpeed=NEO_KHZ800;
     int i = 1;
     Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
@@ -47,8 +44,8 @@ void STB_LED::enableStrip1() {
 void STB_LED::enableStrip2() {
     delay(10);
     Serial.println("STB_LED::enableStrip2");
-    uint32_t clrOrder=NEO_BRG; 
-    int clkSpeed=NEO_KHZ800;
+    // uint32_t clrOrder=NEO_BRG; 
+    // int clkSpeed=NEO_KHZ800;
     int i = 2;
     Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
@@ -59,8 +56,8 @@ void STB_LED::enableStrip2() {
 void STB_LED::enableStrip3() {
     delay(10);
     Serial.println("STB_LED::enableStrip3");
-    uint32_t clrOrder=NEO_BRG; 
-    int clkSpeed=NEO_KHZ800;
+    // uint32_t clrOrder=NEO_BRG; 
+    // int clkSpeed=NEO_KHZ800;
     int i = 3;
     Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
     Strips[i].begin();
@@ -166,3 +163,74 @@ void STB_LED::setAllStripsToClr(long int clr) {
         setStripToClr(i, clr);
     }
 }
+
+/**
+ * @brief  
+ * @param Brain 
+ * @return if cmd was found and evaluated
+*/
+bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
+    if (strncmp(KeywordsList::ledKeyword.c_str(), Brain.STB_.rcvdPtr, KeywordsList::ledKeyword.length()) != 0) {
+        return false;
+    }
+    Serial.println("received ledKeyword");
+    Brain.STB_.rcvdPtr += KeywordsList::ledKeyword.length();
+
+    Serial.println(Brain.STB_.rcvdPtr);
+    int cmdNo;
+    if (sscanf(Brain.STB_.rcvdPtr, "%d", &cmdNo) <= 0) { return false; } 
+    Brain.STB_.rcvdPtr += 2;
+    long int setClr;
+    int pixelInt; 
+    uint16_t pixelNo;
+    // uint32_t currentClr;
+   
+    
+    Serial.println(cmdNo);
+    switch (cmdNo) {
+        case setAll:
+            if (!getClrsFromBuffer(Brain, setClr)) { return false; }
+            setAllStripsToClr(setClr);
+        break;
+        case setPixel:
+
+            if (sscanf(Brain.STB_.rcvdPtr, "%d", &pixelInt) <= 0) { return false; } 
+            Brain.STB_.rcvdPtr += 2; // only works for single digits of pixels
+            if (!getClrsFromBuffer(Brain, setClr)) { return false; }
+
+            pixelNo = (uint16_t) pixelInt;
+            // && i< pixelNo
+            for (uint16_t i=0; (i<activeLeds[0]); i++) {
+                if (pixelNo == i) {
+                    Strips[0].setPixelColor(pixelNo, setClr);
+                } else {
+                    Strips[0].setPixelColor(i, Strips[0].Color(127,0,0));
+                }
+            }
+            Strips[0].show();
+        break;
+        default: return false;
+    }
+    // how fast is evaluation and setting?
+    Brain.sendAck();
+    return true;
+}
+
+
+/**
+ * @brief reads clr data from buffer and writes as clr
+ * @param Brain 
+ * @param clrs 
+*/
+bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
+    int clrs[3];
+
+    if (sscanf(Brain.STB_.rcvdPtr,"%d_%d_%d", &clrs[0], &clrs[1], &clrs[2]) != 3) {
+        Serial.println("did not get value from");
+
+        return false;
+    }
+    setClr = Strips[0].Color(clrs[0],clrs[2],clrs[1]);
+    return true;
+}
+
