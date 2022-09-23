@@ -32,4 +32,5 @@ class STB_LED {
     void setStripToClrs(int stripNo, uint32_t clrs[], int size);
     void setAllStripsToClr(long int clr);
     bool evaluateCmds(STB_BRAIN &Brain);
+    void setLEDWalter(int a);
 };
