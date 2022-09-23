@@ -17,6 +17,7 @@ class STB {
 
     private:
     long rs485timeout = 10;
+    unsigned int writedelay = 50;
     // start at -1 to start with slave 0 since we do the increment in the beginning
     // maybe change this name to keep things less confusing sine mother uses slaveStr
     // time the master waits for  the slave to respond
@@ -32,7 +33,7 @@ class STB {
     
     public:
     bool rs485Receive();
-    unsigned long maxPollingWait = 300;
+    unsigned long maxPollingWait = 30;
     SSD1306AsciiWire defaultOled;
     
     char* rcvdPtr;

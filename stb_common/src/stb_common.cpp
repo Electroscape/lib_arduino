@@ -158,11 +158,13 @@ bool STB::rs485AddToBuffer(String message) {
 */
 void STB::rs485Write(bool persistent) {
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    delayMicroseconds(writedelay);
     Serial.print(bufferOut);
     Serial.println(KeywordsList::eof);
     // extra newline for readaility when monitoring, to tell different senders apart
     Serial.println();
     Serial.flush();
+    delayMicroseconds(writedelay);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     if (!persistent) {
         clearBuffer();
