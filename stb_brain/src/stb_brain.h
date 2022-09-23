@@ -20,8 +20,10 @@ class STB_BRAIN {
         int pollingCheck();
         int flags = 0;
         int settings[SETTINGS_CNT][SETTINGS_PARAMS] = {};
+        int settingsRow = 0;
         bool receiveFlags();
         bool receiveSetting();
+        void receiveSetup();
         bool slaveRespond();
         void softwareReset() {STB_.softwareReset(); };
         
