@@ -37,7 +37,7 @@ void STB::begin() {
 bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
-    Serial.begin(115200);
+    Serial.begin(57600); // 115200 might be too high
     Serial.setTimeout(rs485timeout);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
