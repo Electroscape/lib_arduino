@@ -19,7 +19,6 @@ STB_LED::STB_LED() {};
 
 void STB_LED::enableStrip0() {
     delay(10);
-    Serial.println("STB_LED::enableStrip0");
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 0;
@@ -31,7 +30,6 @@ void STB_LED::enableStrip0() {
 
 void STB_LED::enableStrip1() {
     delay(10);
-    Serial.println("STB_LED::enableStrip1");
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 1;
@@ -43,7 +41,6 @@ void STB_LED::enableStrip1() {
 
 void STB_LED::enableStrip2() {
     delay(10);
-    Serial.println("STB_LED::enableStrip2");
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 2;
@@ -55,7 +52,6 @@ void STB_LED::enableStrip2() {
 
 void STB_LED::enableStrip3() {
     delay(10);
-    Serial.println("STB_LED::enableStrip3");
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 3;
@@ -107,17 +103,6 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     setAllStripsToClr(Strips[0].Color(0,0,0));
     Serial.println(F(" successful"));
 
-    /*
-    Serial.print("enabled so many leds: ");
-    Serial.print(String(activeLeds[0]));
-    Serial.print(" ");
-    Serial.print(String(activeLeds[1]));
-    Serial.print(" ");
-    Serial.print(String(activeLeds[2]));
-    Serial.print(" ");
-    Serial.print(String(activeLeds[3]));
-    */
-
     return true;
 }
 
@@ -127,10 +112,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
  * @param clr 
  */
 void STB_LED::setStripToClr(int stripNo, long int clr) {
-    Serial.println(String(activeLeds[stripNo]));
     if ((int) activeLeds[stripNo] <= 0) { return; }
-    Serial.print("setting stripNo ");
-    Serial.println(String(stripNo));
     for (uint16_t ledNr=0; ledNr<activeLeds[stripNo]; ledNr++) {
         Strips[stripNo].setPixelColor(ledNr, clr);
     }
@@ -173,10 +155,10 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     if (strncmp(KeywordsList::ledKeyword.c_str(), Brain.STB_.rcvdPtr, KeywordsList::ledKeyword.length()) != 0) {
         return false;
     }
-    Serial.println("received ledKeyword");
+    // Serial.println("received ledKeyword");
     Brain.STB_.rcvdPtr += KeywordsList::ledKeyword.length();
 
-    Serial.println(Brain.STB_.rcvdPtr);
+    // Serial.println(Brain.STB_.rcvdPtr);
     int cmdNo;
     if (sscanf(Brain.STB_.rcvdPtr, "%d", &cmdNo) <= 0) { return false; } 
     Brain.STB_.rcvdPtr += 2;
@@ -186,7 +168,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     // uint32_t currentClr;
    
     
-    Serial.println(cmdNo);
+    // Serial.println(cmdNo);
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
@@ -226,8 +208,7 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
     int clrs[3];
 
     if (sscanf(Brain.STB_.rcvdPtr,"%d_%d_%d", &clrs[0], &clrs[1], &clrs[2]) != 3) {
-        Serial.println("did not get value from");
-
+        // Serial.println("did not get value from");
         return false;
     }
     setClr = Strips[0].Color(clrs[0],clrs[2],clrs[1]);
