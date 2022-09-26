@@ -8,6 +8,7 @@
 #ifndef RELAY_I2C_ADD
     #define RELAY_I2C_ADD 0x3F
 #endif 
+#define RESET_I2C_ADD 0x3D
 
 class STB_MOTHER
 {
