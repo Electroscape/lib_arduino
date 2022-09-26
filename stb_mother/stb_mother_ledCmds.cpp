@@ -17,6 +17,8 @@ constexpr int LED_CMDS::clrWhite[3];
 constexpr int LED_CMDS::clrRed[3];
 constexpr int LED_CMDS::clrGreen[3];
 constexpr int LED_CMDS::clrBlack[3];
+constexpr int LED_CMDS::clrBlue[3];
+constexpr int LED_CMDS::clrYellow[3];
 
 
 
