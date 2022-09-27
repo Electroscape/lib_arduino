@@ -18,7 +18,7 @@ class LED_CMDS {
     /*could possibly just pass the Mother class once? 
     brainNo as optional param? otherwise take the currently polled slave
     */
-    static void setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt=-1);
+    static void setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt=-1);
+    static void setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo);
     static void turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt=-1);
-    static void setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], int brightness=100, int brainNo=-1);
 };

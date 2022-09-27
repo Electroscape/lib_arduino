@@ -163,8 +163,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     if (sscanf(Brain.STB_.rcvdPtr, "%d", &cmdNo) <= 0) { return false; } 
     Brain.STB_.rcvdPtr += 2;
     long int setClr;
-    int pixelInt; 
-    uint16_t pixelNo;
+    int value; 
     // uint32_t currentClr;
    
     
@@ -174,22 +173,12 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             setAllStripsToClr(setClr);
         break;
-        case setPixel:
-
-            if (sscanf(Brain.STB_.rcvdPtr, "%d", &pixelInt) <= 0) { return false; } 
+        case ledCmds::setStripToClr:
+            if (sscanf(Brain.STB_.rcvdPtr, "%d", &value) <= 0) { return false; } 
             Brain.STB_.rcvdPtr += 2; // only works for single digits of pixels
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
-
-            pixelNo = (uint16_t) pixelInt;
             // && i< pixelNo
-            for (uint16_t i=0; (i<activeLeds[0]); i++) {
-                if (pixelNo == i) {
-                    Strips[0].setPixelColor(pixelNo, setClr);
-                } else {
-                    Strips[0].setPixelColor(i, Strips[0].Color(127,0,0));
-                }
-            }
-            Strips[0].show();
+            setStripToClr(value, setClr);
         break;
         default: return false;
     }

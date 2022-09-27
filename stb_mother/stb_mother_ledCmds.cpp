@@ -29,7 +29,7 @@ constexpr int LED_CMDS::clrYellow[3];
  * @param clr 
  * @param ledCnt default is all Leds
  */
-void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int ledCnt) {
+void LED_CMDS::setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int ledCnt) {
     char msg[32] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setAll);
@@ -57,19 +57,15 @@ void LED_CMDS::setToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int b
  * @param brightness 
  * @param brainNo 
 */
-void LED_CMDS::setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], int brightness, int brainNo) {
-    if (brainNo < 0) {
-        brainNo = Mother.rs485getPolledSlave();
-    }
-
+void LED_CMDS::setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo) {
     char msg[32] = "";
     char noString[3] = "";
-    sprintf(noString, "%i", ledCmds::setPixel);
+    sprintf(noString, "%i", ledCmds::setStripToClr);
 
     strcpy(msg, KeywordsList::ledKeyword.c_str());
     strcat(msg, noString);
     strcat(msg, KeywordsList::delimiter.c_str());
-    sprintf(noString, "%i", pixel);
+    sprintf(noString, "%i", stripNo);
     strcat(msg, noString);
     strcat(msg, KeywordsList::delimiter.c_str());
 
@@ -85,11 +81,11 @@ void LED_CMDS::setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], in
 }
 
 /**
- * @brief switches off the LEDs on the given brain
+ * @brief switches off all LEDStrips on the given brain
  * @param STB_MOTHER
  * @param brainNo 
  * @param ledCnt default is all Leds
  */
 void LED_CMDS::turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt) {
-    setToClr(Mother, brainNo, clrBlack, int(100), ledCnt);
+    setAllStripsToClr(Mother, brainNo, clrBlack, int(100), ledCnt);
 }
