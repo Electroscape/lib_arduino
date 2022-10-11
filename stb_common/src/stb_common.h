@@ -21,7 +21,7 @@ class STB {
     // start at -1 to start with slave 0 since we do the increment in the beginning
     // maybe change this name to keep things less confusing sine mother uses slaveStr
     // time the master waits for  the slave to respond
-    unsigned long maxResponseTime = 300;
+    unsigned long maxResponseTime = 30;
     char rcvd[bufferSize] = "";
     char bufferOut[bufferSize] = "";
     bool bufferSplit = false;
@@ -33,7 +33,7 @@ class STB {
     
     public:
     bool rs485Receive();
-    unsigned long maxPollingWait = 30;
+    unsigned long maxPollingWait = 20;
     SSD1306AsciiWire defaultOled;
     
     char* rcvdPtr;
