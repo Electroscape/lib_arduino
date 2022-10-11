@@ -17,45 +17,45 @@
 STB_LED::STB_LED() {};
 
 
-void STB_LED::enableStrip0() {
+void STB_LED::enableStrip0(uint32_t clrOrder) {
     delay(10);
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 0;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (clrOrder + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
 
 
-void STB_LED::enableStrip1() {
+void STB_LED::enableStrip1(uint32_t clrOrder) {
     delay(10);
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 1;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (clrOrder + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
 
 
-void STB_LED::enableStrip2() {
+void STB_LED::enableStrip2(uint32_t clrOrder) {
     delay(10);
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 2;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (clrOrder + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }
 
 
-void STB_LED::enableStrip3() {
+void STB_LED::enableStrip3(uint32_t clrOrder) {
     delay(10);
     // uint32_t clrOrder=NEO_BRG; 
     // int clkSpeed=NEO_KHZ800;
     int i = 3;
-    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (NEO_BRG + NEO_KHZ800));
+    Strips[i] = Adafruit_NeoPixel((uint16_t) LED_MAX_CNT, ledPins[i], (clrOrder + NEO_KHZ800));
     Strips[i].begin();
     delay(10);
 }

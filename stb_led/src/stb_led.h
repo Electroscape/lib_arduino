@@ -17,10 +17,10 @@ class STB_LED {
 
     bool getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr);
 
-    void enableStrip0();
-    void enableStrip1();
-    void enableStrip2();
-    void enableStrip3();
+    void enableStrip0(uint32_t clrOrder=NEO_BRG);
+    void enableStrip1(uint32_t clrOrder=NEO_BRG);
+    void enableStrip2(uint32_t clrOrder=NEO_BRG);
+    void enableStrip3(uint32_t clrOrder=NEO_BRG);
 
 
     public:
