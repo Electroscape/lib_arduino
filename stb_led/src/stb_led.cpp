@@ -6,7 +6,6 @@
  * @date 2022-04-01
  * TODO: 
  * - only works for single digits of pixels, evaluation fnc need reevaluation
- * - passing of clr order and freq to enableStrips 
  */
 
 
@@ -16,7 +15,7 @@
 
 STB_LED::STB_LED() {};
 
-
+// due to compile time requirements from some values
 void STB_LED::enableStrip0(uint32_t clrOrder) {
     delay(10);
     // uint32_t clrOrder=NEO_BRG; 
@@ -106,6 +105,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     return true;
 }
 
+
 /**
  * @brief 
  * @param stripNo index from 0-3
@@ -133,6 +133,8 @@ void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
     }
     delay(10);
 }
+
+
 /**
  * @brief 
  * 
@@ -145,6 +147,7 @@ void STB_LED::setAllStripsToClr(long int clr) {
         setStripToClr(i, clr);
     }
 }
+
 
 /**
  * @brief  
@@ -189,7 +192,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
 
 
 /**
- * @brief reads clr data from buffer and writes as clr
+ * @brief reads clr data from buffer and writes information into setClr
  * @param Brain 
  * @param clrs 
 */
