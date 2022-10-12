@@ -30,6 +30,10 @@ enum cmdFlags {
 enum settingCmds {
     ledCount,
     rfidAmount,
+    /* 
+    Dots -> NEO_RGB, 
+    5V WS2812B strips -> NEO_GRB
+    */
     ledClrOrder,
     // to iterate over settings
     amountOfSettings
