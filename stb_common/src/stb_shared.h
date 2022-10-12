@@ -30,8 +30,9 @@ enum cmdFlags {
 enum settingCmds {
     ledCount,
     rfidAmount,
-    // update this everytime you add flags, only count the cmds
-    amountOfSettings = 2
+    ledClrOrder,
+    // to iterate over settings
+    amountOfSettings
 };
 
 
