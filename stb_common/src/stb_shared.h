@@ -51,7 +51,6 @@ class KeywordsList {
     static const String ACK;
     // static const String NACK;
     static const String delimiter;
-    static const String relayKeyword;
     static const String eof;
     static const String oledHKeyword;
 };
