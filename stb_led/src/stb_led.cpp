@@ -117,6 +117,7 @@ void STB_LED::setStripToClr(int stripNo, long int clr) {
         Strips[stripNo].setPixelColor(ledNr, clr);
     }
     Strips[stripNo].show();
+    delay(1);
 }
 
 
@@ -185,8 +186,6 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
         break;
         default: return false;
     }
-    // how fast is evaluation and setting?
-    Brain.sendAck();
     return true;
 }
 
@@ -204,6 +203,8 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
         return false;
     }
     setClr = Strips[0].Color(clrs[0],clrs[2],clrs[1]);
+    // everything needed has been read, hence answering the mother can be done here already
+    Brain.sendAck();
     return true;
 }
 
