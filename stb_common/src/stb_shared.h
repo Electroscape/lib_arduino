@@ -15,7 +15,7 @@
 // defines the passing of settings, particularily how many settings the brain receive and store
 #define SETTINGS_CNT 8
 // col in the settings matrix, 
-#define SETTINGS_PARAMS 3
+#define SETTINGS_PARAMS 5
 
 
 enum cmdFlags {

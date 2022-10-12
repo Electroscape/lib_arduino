@@ -77,6 +77,7 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
     Serial.print(F("\n\nLED init ..."));
  
     int row = 0;
+    int clrOrdersRow = -1;
     while (row < SETTINGS_CNT && settings[row][0] >= 0) {
         if (settings[row][0] == settingCmds::ledCount) {
             int stripeNo = settings[row][1];
@@ -85,18 +86,24 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
             // if (LED_MAX_CNT < settings[row][2]) { continue; }
 
             activeLeds[stripeNo] = (uint16_t) settings[row][2];
+        } else if (settings[row][0] == settingCmds::ledClrOrder) {
+           clrOrdersRow = row;
         }
         row++;
     }
 
+    if (clrOrdersRow < 0) {
+        Serial.println(F("missing clr Order"));
+        return false;
+    }
 
     for (int i=0; i<STRIPE_CNT; i++) {
         if (activeLeds[i] <= 0) { continue; }
         switch (i) {
-            case 0: enableStrip0(); break;
-            case 1: enableStrip1(); break;
-            case 2: enableStrip2(); break;
-            case 3: enableStrip3(); break;
+            case 0: enableStrip0((uint32_t) settings[clrOrdersRow][i+1]); break;
+            case 1: enableStrip1((uint32_t) settings[clrOrdersRow][i+1]); break;
+            case 2: enableStrip2((uint32_t) settings[clrOrdersRow][i+1]); break;
+            case 3: enableStrip3((uint32_t) settings[clrOrdersRow][i+1]); break;
         }
     }
     setAllStripsToClr(Strips[0].Color(0,0,0));
