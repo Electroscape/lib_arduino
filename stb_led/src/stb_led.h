@@ -28,8 +28,8 @@ class STB_LED {
     STB_LED();
 
     bool ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder=NEO_RGB, int clkSpeed=NEO_KHZ800);
-    void setStripToClr(int stripNo, long int clr);
-    void setStripToClrs(int stripNo, uint32_t clrs[], int size);
+    void setStripToClr(int stripNo, long int clr, bool show=true);
+    // void setStripToClrs(int stripNo, uint32_t clrs[], int size);
     void setAllStripsToClr(long int clr);
     bool evaluateCmds(STB_BRAIN &Brain);
 };

@@ -118,12 +118,12 @@ bool STB_LED::ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrO
  * @param stripNo index from 0-3
  * @param clr 
  */
-void STB_LED::setStripToClr(int stripNo, long int clr) {
+void STB_LED::setStripToClr(int stripNo, long int clr, bool show) {
     if ((int) activeLeds[stripNo] <= 0) { return; }
     for (uint16_t ledNr=0; ledNr<activeLeds[stripNo]; ledNr++) {
         Strips[stripNo].setPixelColor(ledNr, clr);
     }
-    Strips[stripNo].show();
+    if (show) {Strips[stripNo].show();}
     delay(1);
 }
 
@@ -133,7 +133,6 @@ void STB_LED::setStripToClr(int stripNo, long int clr) {
  * 
  * @param neopixel 
  * @param clrs 
- */
 void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
     for (int ledNr=0; ledNr<size; ledNr++) {
         Strips[stripNo].setPixelColor(ledNr, clrs[ledNr]);
@@ -141,6 +140,7 @@ void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
     }
     delay(10);
 }
+*/
 
 
 /**
@@ -152,7 +152,10 @@ void STB_LED::setStripToClrs(int stripNo, uint32_t  clrs[], int size) {
 void STB_LED::setAllStripsToClr(long int clr) {
     for (int i=0; i<STRIPE_CNT; i++) {
         // the check if the strip is activated is done in the following fnc
-        setStripToClr(i, clr);
+        setStripToClr(i, clr, false);
+    }
+    for (int i=0; i<STRIPE_CNT; i++) {
+        Strips[i].show();
     }
 }
 
