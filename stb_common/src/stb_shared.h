@@ -15,7 +15,7 @@
 // defines the passing of settings, particularily how many settings the brain receive and store
 #define SETTINGS_CNT 8
 // col in the settings matrix, 
-#define SETTINGS_PARAMS 3
+#define SETTINGS_PARAMS 5
 
 
 enum cmdFlags {
@@ -30,8 +30,13 @@ enum cmdFlags {
 enum settingCmds {
     ledCount,
     rfidAmount,
-    // update this everytime you add flags, only count the cmds
-    amountOfSettings = 2
+    /* 
+    Dots -> NEO_RGB, 
+    5V WS2812B strips -> NEO_GRB
+    */
+    ledClrOrder,
+    // to iterate over settings
+    amountOfSettings
 };
 
 
