@@ -50,7 +50,7 @@ class STB {
     bool rs485AddToBuffer(String message);
     void clearBuffer();
     
-    bool checkAck();
+    int checkAck();
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485RcvdNextLn();

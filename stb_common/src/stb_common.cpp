@@ -215,16 +215,27 @@ bool STB::rs485Receive() {
 }
 
 
-bool STB::checkAck() {
-    return (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) == 0);
+int STB::checkAck() {
+    if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) != 0) { return -1; }
+    int ackNr;
+    if (sscanf(Brain.STB_.rcvdPtr,"%d", ackNr) <= 0) {
+        return 0;
+    }
+    return ackNr;
 }
 
 
 /**
  * @brief sends the acknowledge msg
  */
-void STB::rs485SendAck() {
-    rs485AddToBuffer(KeywordsList::ACK);
+void STB::rs485SendAck(int ackNr=1) {
+    char msg[8];
+    char noString[3] = "";
+    strcpy(msg, KeywordsList::ACK);
+    strcat(msg, KeywordsList::delimiter);
+    sprintf(noString, "%i", ackNr);
+    strcat(msg, noString);
+    rs485AddToBuffer(msg);
     rs485Write();
 }
 
@@ -239,8 +250,8 @@ bool STB::rs485SendBuffer(bool isCmd) {
     rs485Receive();
     while (true) {
         Serial.println(rcvdPtr);
-        if (checkAck()) { 
-            // Serial.println("Ack rcvd");
+        int ackNr = checkAck();
+        if (ackNr) { 
             clearBuffer();
             return true; 
         }
