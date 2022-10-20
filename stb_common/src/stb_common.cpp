@@ -153,7 +153,6 @@ bool STB::rs485AddToBuffer(String message) {
 
 /**
  * @brief  simply writes bufferout, persistent determine if its cleared or not after the msg
- * 
  * @param persistent 
 */
 void STB::rs485Write(bool persistent) {

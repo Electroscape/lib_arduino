@@ -54,7 +54,7 @@ class KeywordsList {
     // pushStr is used to send messaged to the brain
     static const String pushStr;
     static const String ACK;
-    // static const String NACK;
+    static const String NACK;
     static const String delimiter;
     static const String eof;
     static const String oledHKeyword;
