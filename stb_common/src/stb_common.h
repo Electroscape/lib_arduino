@@ -30,6 +30,8 @@ class STB {
     void printInfo();
     void rs485Write(bool persistent=false);
     void printI2cDeviceName(int deviceNo);
+
+    bool checkNack();
     
     public:
     bool rs485Receive();
@@ -40,7 +42,6 @@ class STB {
 
     STB();
     void begin();
-    void printWithHeader(String message, String source=String("SYS"));
     void printSetupEnd();
     void dbg(String message);
     void dbgln(String message);
@@ -51,6 +52,8 @@ class STB {
     void clearBuffer();
     
     int checkAck();
+    void negotiateAck(int ackNr=-1);
+
     void rs485SendAck();
     bool rs485SendBuffer(bool isCmd=false);
     bool rs485RcvdNextLn();

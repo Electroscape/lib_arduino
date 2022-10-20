@@ -71,29 +71,6 @@ void STB::printInfo() {
 }
 
 
-#ifdef True
-/**
- * legacy at this point, also does not handle bus clearance
- * 
- *  @return void
- *  @param message (String) message to be printed
- *  @param source (String) soure of the message default is "SYS"
- */
-void STB::printWithHeader(String message, String source) {
-    Serial.flush();
-    digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
-    Serial.println();
-    Serial.print("!Br,");
-    Serial.print(source);
-    Serial.print(",");
-    Serial.print(message);
-    Serial.println(",Done.");
-    Serial.flush();
-    digitalWrite(MAX_CTRL_PIN, MAX485_READ);
-}
-#endif
-
-
 /**
  * @brief prints a setup end to serial
  */
@@ -213,14 +190,41 @@ bool STB::rs485Receive() {
     return false;
 }
 
-
+/**
+ * @brief  
+ * @return int -1 if no ack, if no ackNR found-> 0, otherwise AckNr
+*/
 int STB::checkAck() {
     if (memcmp(KeywordsList::ACK.c_str(), rcvdPtr, KeywordsList::ACK.length()) != 0) { return -1; }
-    int ackNr;
-    if (sscanf(Brain.STB_.rcvdPtr,"%d", ackNr) <= 0) {
+    int no;
+    if (sscanf(Brain.STB_.rcvdPtr,"%d", no) <= 0) {
         return 0;
     }
-    return ackNr;
+    return no;
+}
+
+
+/**
+ * @brief      // only used in setup, to prevent a desync between mother and brain
+ * @param ackNr 
+*/
+void STB::negotiateAck(int ackNr) {
+    int ackNr = -1;
+    while (ackNr < 2) {
+        rs485Receive();
+        if (ackNr < 2) {
+            ackNr = checkAck();
+        } else {
+            checkNack();
+        }
+
+    }
+
+}
+
+
+bool STB::checkNack() {
+    return (memcmp(KeywordsList::NACK.c_str(), rcvdPtr, KeywordsList::NACK.length()) != 0);
 }
 
 
@@ -250,7 +254,7 @@ bool STB::rs485SendBuffer(bool isCmd) {
     while (true) {
         Serial.println(rcvdPtr);
         int ackNr = checkAck();
-        if (ackNr) { 
+        if (ackNr > 0) { 
             clearBuffer();
             return true; 
         }

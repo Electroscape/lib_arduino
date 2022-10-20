@@ -108,6 +108,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
         // maybe spamming too much aint teh best idea
         delay(5);
     }
+    // ackhandling?
     return true;
 };
 

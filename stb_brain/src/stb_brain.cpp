@@ -49,9 +49,10 @@ void STB_BRAIN::begin() {
 void STB_BRAIN::receiveSetup() {
     wdt_disable();
     while (true) {
+        
         if (strncmp(KeywordsList::beginKeyword.c_str(), STB_.rcvdPtr, KeywordsList::beginKeyword.length()) != 0) {
             sendAck();
-            Serial.println("end receiveSetup");
+            Serial.println("!setup rcvd");
             return;
         }
         if (!slaveRespond()) { continue; }
