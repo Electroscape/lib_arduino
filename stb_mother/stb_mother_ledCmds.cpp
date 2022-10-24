@@ -91,3 +91,145 @@ void LED_CMDS::setPixelToClr(STB_MOTHER &Mother, int pixel ,const int clr[3], in
 void LED_CMDS::turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt) {
     setToClr(Mother, brainNo, clrBlack, int(100), ledCnt);
 }
+
+/**
+ * @brief set the LED strip to running light with defined color clr
+ * @param STB_MOTHER 
+ * @param brainNo 
+ * @param clr 
+ * @param actLED how much LEDs are active 
+ */
+void LED_CMDS::running(STB_MOTHER &Mother, int brainNo, const int clr[3], int runTime, int actLED) {
+    char msg[32] = "";
+    char noString[3] = "";
+    sprintf(noString, "%i", ledCmds::setRunning);
+    
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
+    strcat(msg, noString);
+    strcat(msg, KeywordsList::delimiter.c_str());
+    // repeat function ... pack this into a fnc
+    
+    for (int i=0; i<3; i++) {
+        char intStr[3];        
+        itoa(clr[i], intStr, 10);
+        strcat(msg, intStr);
+        if (i<2) {strcat(msg, "_");}
+    }
+
+    char intStr[5]; 
+    strcat(msg, "_");
+    itoa(runTime, intStr, 10);
+    strcat(msg,intStr );
+    strcat(msg, "_");
+    itoa(actLED, intStr, 10);
+    strcat(msg,intStr );
+
+    Mother.sendCmdToSlave(msg, brainNo);
+    
+    //Serial.println(F("Running send"));
+}
+
+/**
+ * @brief starts a running light sequence over the PWMs
+ * @param STB_MOTHER 
+ * @param brainNo 
+ * @param clr 
+ * @param actLED how much LEDs are active 
+ */
+
+void LED_CMDS::runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int runTime, int actPWM) {
+    char msg[32] = "";
+    char noString[3] = "";
+    sprintf(noString, "%i", ledCmds::setRunningPWM);
+    
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
+    strcat(msg, noString);
+    strcat(msg, KeywordsList::delimiter.c_str());
+    // repeat function ... pack this into a fnc
+    
+    for (int i=0; i<3; i++) {
+        char intStr[3];        
+        itoa(clr[i], intStr, 10);
+        strcat(msg, intStr);
+        if (i<2) {strcat(msg, "_");}
+    }
+
+    char intStr[5]; 
+    strcat(msg, "_");
+    itoa(runTime, intStr, 10);
+    strcat(msg,intStr );
+    strcat(msg, "_");
+    itoa(actPWM, intStr, 10);
+    strcat(msg,intStr );
+
+    Mother.sendCmdToSlave(msg, brainNo);
+    
+    //Serial.println(F("Running send"));
+}
+  
+
+/**
+ * @brief set the LED strip to blinking with two different colors and different times
+ * @param STB_MOTHER 
+ * @param brainNo 
+ * @param clr 
+ * @param actLED how much LEDs are active 
+ */
+    void LED_CMDS::blinking(STB_MOTHER &Mother, int brainNo,const int clr1[3],const int clr2[3],int blinkTime1, int blinkTime2) {
+    char msg[32] = "";
+    char noString[3] = "";
+    sprintf(noString, "%i", ledCmds::setBlinking);
+    
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
+    strcat(msg, noString);
+    strcat(msg, KeywordsList::delimiter.c_str());
+    
+    for (int i=0; i<3; i++) {
+        char intStr[3];        
+        itoa(clr1[i], intStr, 10);
+        strcat(msg, intStr);
+        if (i<2) {strcat(msg, "_");}
+    }
+    strcat(msg, "_");
+
+    
+    for (int i=0; i<3; i++) {
+        char intStr[3];        
+        itoa(clr2[i], intStr, 10);
+        strcat(msg, intStr);
+        if (i<2) {strcat(msg, "_");}
+    }
+    
+    char intStr[5]; 
+    strcat(msg, "_");
+    itoa(blinkTime1, intStr, 10);
+    strcat(msg,intStr );
+    strcat(msg, "_");
+    itoa(blinkTime2, intStr, 10);
+    strcat(msg,intStr );
+
+
+   
+    Mother.sendCmdToSlave(msg, brainNo);
+    
+    //Serial.println(F("Blinking Send"));
+
+    }
+/**
+ * @brief set the LED strip to dimming with defined dimm time to end brightness
+ * @param STB_MOTHER 
+ * @param brainNo 
+ * @param clr 
+ * @param actLED how much LEDs are active 
+ */
+    void LED_CMDS::dimming(STB_MOTHER &Mother, int brainNo, int dimmTime , int endBrightness  ) {
+    char msg[32] = "";
+    char noString[3] = "";
+    sprintf(noString, "%i", ledCmds::setDimming);
+    
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
+    strcat(msg, noString);
+    strcat(msg, KeywordsList::delimiter.c_str());
+
+    Mother.sendCmdToSlave(msg, brainNo);
+    }

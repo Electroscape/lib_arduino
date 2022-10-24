@@ -2,5 +2,11 @@
 
 enum ledCmds {
     setAll,
-    setPixel
+    setPixel,
+    setStripMultipleColors,
+    setRunning,
+    setRunningPWM,
+    setBlinking,
+    setDimming
+
 };

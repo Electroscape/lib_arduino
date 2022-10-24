@@ -32,7 +32,7 @@ class STB {
     
     public:
     bool rs485Receive();
-    unsigned long maxPollingWait = 300;
+    unsigned long maxPollingWait = 50;
     SSD1306AsciiWire defaultOled;
     
     char* rcvdPtr;
