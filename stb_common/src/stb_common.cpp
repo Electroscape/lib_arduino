@@ -37,7 +37,7 @@ void STB::begin() {
 bool STB::serialInit() {
     Wire.begin();
     Wire.setClock(i2cClkSpeed);
-    Serial.begin(115200);
+    Serial.begin(57600); // 115200 might be too high
     Serial.setTimeout(rs485timeout);
     delay(100);
     pinMode(MAX_CTRL_PIN, OUTPUT);
@@ -158,11 +158,13 @@ bool STB::rs485AddToBuffer(String message) {
 */
 void STB::rs485Write(bool persistent) {
     digitalWrite(MAX_CTRL_PIN, MAX485_WRITE);
+    delayMicroseconds(writedelay);
     Serial.print(bufferOut);
     Serial.println(KeywordsList::eof);
     // extra newline for readaility when monitoring, to tell different senders apart
     Serial.println();
     Serial.flush();
+    delayMicroseconds(writedelay);
     digitalWrite(MAX_CTRL_PIN, MAX485_READ);
     if (!persistent) {
         clearBuffer();

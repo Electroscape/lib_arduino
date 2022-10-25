@@ -155,7 +155,7 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
     sprintf(noString, "%d", setting);
     strcat(msg, noString);
 
-    for (int index; index < amountOfValues; index++) {
+    for (int index=0; index < amountOfValues; index++) {
         strcat(msg, "_");
         sprintf(noString, "%d", values[index]);
         strcat(msg, noString);

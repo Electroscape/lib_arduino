@@ -18,10 +18,10 @@ class STB_LED {
     bool getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr);
     bool getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values);
 
-    void enableStrip0();
-    void enableStrip1();
-    void enableStrip2();
-    void enableStrip3();
+    void enableStrip0(uint32_t clrOrder=NEO_BRG);
+    void enableStrip1(uint32_t clrOrder=NEO_BRG);
+    void enableStrip2(uint32_t clrOrder=NEO_BRG);
+    void enableStrip3(uint32_t clrOrder=NEO_BRG);
 
 
     public:
@@ -37,14 +37,14 @@ class STB_LED {
     int lightState[4] = {0,0,0,0};
 
     bool ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder=NEO_RGB, int clkSpeed=NEO_KHZ800);
-    void setStripToClr(int stripNo, long int clr);
-    void setStripToClrs(int stripNo, uint32_t clrs[], int size);
+    void setStripToClr(int stripNo, long int clr, bool show=true);
+    // void setStripToClrs(int stripNo, uint32_t clrs[], int size);
     void setAllStripsToClr(long int clr);
     bool evaluateCmds(STB_BRAIN &Brain);
     void setLEDToClr(int stripNo,uint16_t ledNr, long int clr) ;
-    void running(int stripNo,long int clr, int runTime=1200, int actLED=2);
+    void running(int stripNo, long int clr, int runTime=1200, int actLED=2);
     void runningPWM(long int clr, int runTime=1200, int actLED=4);
-    void blinking(int stripNo,const int clr1,const int clr2,int blinkTime1=500, int blinkTime2=500);
-    void dimming(int stripNo,int dimmTime = 2000, int endBrightness = 0);
+    void blinking(int stripNo, const int clr1, const int clr2, int blinkTime1=500, int blinkTime2=500);
+    void dimming(int stripNo, int dimmTime = 2000, int endBrightness = 0);
     void loop(STB_BRAIN &Brain);
 };

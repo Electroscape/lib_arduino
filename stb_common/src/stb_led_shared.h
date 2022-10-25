@@ -1,12 +1,11 @@
 #pragma once
 
 enum ledCmds {
+    // sets all strips to a given clr
     setAll,
-    setPixel,
-    setStripMultipleColors,
     setRunning,
     setRunningPWM,
     setBlinking,
-    setDimming
-
+    setDimming,
+    setStripToClr
 };

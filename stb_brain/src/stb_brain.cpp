@@ -43,6 +43,26 @@ void STB_BRAIN::begin() {
 
 
 /**
+ * @brief  receives flags and settings, works with one line at a time currently
+ * 
+*/
+void STB_BRAIN::receiveSetup() {
+    wdt_disable();
+    while (true) {
+        if (strncmp(KeywordsList::beginKeyword.c_str(), STB_.rcvdPtr, KeywordsList::beginKeyword.length()) != 0) {
+            sendAck();
+            Serial.println("end receiveSetup");
+            return;
+        }
+        if (!slaveRespond()) { continue; }
+        if (receiveFlags()) { continue; }
+        if (receiveSetting()) { continue; }
+    }
+    wdt_enable(WDTO_8S);
+}
+
+
+/**
  * @brief receives the flags send by the mother
  */
 bool STB_BRAIN::receiveFlags() {
@@ -50,16 +70,20 @@ bool STB_BRAIN::receiveFlags() {
     if (strncmp(KeywordsList::flagKeyword.c_str(), STB_.rcvdPtr, KeywordsList::flagKeyword.length()) != 0) {
         return false;
     }     
+    /*
     Serial.print("flags rcv: ");
     Serial.println(STB_.rcvdPtr);
+    */
     STB_.rcvdPtr += KeywordsList::flagKeyword.length();
 
     if (!STB_.rcvdPtr) { return false; };
 
     STB_.rs485SendAck();
     flags = atoi(STB_.rcvdPtr);
+    /*
     Serial.print("flags are: ");
     Serial.println(flags);
+    */
     return true;
 }
 
@@ -68,48 +92,31 @@ bool STB_BRAIN::receiveFlags() {
  * @brief receives Settings from the Mother
  * todo define how many settings can be saved, 
  * how many values each settings can have
+ * TODO: add safety checks
  */
 bool STB_BRAIN::receiveSetting() {
 
-    /*
-
-    bool sendAck = false;
-    char line[12] = "";
-    char *linePtr;
-    int row = 0, col = 0;
-
     if (strncmp(KeywordsList::settingKeyword.c_str(), STB_.rcvdPtr, KeywordsList::settingKeyword.length()) != 0) {
-        return;
+        return false;
     }
 
-    // discard if the rows are used up, we dont want to write out of index
-    if (row >= SETTINGS_CNT) {
-        STB_.dbgln(F("overflow!"));
-        continue;
-    }
-
-        // doesnt have a trailing "_" hence a +1 to get the value
-        STB_.rcvdPtr += KeywordsList::settingKeyword.length() + 1;
-
-        strcpy(line, STB_.rcvdPtr);
-        linePtr = strtok(line, "_"); 
-        col = 0;
-        
-        while (linePtr != NULL && col < SETTINGS_PARAMS) {
-            settings[row][col] = atoi(linePtr);
-            linePtr = strtok(NULL, "_");
-            col++;
-        }
-        row++;
-    }
-
-    if (sendAck) {
+    if (settingsRow >= SETTINGS_CNT) {
+        STB_.dbgln(F("SETT OVERFLOW"));
         STB_.rs485SendAck();
-        sendAck = false;
+        delay(500);
+        return true; 
     }
 
-    STB_.rs485RcvdNextLn();
-    */
+    STB_.rcvdPtr += KeywordsList::settingKeyword.length() + 1;
+    STB_.rcvdPtr = strtok(STB_.rcvdPtr, KeywordsList::delimiter.c_str());
+
+    int col = 0;
+    while (sscanf(STB_.rcvdPtr, "%d", &settings[settingsRow][col]) && col < SETTINGS_PARAMS) {
+        STB_.rcvdPtr = strtok(NULL, "_");
+        col++;
+    }
+
+    STB_.rs485SendAck();
     return true;
 }
 
@@ -120,7 +127,7 @@ bool STB_BRAIN::receiveSetting() {
  */
 void STB_BRAIN::setSlaveAddr(int no) {
     slaveAddr = no;
-    STB_.dbgln(F("Slave responds to")); 
+    STB_.dbgln(F("SlaveAddr:")); 
     char noString[2];
     sprintf(noString, "%d", no);
     strcpy(slavePollStr, KeywordsList::pollStr.c_str());
