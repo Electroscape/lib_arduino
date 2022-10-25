@@ -16,7 +16,6 @@ class STB_LED {
     uint16_t activeLeds[STRIPE_CNT] = {0};
 
     bool getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr);
-    bool getTimeFromBuffer(STB_BRAIN &Brain, int &setTime);
     bool getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values);
 
     void enableStrip0();
