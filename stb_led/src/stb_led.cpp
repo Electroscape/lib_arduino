@@ -16,7 +16,8 @@
 
 STB_LED::STB_LED() {};
 
-unsigned long lightTimming=millis();
+unsigned long lightTimming = millis();
+
 // due to compile time requirements from some values
 void STB_LED::enableStrip0(uint32_t clrOrder) {
     delay(10);
@@ -167,9 +168,7 @@ void STB_LED::setAllStripsToClr(long int clr) {
 }
 
 void STB_LED::loop(STB_BRAIN &Brain){
-    /*  Serial.println("Run LED loop");
-    Serial.println(lightState[0]);  */
-    //for (int i_PWM=0; i_PWM<=STRIPE_CNT; i_PWM++) // only for 4 PWM make it flexible
+    // only for 1 PWM make it flexible
         switch( lightState[0]){
 
             case setRunning:running(0,color1,runTime,actLED);break;
@@ -188,37 +187,26 @@ void STB_LED::loop(STB_BRAIN &Brain){
  * @param neopixels array of led instances
  * @param clr 
  */
-void STB_LED::running(int stripNo,long int clr,int runTime,int actLED) {
+void STB_LED::running(int stripNo, long int clr, int runTime, int actLED) {
+    // only for strip with 6 LED, needs edit
     lightState[0] = setRunning;
-    unsigned long actTime = millis()-lightTimming;
-    if (actTime>runTime){
+    unsigned long actTime = millis() - lightTimming;
+    if (actTime > runTime){
         lightTimming = millis();
         actTime = 0;
     }
 
-    long gray =Strips[0].Color(40,40,40);
     long black =Strips[0].Color(0,0,0);
     uint16_t nrLED = uint16_t(round(float(actTime)/float(runTime)*float(6))-1);
     if (nrLED>6){nrLED = 6;}
-    uint16_t nrHALF = nrLED-1;
-    uint16_t nrOUT = nrLED-2;
+    uint16_t nrOUT = nrLED-1;
     if (nrLED==0){
-        nrHALF =5;
-        nrOUT = 4;
-    }
-    if (nrLED==1){
         nrOUT = 5;
     }
-    /* Serial.println("Running");
-    Serial.println(nrLED);
-    Serial.println(actTime);
-    Serial.println(lightTimming);
-    Serial.println(runTime); */
+    
 
-
-    setLEDToClr(stripNo,nrLED,clr);
-    setLEDToClr(stripNo,nrHALF,black);
-    setLEDToClr(stripNo,nrOUT,black);
+    setLEDToClr(stripNo, nrLED, clr);
+    setLEDToClr(stripNo, nrOUT, black);
     
 }
 /**
@@ -297,31 +285,27 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
         break;
 
         case setRunning: // starts the runningLight sequence
-            getBufferValues(Brain,3,*clrs);
-            getBufferValues(Brain,1,runTime);
-            getBufferValues(Brain,1,actLED);
+            getBufferValues(Brain, 3, *clrs);
+            getBufferValues(Brain, 1, runTime);
+            getBufferValues(Brain, 1, actLED);
 
-            running(0,color1,runTime,actLED);
+            running(0, color1, runTime, actLED);
         break;
 
         case setRunningPWM: // starts the runningLight sequence
             //getBufferValues(Brain,3,*clrs); // soll auch mit mehreren Werten klappen
-            getBufferValues(Brain,1,clrs[0]);
-            getBufferValues(Brain,1,clrs[1]);
-            getBufferValues(Brain,1,clrs[2]);
-            color1 =  Strips[0].Color(clrs[0],clrs[1],clrs[2]);  
-            //Serial.println(clrs[0]);Serial.println(clrs[1]); Serial.println(clrs[2]);
-            getBufferValues(Brain,1,runTime);
-            getBufferValues(Brain,1,actLED);
-            /* Serial.print(clrs[0]);
-            Serial.print(clrs[1]);
-            Serial.println(clrs[2]); */
-            runningPWM(color1,runTime,actLED);
+            getBufferValues(Brain, 1, clrs[0]);
+            getBufferValues(Brain, 1, clrs[1]);
+            getBufferValues(Brain, 1, clrs[2]);
+            color1 =  Strips[0].Color(clrs[0], clrs[1], clrs[2]);  
+            getBufferValues(Brain, 1, runTime);
+            getBufferValues(Brain, 1, actLED);
+            runningPWM(color1, runTime, actLED);
         break;
         
         case setBlinking:  // starts the blinking sequence
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
-            blinking(0,setClr,setClr,500,500);
+            blinking(0, setClr, setClr, 500, 500);
         break;
 
          
@@ -348,7 +332,7 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
         // Serial.println("did not get value from");
         return false;
     }
-    setClr = Strips[0].Color(clrs[0],clrs[2],clrs[1]);
+    setClr = Strips[0].Color(clrs[0], clrs[2], clrs[1]);
     // everything needed has been read, hence answering the mother can be done here already
     Brain.sendAck();
     return true;

@@ -173,7 +173,7 @@ void LED_CMDS::runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int
  * @param clr 
  * @param actLED how much LEDs are active 
  */
-    void LED_CMDS::blinking(STB_MOTHER &Mother, int brainNo,const int clr1[3],const int clr2[3],int blinkTime1, int blinkTime2) {
+    void LED_CMDS::blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2) {
     char msg[32] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setBlinking);

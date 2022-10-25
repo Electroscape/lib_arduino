@@ -42,9 +42,9 @@ class STB_LED {
     void setAllStripsToClr(long int clr);
     bool evaluateCmds(STB_BRAIN &Brain);
     void setLEDToClr(int stripNo,uint16_t ledNr, long int clr) ;
-    void running(int stripNo,long int clr, int runTime=1200, int actLED=2);
+    void running(int stripNo, long int clr, int runTime=1200, int actLED=2);
     void runningPWM(long int clr, int runTime=1200, int actLED=4);
-    void blinking(int stripNo,const int clr1,const int clr2,int blinkTime1=500, int blinkTime2=500);
-    void dimming(int stripNo,int dimmTime = 2000, int endBrightness = 0);
+    void blinking(int stripNo, const int clr1, const int clr2, int blinkTime1=500, int blinkTime2=500);
+    void dimming(int stripNo, int dimmTime = 2000, int endBrightness = 0);
     void loop(STB_BRAIN &Brain);
 };
