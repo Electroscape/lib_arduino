@@ -10,11 +10,13 @@
 
 
 #include "stb_led.h"
+#include "string.h"
 
 
 
 STB_LED::STB_LED() {};
 
+unsigned long lightTimming=millis();
 // due to compile time requirements from some values
 void STB_LED::enableStrip0(uint32_t clrOrder) {
     delay(10);
@@ -126,6 +128,11 @@ void STB_LED::setStripToClr(int stripNo, long int clr, bool show) {
     if (show) {Strips[stripNo].show();}
     delay(1);
 }
+void STB_LED::setLEDToClr(int stripNo,uint16_t ledNr, long int clr) {
+   
+    Strips[stripNo].setPixelColor(ledNr, clr);
+    Strips[stripNo].show();
+}
 
 
 /**
@@ -159,6 +166,99 @@ void STB_LED::setAllStripsToClr(long int clr) {
     }
 }
 
+void STB_LED::loop(STB_BRAIN &Brain){
+    /*  Serial.println("Run LED loop");
+    Serial.println(lightState[0]);  */
+    //for (int i_PWM=0; i_PWM<=STRIPE_CNT; i_PWM++) // only for 4 PWM make it flexible
+        switch( lightState[0]){
+
+            case setRunning:running(0,color1,runTime,actLED);break;
+            case setRunningPWM: runningPWM(color1,runTime,actLED); break;
+        }
+
+
+}
+
+
+
+
+/**
+ * @brief runningLight
+ * 
+ * @param neopixels array of led instances
+ * @param clr 
+ */
+void STB_LED::running(int stripNo,long int clr,int runTime,int actLED) {
+    lightState[0] = setRunning;
+    unsigned long actTime = millis()-lightTimming;
+    if (actTime>runTime){
+        lightTimming = millis();
+        actTime = 0;
+    }
+
+    long gray =Strips[0].Color(40,40,40);
+    long black =Strips[0].Color(0,0,0);
+    uint16_t nrLED = uint16_t(round(float(actTime)/float(runTime)*float(6))-1);
+    if (nrLED>6){nrLED = 6;}
+    uint16_t nrHALF = nrLED-1;
+    uint16_t nrOUT = nrLED-2;
+    if (nrLED==0){
+        nrHALF =5;
+        nrOUT = 4;
+    }
+    if (nrLED==1){
+        nrOUT = 5;
+    }
+    /* Serial.println("Running");
+    Serial.println(nrLED);
+    Serial.println(actTime);
+    Serial.println(lightTimming);
+    Serial.println(runTime); */
+
+
+    setLEDToClr(stripNo,nrLED,clr);
+    setLEDToClr(stripNo,nrHALF,black);
+    setLEDToClr(stripNo,nrOUT,black);
+    
+}
+/**
+ * @brief runningLight
+ * 
+ * @param neopixels array of led instances
+ * @param clr 
+ */
+void STB_LED::runningPWM(long int clr,int runTime,int actPWM) {
+    for (int i = 0; i<= actPWM; i++){
+        lightState[i] = setRunningPWM;
+    }
+    unsigned long actTime = millis()-lightTimming;
+    if (actTime>runTime){
+        lightTimming = millis();
+        actTime = 0;
+    }
+
+    long black =Strips[0].Color(0,0,0);
+    uint16_t nrLED = uint16_t(round(float(actTime)/float(runTime)*float(actPWM))-1);
+    if (nrLED>actPWM-1){nrLED = actPWM-1;}
+    uint16_t nrOUT = nrLED-1;
+    if (nrLED==0){
+        nrOUT = actPWM-1;
+    }
+    
+    setStripToClr(nrLED,clr);
+    setStripToClr(nrOUT,black);
+
+    
+}
+
+
+void STB_LED::blinking(int stripNo,const int clr1,const int clr2,int blinkTime1, int blinkTime2) {
+    
+    //Serial.println("Blinking");
+    lightState[0] = setBlinking;
+       
+}
+
 
 /**
  * @brief  
@@ -181,7 +281,8 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     // uint32_t currentClr;
    
     
-    // Serial.println(cmdNo);
+    //Serial.println(cmdNo);
+    int clrs[3];
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
@@ -194,6 +295,41 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             // && i< pixelNo
             setStripToClr(value, setClr);
         break;
+
+        case setRunning: // starts the runningLight sequence
+            getBufferValues(Brain,3,*clrs);
+            getBufferValues(Brain,1,runTime);
+            getBufferValues(Brain,1,actLED);
+
+            running(0,color1,runTime,actLED);
+        break;
+
+        case setRunningPWM: // starts the runningLight sequence
+            //getBufferValues(Brain,3,*clrs); // soll auch mit mehreren Werten klappen
+            getBufferValues(Brain,1,clrs[0]);
+            getBufferValues(Brain,1,clrs[1]);
+            getBufferValues(Brain,1,clrs[2]);
+            color1 =  Strips[0].Color(clrs[0],clrs[1],clrs[2]);  
+            //Serial.println(clrs[0]);Serial.println(clrs[1]); Serial.println(clrs[2]);
+            getBufferValues(Brain,1,runTime);
+            getBufferValues(Brain,1,actLED);
+            /* Serial.print(clrs[0]);
+            Serial.print(clrs[1]);
+            Serial.println(clrs[2]); */
+            runningPWM(color1,runTime,actLED);
+        break;
+        
+        case setBlinking:  // starts the blinking sequence
+            if (!getClrsFromBuffer(Brain, setClr)) { return false; }
+            blinking(0,setClr,setClr,500,500);
+        break;
+
+         
+        case setDimming:  // starts the dimming sequence
+            if (!getClrsFromBuffer(Brain, setClr)) { return false; }
+            //dimming(setClr);
+        break;
+
         default: return false;
     }
     return true;
@@ -218,3 +354,17 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
     return true;
 }
 
+bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
+    
+    int tmpValues[5];
+    
+    for (int i=0; i <=nrValues-1;i++){
+        sscanf(Brain.STB_.rcvdPtr,"%d", &tmpValues[i]); //gets Value No i from Buffer  
+        Brain.STB_.rcvdPtr=strstr( Brain.STB_.rcvdPtr, "_")+1; // find Delimiter in String and move pointer
+        //Serial.println(tmpValues[i]);
+    }
+
+    values = *tmpValues;
+    return true;
+
+}
