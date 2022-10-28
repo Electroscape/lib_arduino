@@ -29,15 +29,16 @@ class STB_LED {
     STB_LED();    
     long clrBlack =STB_LED::Strips->Color(0,0,0);
     
-    long int color1;// color1 @running & @blinking
-    long int color2;// color2 @running & @blinking
-    int runTime;    // runtime @running
-    int actLED;     // number of used LEDS @running & @blinking
-    int blinkTime1; // blinking time color1 @blinking
-    int blinkTime2; // blinking time color2 @blinking
-    int lightState[4] = {0,0,0,0};    // state of PWM, define with ledCmds 
+    // Variables used for light effects like running light
+    long int color1;                        // color1 @running & @blinking
+    long int color2;                        // color2 @running & @blinking
+    int actLED;                             // number of used LEDS @running & @blinking
+    int runTime;                            // runtime @running
+    int blinkTime1;                         // blinking time color1 @blinking
+    int blinkTime2;                         // blinking time color2 @blinking
+    int lightState[4] = {0,0,0,0};          // operation mode of PWM, defined with ledCmds 
     unsigned long lightTiming[4];
-    uint16_t LED_ON[4]; //@running
+    uint16_t LED_ON[STRIPE_CNT];            // used for the running light
     unsigned long deltaTime[4] = {0,0,0,0}; // time delta for timed LED function
 
     bool ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder=NEO_RGB, int clkSpeed=NEO_KHZ800);
@@ -47,7 +48,7 @@ class STB_LED {
     bool evaluateCmds(STB_BRAIN &Brain);
     void setLEDToClr(int stripNo,uint16_t ledNr, long int clr) ;
     void running(int stripNo, long int clr, int runTime=1200, int actLED=2);
-    void runningPWM(long int clr, int runTime=1200, uint16_t actLED=4);
+    void runningPWM(int runTime=1200, uint16_t actPWM=STRIPE_CNT);
     void blinking(int stripNo, const int clr1, const int clr2, int blinkTime1=500, int blinkTime2=500);
     void dimming(int stripNo, int dimmTime = 2000, int endBrightness = 0);
     void LEDloop(STB_BRAIN &Brain);
