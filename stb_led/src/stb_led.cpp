@@ -10,13 +10,11 @@
 
 
 #include "stb_led.h"
-#include "string.h"
 
 
 
 STB_LED::STB_LED() {};
 
-unsigned long lightTimming = millis();
 
 // due to compile time requirements from some values
 void STB_LED::enableStrip0(uint32_t clrOrder) {
@@ -129,8 +127,9 @@ void STB_LED::setStripToClr(int stripNo, long int clr, bool show) {
     if (show) {Strips[stripNo].show();}
     delay(1);
 }
-void STB_LED::setLEDToClr(int stripNo,uint16_t ledNr, long int clr) {
-   
+
+
+void STB_LED::setLEDToClr(int stripNo, uint16_t ledNr, long int clr) {  
     Strips[stripNo].setPixelColor(ledNr, clr);
     Strips[stripNo].show();
 }
@@ -167,7 +166,7 @@ void STB_LED::setAllStripsToClr(long int clr) {
     }
 }
 
-void STB_LED::loop(STB_BRAIN &Brain){
+void STB_LED::LEDloop(STB_BRAIN &Brain){
     // only for 1 PWM make it flexible
         switch( lightState[0]){
 
@@ -188,7 +187,7 @@ void STB_LED::loop(STB_BRAIN &Brain){
  * @param clr 
  */
 void STB_LED::running(int stripNo, long int clr, int runTime, int actLED) {
-    // only for strip with 6 LED, needs edit
+    /* // only for strip with 6 LED, needs edit
     lightState[0] = setRunning;
     unsigned long actTime = millis() - lightTimming;
     if (actTime > runTime){
@@ -206,37 +205,24 @@ void STB_LED::running(int stripNo, long int clr, int runTime, int actLED) {
     
 
     setLEDToClr(stripNo, nrLED, clr);
-    setLEDToClr(stripNo, nrOUT, black);
+    setLEDToClr(stripNo, nrOUT, black); */
     
 }
 /**
- * @brief runningLight
+ * @brief runningPWM
  * 
- * @param neopixels array of led instances
- * @param clr 
+ * @param clr color
+ * @param runTime time (ms) for one run
+ * @param actPWM numbers of used PWMs on the brain 
  */
-void STB_LED::runningPWM(long int clr,int runTime,int actPWM) {
-    for (int i = 0; i<= actPWM; i++){
-        lightState[i] = setRunningPWM;
-    }
-    unsigned long actTime = millis()-lightTimming;
-    if (actTime>runTime){
-        lightTimming = millis();
-        actTime = 0;
-    }
-
-    long black =Strips[0].Color(0,0,0);
-    uint16_t nrLED = uint16_t(round(float(actTime)/float(runTime)*float(actPWM))-1);
-    if (nrLED>actPWM-1){nrLED = actPWM-1;}
-    uint16_t nrOUT = nrLED-1;
-    if (nrLED==0){
-        nrOUT = actPWM-1;
-    }
-    
-    setStripToClr(nrLED,clr);
-    setStripToClr(nrOUT,black);
-
-    
+void STB_LED::runningPWM(long int clr, int runTime, int actPWM) { //(CW 281022)
+   
+    if (lightTiming[0]> millis()) {return;}  // return if lightTiming is not reached
+    lightTiming[0] += deltaTime[0];          // set new timepoint
+    setStripToClr(LED_ON[0], clrBlack);      // turn off LED
+    LED_ON[0] += 1;                           // set new LED
+    if(LED_ON[0] > actPWM-1){ LED_ON[0] = 0;}   // condition if LED_ON reaches end of actPWM
+    setStripToClr(LED_ON[0], clr);           // turn on new LED
 }
 
 
@@ -260,7 +246,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     // Serial.println("received ledKeyword");
     Brain.STB_.rcvdPtr += KeywordsList::ledKeyword.length();
 
-    // Serial.println(Brain.STB_.rcvdPtr);
+    //Serial.println(Brain.STB_.rcvdPtr);
     int cmdNo;
     if (sscanf(Brain.STB_.rcvdPtr, "%d", &cmdNo) <= 0) { return false; } 
     Brain.STB_.rcvdPtr += 2;
@@ -271,6 +257,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     
     //Serial.println(cmdNo);
     int clrs[3];
+    for (int i=0; i <= STRIPE_CNT; i++) {lightState[i] = -1;}
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
@@ -284,7 +271,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             setStripToClr(value, setClr);
         break;
 
-        case setRunning: // starts the runningLight sequence
+        case setRunning: // starts the runningLight sequence 
             getBufferValues(Brain, 3, *clrs);
             getBufferValues(Brain, 1, runTime);
             getBufferValues(Brain, 1, actLED);
@@ -292,20 +279,26 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             running(0, color1, runTime, actLED);
         break;
 
-        case setRunningPWM: // starts the runningLight sequence
+        case setRunningPWM: // starts the runningLight sequence (CW 281022)
             //getBufferValues(Brain,3,*clrs); // soll auch mit mehreren Werten klappen
             getBufferValues(Brain, 1, clrs[0]);
             getBufferValues(Brain, 1, clrs[1]);
             getBufferValues(Brain, 1, clrs[2]);
-            color1 =  Strips[0].Color(clrs[0], clrs[1], clrs[2]);  
             getBufferValues(Brain, 1, runTime);
-            getBufferValues(Brain, 1, actLED);
+            getBufferValues(Brain, 1, actLED);            
+            Brain.sendAck();
+            color1 =  STB_LED::Strips->Color(clrs[0], clrs[2], clrs[1]);  
+            lightState[0] = setRunningPWM;  //for PWM only the first state is necessary  
+            lightTiming[0] = millis();
+            deltaTime[0] =  long(round(long(runTime)/long(actLED)));
+            LED_ON[0] = 0;
             runningPWM(color1, runTime, actLED);
+            
         break;
         
         case setBlinking:  // starts the blinking sequence
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
-            blinking(0, setClr, setClr, 500, 500);
+            //blinking(0, setClr, setClr, 500, 500);
         break;
 
          
