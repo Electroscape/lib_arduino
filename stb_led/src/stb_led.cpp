@@ -215,7 +215,7 @@ void STB_LED::running(int stripNo, long int clr, int runTime, int actLED) {
  * @param runTime time (ms) for one run
  * @param actPWM numbers of used PWMs on the brain 
  */
-void STB_LED::runningPWM(long int clr, int runTime, int actPWM) { //(CW 281022)
+void STB_LED::runningPWM(long int clr, int runTime, uint16_t actPWM) { //(CW 281022)
    
     if (lightTiming[0]> millis()) {return;}  // return if lightTiming is not reached
     lightTiming[0] += deltaTime[0];          // set new timepoint
@@ -257,7 +257,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     
     //Serial.println(cmdNo);
     int clrs[3];
-    for (int i=0; i <= STRIPE_CNT; i++) {lightState[i] = -1;}
+    for (int i=0; i < STRIPE_CNT; i++) {lightState[i] = -1;}
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
