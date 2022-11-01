@@ -102,7 +102,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
     }
 
     setSlaveAsTgt(slaveNo);
-    STB_.rs485AddToBuffer(message);
+    STB_.rs485AddToBuffer(String(message));
     while (!STB_.rs485SendBuffer(true)) {
         wdt_reset();
         // maybe spamming too much aint teh best idea
