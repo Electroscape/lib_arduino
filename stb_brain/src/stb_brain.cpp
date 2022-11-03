@@ -24,7 +24,7 @@ STB_BRAIN::~STB_BRAIN() {};
  * @param message 
  * @param containsCmd wether the message is send without control flow or send with a ack before being cleared from buffer
  */
-void STB_BRAIN::addToBuffer(String message, bool containsCmd) {
+void STB_BRAIN::addToBuffer(char* message, bool containsCmd) {
     if (containsCmd) {
         outgoingCmd=true;
     }; 

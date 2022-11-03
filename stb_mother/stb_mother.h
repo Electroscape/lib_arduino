@@ -42,7 +42,7 @@ class STB_MOTHER
         void dbgln(String message) { STB_.dbgln(message); };
         void dbg(String message) { STB_.dbg(message); };
         void oledClear() {STB_.defaultOled.clear();};
-        void addToBuffer(String message) {STB_.rs485AddToBuffer(message);};
+        void addToBuffer(char* message) {STB_.rs485AddToBuffer(message);};
         void sendAck() {STB_.rs485SendAck();};
         bool nextRcvdLn() {return STB_.rs485RcvdNextLn();};
 };

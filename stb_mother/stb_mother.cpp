@@ -102,7 +102,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
     }
 
     setSlaveAsTgt(slaveNo);
-    STB_.rs485AddToBuffer(String(message));
+    STB_.rs485AddToBuffer(message);
     while (!STB_.rs485SendBuffer(true)) {
         wdt_reset();
         // maybe spamming too much aint teh best idea
@@ -182,7 +182,9 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
 void STB_MOTHER::setupComplete(int brainNo) {
 
     setSlaveAsTgt(brainNo);
-    STB_.rs485AddToBuffer(KeywordsList::beginKeyword);
+    char msg[8];
+    strcpy(msg, KeywordsList::beginKeyword.c_str());
+    STB_.rs485AddToBuffer(msg);
 
     while (true) {
         if (STB_.rs485SendBuffer(true)) {

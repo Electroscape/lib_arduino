@@ -141,9 +141,9 @@ void STB::clearBuffer() {
  * @param message
  * @return if place was available in the bufferOut
  */
-bool STB::rs485AddToBuffer(String message) {
-    if (strlen(bufferOut) + message.length() + 2 <= bufferSize) {
-        strcat(bufferOut, message.c_str());
+bool STB::rs485AddToBuffer(char* message) {
+    if (strlen(bufferOut) + strlen(message) + 2 <= bufferSize) {
+        strcat(bufferOut, message);
         strcat(bufferOut, "\n");
         return true;
     }
@@ -224,7 +224,9 @@ bool STB::checkAck() {
  * @brief sends the acknowledge msg
  */
 void STB::rs485SendAck() {
-    rs485AddToBuffer(KeywordsList::ACK);
+    char msg[8];
+    strcpy(msg, KeywordsList::ACK.c_str()); 
+    rs485AddToBuffer(msg);
     rs485Write();
 }
 
@@ -232,6 +234,7 @@ void STB::rs485SendAck() {
 /**
  * @brief send buffer and waits for ack response if flag was set
  * @return if ack was received, if not a cmd returns true
+ * @todo consider safety check for empty buffer
  */
 bool STB::rs485SendBuffer(bool isCmd) {
     rs485Write(isCmd);

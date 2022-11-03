@@ -47,7 +47,7 @@ class STB {
     
     
     // ideally it would be an array of which slave number are active...
-    bool rs485AddToBuffer(String message);
+    bool rs485AddToBuffer(char* message);
     void clearBuffer();
     
     bool checkAck();
