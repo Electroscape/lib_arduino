@@ -30,16 +30,19 @@ class STB_LED {
     long clrBlack =STB_LED::Strips->Color(0,0,0);
     
     // Variables used for light effects like running light
-    long int color1;                        // color1 @running & @blinking
-    long int color2;                        // color2 @running & @blinking
-    int actLED;                             // number of used LEDS @running & @blinking
-    int runTime;                            // runtime @running
-    int blinkTime1;                         // blinking time color1 @blinking
-    int blinkTime2;                         // blinking time color2 @blinking
-    int lightState[4] = {0,0,0,0};          // operation mode of PWM, defined with ledCmds 
-    unsigned long lightTiming[4];
-    uint16_t LED_ON[STRIPE_CNT];            // used for the running light
-    unsigned long deltaTime[4] = {0,0,0,0}; // time delta for timed LED function
+    // pack LEDvariables in Matrix
+    uint32_t color1[STRIPE_CNT];                         // color1 @running & @blinking
+    uint32_t color2[STRIPE_CNT];                         // color2 @running & @blinking
+    int actLED[STRIPE_CNT];                              // number of used LEDS @running & @blinking
+    int runTime[STRIPE_CNT];                             // runtime @running
+    int blinkTime1[STRIPE_CNT];                         // blinking time color1 @blinking
+    int blinkTime2[STRIPE_CNT];                         // blinking time color2 @blinking
+    int lightState[STRIPE_CNT] = {-1,-1,-1,-1};          // operation mode of PWM, defined with ledCmds 
+    uint8_t brightness[STRIPE_CNT];
+    int endbrightness[STRIPE_CNT];
+    unsigned long lightTiming[STRIPE_CNT];
+    uint16_t LED_ON[STRIPE_CNT]= {0,0,0,0};            // used for the running light
+    unsigned long deltaTime[STRIPE_CNT] = {0,0,0,0}; // time delta for timed LED function
 
     bool ledInit(int settings[SETTINGS_CNT][SETTINGS_PARAMS], uint32_t clrOrder=NEO_RGB, int clkSpeed=NEO_KHZ800);
     void setStripToClr(int stripNo, long int clr, bool show=true);
@@ -48,8 +51,9 @@ class STB_LED {
     bool evaluateCmds(STB_BRAIN &Brain);
     void setLEDToClr(int stripNo,uint16_t ledNr, long int clr) ;
     void running(int stripNo, long int clr, int runTime=1200, int actLED=2);
-    void runningPWM(int runTime=1200, uint16_t actPWM=STRIPE_CNT);
-    void blinking(int stripNo, const int clr1, const int clr2, int blinkTime1=500, int blinkTime2=500);
-    void dimming(int stripNo, int dimmTime = 2000, int endBrightness = 0);
+    void runningPWM();
+    void blinking(int stripNo);
+    void dimming(int stripNo);
+    void fade2color(int stripNo);
     void LEDloop(STB_BRAIN &Brain);
 };

@@ -6,6 +6,6 @@ enum ledCmds {
     setRunning,
     setRunningPWM,
     setBlinking,
-    setDimming,
-    setStripToClr
+    setStripToClr,
+    setfade2color
 };
