@@ -33,7 +33,7 @@ void STB_MOTHER::setFlags(int brainNo, int flags) {
 
     char msg[16] = "";
     strcpy(msg, KeywordsList::flagKeyword.c_str());
-    char noString[8];
+    char noString[8] = "";
     sprintf(noString, "%d", flags);
     strcat(msg, noString);
 
@@ -72,7 +72,7 @@ void STB_MOTHER::rs485PerformPoll() {
     char message[16];
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pollStr.c_str());
-    char slaveNoStr[3];
+    char slaveNoStr[3] = "";
     sprintf(slaveNoStr, "%i", polledSlave);
     strcat(message, slaveNoStr);
     
@@ -121,7 +121,7 @@ void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
     char message[16];
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pushStr.c_str());
-    char slaveNoStr[3];
+    char slaveNoStr[3] = "";
     sprintf(slaveNoStr, "%i", slaveNo);
     strcat(message, slaveNoStr);
     
@@ -148,7 +148,7 @@ void STB_MOTHER::rs485SetSlaveCount(int count) {
 void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int amountOfValues) {
  
     char msg[32] = "";
-    char noString[8];
+    char noString[8] = "";
 
     strcpy(msg, KeywordsList::settingKeyword.c_str());
     strcat(msg, "_");
@@ -182,7 +182,7 @@ void STB_MOTHER::sendSetting(int brainNo, settingCmds setting, int values[], int
 void STB_MOTHER::setupComplete(int brainNo) {
 
     setSlaveAsTgt(brainNo);
-    char msg[8];
+    char msg[8] = "";
     strcpy(msg, KeywordsList::beginKeyword.c_str());
     STB_.rs485AddToBuffer(msg);
 
