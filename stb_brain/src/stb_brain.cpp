@@ -19,6 +19,7 @@ STB_BRAIN::STB_BRAIN() {
 };
 STB_BRAIN::~STB_BRAIN() {};
 
+
 /**
  * @brief adds given message to buffer
  * @param message 
