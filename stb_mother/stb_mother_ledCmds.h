@@ -22,8 +22,26 @@ class LED_CMDS {
     static void setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo);
     static void turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt=-1);
     static void setPixelToClr(STB_MOTHER &Mother, int pixel , const int clr[3], int brightness=100, int brainNo=-1);
-    static void running(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime= 1200, int actLED=2);
-    static void runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime= 1200, int actLED=2);
+    static void running(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime, int usedLED, int stripNo,int pauseTime = 0);
+    static void runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime = 1200, int usedLED = 2,int pauseTime = 0);
     static void blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2, int brightness1, int brightness2, int stripNo);
-    static void fade2color(STB_MOTHER &Mother, int brainNo, const int clr1[3], int brightness1, const int clr2[3], int brightness2, int runTime , int stripNo);
+    static void fade2color(STB_MOTHER &Mother, int brainNo, const int clr1[3], int brightness1, const int clr2[3], int brightness2, int runTime, int stripNo);
+};enum PWM {
+    // sets all strips to a given clr
+    out,
+    set1,
+    set2,
+    set1_2,
+    set3,
+    set1_3,
+    set2_3,
+    set1_2_3,
+    set4,
+    set1_4,
+    set2_4,
+    set1_2_4,
+    set3_4,
+    set1_3_4,
+    set2_3_4,
+    set1_2_3_4,
 };
