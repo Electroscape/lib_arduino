@@ -88,16 +88,26 @@ void STB_MOTHER::rs485PerformPoll() {
  */
 bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
     delay(1);
+    STB_.clearBuffer();
+    // Serial.println(message);
+
     if (slaveNo < 0) {
         slaveNo = polledSlave;
     }
+    int reps = 0;
 
     setSlaveAsTgt(slaveNo);
-    STB_.rs485AddToBuffer(message);
+    if (strlen(message) <= 0) { return true; }
+    if (!STB_.rs485AddToBuffer(message)) {
+        Serial.println("message too long!!");
+        return false;
+    }
     while (!STB_.rs485SendBuffer(true)) {
         wdt_reset();
         // maybe spamming too much aint teh best idea
         delay(5);
+        if (reps > 10) { return false; }
+        reps++;
     }
     return true;
 };

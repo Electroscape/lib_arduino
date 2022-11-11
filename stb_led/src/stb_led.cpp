@@ -337,6 +337,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             // && i< pixelNo
             setStripToClr(value, setClr);
+            // @todo safety!
             lightState[value] = -1;
         break;
 
