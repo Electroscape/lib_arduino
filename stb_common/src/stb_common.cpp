@@ -139,6 +139,7 @@ void STB::clearBuffer() {
 /**
  * @brief add the content with Newline in the end to the outgoing buffer
  * @param message
+ * 🔲 check what happens with strings without "\0"
  * @return if place was available in the bufferOut
  */
 bool STB::rs485AddToBuffer(char* message) {

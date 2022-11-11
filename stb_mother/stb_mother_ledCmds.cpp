@@ -30,7 +30,7 @@ constexpr int LED_CMDS::clrYellow[3];
  * @param ledCnt default is all Leds
  */
 void LED_CMDS::setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int ledCnt) {
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setAll);
     
@@ -58,7 +58,7 @@ void LED_CMDS::setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[
  * @param brainNo 
 */
 void LED_CMDS::setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo) {
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setStripToClr);
 
@@ -103,7 +103,7 @@ void LED_CMDS::turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt) {
  * @param pauseTime 
  */
 void LED_CMDS::running(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime, int usedLED, int stripNo, int pauseTime) {
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setRunning);
     
@@ -111,10 +111,10 @@ void LED_CMDS::running(STB_MOTHER &Mother, int brainNo, const int clr[3], int br
     strcat(msg, noString);
     strcat(msg, KeywordsList::delimiter.c_str());
     
-    char intStr[5]; 
+    char intStr[5] = ""; 
     
     itoa(stripNo, intStr, 10);
-    strcat(msg,intStr );
+    strcat(msg,intStr);
     strcat(msg, "_");
 
     // repeat function ... pack this into a fnc
@@ -126,17 +126,17 @@ void LED_CMDS::running(STB_MOTHER &Mother, int brainNo, const int clr[3], int br
         if (i<2) {strcat(msg, "_");}
     }
 
-    strcat(msg, "_");
+    strcat(msg, KeywordsList::delimiter.c_str());
     itoa(runTime, intStr, 10);
-    strcat(msg,intStr );
+    strcat(msg, intStr);
 
-    strcat(msg, "_");
+    strcat(msg, KeywordsList::delimiter.c_str());
     itoa(usedLED, intStr, 10);
-    strcat(msg,intStr );
+    strcat(msg, intStr);
 
-    strcat(msg, "_");
+    strcat(msg, KeywordsList::delimiter.c_str());
     itoa(pauseTime, intStr, 10);
-    strcat(msg,intStr );
+    strcat(msg, intStr);
 
     Mother.sendCmdToSlave(msg, brainNo);
     
@@ -156,7 +156,7 @@ void LED_CMDS::running(STB_MOTHER &Mother, int brainNo, const int clr[3], int br
  */
 
 void LED_CMDS::runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime, int usedPWM, int pauseTime) {
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setRunningPWM);
     
@@ -200,7 +200,7 @@ void LED_CMDS::runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int
  * @param Strip_No
  */
     void LED_CMDS::blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2, int brightness1,  int brightness2,int stripNo) {
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setBlinking);
     
@@ -261,7 +261,7 @@ void LED_CMDS::runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int
     void LED_CMDS::fade2color(STB_MOTHER &Mother, int brainNo,  const int clr1[3], int brightness1, const int clr2[3], int brightness2, int runTime, int stripNo) {
 
 
-    char msg[32] = "";
+    char msg[48] = "";
     char noString[3] = "";
     sprintf(noString, "%i", ledCmds::setfade2color);
     
