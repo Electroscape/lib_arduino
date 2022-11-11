@@ -358,7 +358,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             deltaTime[stripNr] =  long(round(long(runTime[stripNr]) / long(usedLED[stripNr])));
             lightTiming[stripNr] = millis() + deltaTime[stripNr];
             LED_ON[stripNr] = 0;
-            setLEDToClr(stripNr, LED_ON[stripNr], color1[stripNr]);            // turn on new LED
+            setLEDToClr(stripNr, LED_ON[stripNr], colorLEDLoop[stripNr][0]);            // turn on new LED
             running(stripNr);
 
         break;
