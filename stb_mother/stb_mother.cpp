@@ -60,7 +60,7 @@ void STB_MOTHER::rs485PerformPoll() {
         polledSlave = 0;
     }
 
-    char message[16];
+    char message[16] = "";
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pollStr.c_str());
     char slaveNoStr[3] = "";
@@ -119,7 +119,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
  */
 void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
 
-    char message[16];
+    char message[16] = "";
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pushStr.c_str());
     char slaveNoStr[3] = "";
