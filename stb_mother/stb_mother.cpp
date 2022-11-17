@@ -41,7 +41,7 @@ void STB_MOTHER::setFlags(int brainNo, int flags) {
 }
 
 
-int STB_MOTHER::rs485getPolledSlave() {
+int STB_MOTHER::getPolledSlave() {
     return polledSlave;
 }
 
