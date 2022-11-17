@@ -46,7 +46,7 @@ int STB_MOTHER::rs485getPolledSlave() {
 }
 
 
-int STB_MOTHER::rs485getSlaveCnt() {
+int STB_MOTHER::getSlaveCnt() {
     return slaveCount;
 }
 
