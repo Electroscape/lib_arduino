@@ -356,6 +356,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             Brain.sendAck();
             colorLEDLoop[stripNr][0] =  STB_LED::Strips->Color(clrs[0], clrs[2], clrs[1]);  
             lightState[stripNr] = ledCmds::setRunning;  //for PWM only the first state is necessary  
+            setStripToClr(stripNr, clrBlack, false);
             deltaTime[stripNr] =  long(round(long(runTime[stripNr]) / long(usedLED[stripNr])));
             lightTiming[stripNr] = millis() + deltaTime[stripNr];
             LED_ON[stripNr] = 0;
