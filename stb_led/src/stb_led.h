@@ -28,39 +28,21 @@ class STB_LED {
     Adafruit_NeoPixel Strips[STRIPE_CNT];
     STB_LED();    
     long clrBlack =STB_LED::Strips->Color(0,0,0);
-    
-    // Variables used for light effects like running light
-    // pack LEDvariables in Matrix
-    //uint32_t colorLEDLoop[STRIPE_CNT][2];                      // color storage for functions
-    //uint32_t color1[STRIPE_CNT];                         // color1 @running & @blinking
-   // uint32_t color2[STRIPE_CNT];                         // color2 @running & @blinking
-    int TimeVarsTest[STRIPE_CNT][12];                    // diferent variables for timed LED functions 1: actLED/actPWM(used nr of PWM or LEDS on a PWM) 3&4:runTime (time the function or effect is running, two for e.g. blinking) 4
-    //int usedLED[STRIPE_CNT];                              // number of used LEDS @running & @blinking
-    //int runTime[STRIPE_CNT];                             // runtime @running
-    //int blinkTime1[STRIPE_CNT];                         // blinking time color1 @blinking
-    //int blinkTime2[STRIPE_CNT];                         // blinking time color2 @blinking
-    //int lightState[STRIPE_CNT] = {-1,-1,-1,-1};          // operation mode of PWM, defined with ledCmds 
-    //uint8_t brightness[STRIPE_CNT];
-    int endbrightness[STRIPE_CNT];
-    //int pauseTime [STRIPE_CNT];
-    //unsigned long lightTiming[STRIPE_CNT];
-    //uint16_t LED_ON[STRIPE_CNT]= {0,0,0,0};            // used for the running light
-    //unsigned long deltaTime[STRIPE_CNT] = {0,0,0,0}; // time delta for timed LED function
    
     struct TimeVarsStruct
     {
-        int usedLED;  
-        int blinkTime[2];   
-        int pauseTime;
-        int effektTime;
-        int lightState = -1;
-        unsigned long lightTiming;   
-        unsigned long deltaTime = 0;
-        uint16_t LED_ON = 0;
-        uint32_t color[2];
+        int usedLED;                    // how many LEDs are used        
+        int blinkTime[2];               // blinking time for color 1 and 2
+        int pauseTime;  
+        int effektTime;                 
+        int lightMode = -1;            // operation mode of PWM, defined with ledCmds 
+        unsigned long modeDuration;      // timestamp for light functions switching in next loop =0 -> reset timer
+        unsigned long deltaTime = 0;    // delat in time for next action
+        uint16_t LED_ON = 0;            // current active LED
+        uint32_t color[2];              // second color for blinking
     };
     
-    TimeVarsStruct TimeVars[4];
+    TimeVarsStruct TimeVars[STRIPE_CNT];
 
     
 

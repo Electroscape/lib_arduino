@@ -155,7 +155,7 @@ void STB_LED::setAllStripsToClr(long int clr) {
 */
 void STB_LED::LEDloop(STB_BRAIN &Brain){
     for (int i = 0; i < STRIPE_CNT; i++) {
-        switch (TimeVars[i].lightState) {
+        switch (TimeVars[i].lightMode) {
             case ledCmds::setRunning: running(i); break;
             case ledCmds::setRunningPWM: runningPWM(); break;
             case ledCmds::setBlinking: blinking(i); break;
@@ -175,26 +175,25 @@ void STB_LED::LEDloop(STB_BRAIN &Brain){
  */
 void STB_LED::running(int stripNo) {
     
-    if (TimeVars[stripNo].lightTiming == 0){    // first run after call
-            TimeVars[stripNo].deltaTime =  long(round(long(TimeVars[stripNo].effektTime) / long(TimeVars[stripNo].usedLED)));
-            TimeVars[stripNo].lightTiming  = millis();
+    if (TimeVars[stripNo].modeDuration == 0){    // first run after call
+        TimeVars[stripNo].deltaTime =  long(round(long(TimeVars[stripNo].effektTime) / long(TimeVars[stripNo].usedLED)));
+        TimeVars[stripNo].modeDuration  = millis();
     } 
 
-    if (TimeVars[stripNo].lightTiming > millis()) { return; }   // return if lightTiming is not reached
+    if (TimeVars[stripNo].modeDuration > millis()) { return; }   // return if modeDuration is not reached
 	
-    if (TimeVars[stripNo].LED_ON == uint16_t(TimeVars[stripNo].usedLED) && TimeVars[stripNo].pauseTime > 0) { // condition if LED_ON reaches end of actPWM if pause is active
-        TimeVars[stripNo].lightTiming  = TimeVars[stripNo].lightTiming  + TimeVars[stripNo].pauseTime;  // reset timing with defined pauseTime
+    if (TimeVars[stripNo].LED_ON == uint16_t(TimeVars[stripNo].usedLED) && TimeVars[stripNo].pauseTime > 0) { // condition if LED_ON reaches end of actLED if pause is active
+        TimeVars[stripNo].modeDuration  = TimeVars[stripNo].modeDuration  + TimeVars[stripNo].pauseTime;  // reset timing with defined pauseTime
         setLEDToClr(stripNo,TimeVars[stripNo].usedLED - 1, clrBlack);                                   // turn off Last LED 
         TimeVars[stripNo].LED_ON += 1;                                                                  // increaese counter to avoid pause condition on next Loop   
         return;   
     }
 
-    TimeVars[stripNo].lightTiming  += TimeVars[stripNo].deltaTime;                 // set new timepoint
+    TimeVars[stripNo].modeDuration  += TimeVars[stripNo].deltaTime;                 // set new timepoint
 
     if (TimeVars[stripNo].LED_ON == 0){
         setLEDToClr(stripNo,TimeVars[stripNo].usedLED - 1, clrBlack);             // turn off LED when reset
-    }
-    else{
+    } else {
         setLEDToClr(stripNo,TimeVars[stripNo].LED_ON - 1, clrBlack);             // turn off LED 
     }
     
@@ -210,26 +209,27 @@ void STB_LED::running(int stripNo) {
 
 /**
  * @brief runningPWM
+ * currently only supports start with PWM 0
  */
 void STB_LED::runningPWM() { //(CW 281022)
 
     
     
-    if (TimeVars[0].lightTiming == 0){// first run after call
+    if (TimeVars[0].modeDuration == 0){// first run after call
             TimeVars[0].deltaTime =  long(round(long(TimeVars[0].effektTime) / long(TimeVars[0].usedLED)));
-            TimeVars[0].lightTiming  = millis();
+            TimeVars[0].modeDuration  = millis();
     } 
 
-    if (TimeVars[0].lightTiming > millis()) { return; }       // return if lightTiming is not reached
+    if (TimeVars[0].modeDuration > millis()) { return; }       // return if modeDuration is not reached
 	
     if (TimeVars[0].LED_ON == uint16_t(TimeVars[0].usedLED) && TimeVars[0].pauseTime > 0) { // condition if LED_ON reaches end of actPWM if pause is active
-        TimeVars[0].lightTiming  = TimeVars[0].lightTiming  + TimeVars[0].pauseTime;  // reset timing with defined pauseTime
+        TimeVars[0].modeDuration  = TimeVars[0].modeDuration  + TimeVars[0].pauseTime;  // reset timing with defined pauseTime
         setStripToClr(TimeVars[0].usedLED - 1, clrBlack);             // turn off Last LED 
         TimeVars[0].LED_ON += 1;                                 // increaese counter to avoid pause condition new LED   
         return;   
     }
 
-    TimeVars[0].lightTiming  += TimeVars[0].deltaTime;                 // set new timepoint
+    TimeVars[0].modeDuration  += TimeVars[0].deltaTime;                 // set new timepoint
 
     if (TimeVars[0].LED_ON == 0){
         setStripToClr(TimeVars[0].usedLED - 1, clrBlack);             // turn off LED when reset
@@ -253,15 +253,15 @@ void STB_LED::runningPWM() { //(CW 281022)
 */
 void STB_LED::blinking(int stripNo) { //(CW 281022)
   
-    if (TimeVars[stripNo].lightTiming > millis()) { return; } 
+    if (TimeVars[stripNo].modeDuration > millis()) { return; } 
     
     if(TimeVars[stripNo].LED_ON == 0){
-        TimeVars[stripNo].lightTiming  += TimeVars[stripNo].blinkTime[0];
+        TimeVars[stripNo].modeDuration  += TimeVars[stripNo].blinkTime[0];
         TimeVars[stripNo].LED_ON = 1;
         setStripToClr(stripNo, TimeVars[stripNo].color[0]);             // turn off LED
     }
     else{
-        TimeVars[stripNo].lightTiming += TimeVars[stripNo].blinkTime[1];
+        TimeVars[stripNo].modeDuration += TimeVars[stripNo].blinkTime[1];
         TimeVars[stripNo].LED_ON = 0;
         setStripToClr(stripNo, TimeVars[stripNo].color[1]);
     }
@@ -278,8 +278,8 @@ void STB_LED::fade2color(int stripNo){
 
     unsigned long actTime = millis();
 
-    if (TimeVars[stripNo].lightTiming  < actTime) { // last call force color
-        TimeVars[stripNo].lightState = -1;          
+    if (TimeVars[stripNo].modeDuration  < actTime) { // last call force color
+        TimeVars[stripNo].lightMode = -1;          
         setStripToClr(stripNo, TimeVars[stripNo].color[1]);    
         return; 
     } 
@@ -294,8 +294,8 @@ void STB_LED::fade2color(int stripNo){
     
 
     // linear interpolation of new color    
-    unsigned long t0 = TimeVars[stripNo].lightTiming - TimeVars[stripNo].effektTime;
-    unsigned long t1 = TimeVars[stripNo].lightTiming;
+    unsigned long t0 = TimeVars[stripNo].modeDuration - TimeVars[stripNo].effektTime;
+    unsigned long t1 = TimeVars[stripNo].modeDuration;
 
     uint8_t newclr_1 = clr1_1*(t1 - actTime)/TimeVars[stripNo].effektTime + clr2_1*( actTime - t0)/TimeVars[stripNo].effektTime;
     uint8_t newclr_2 = clr1_2*(t1 - actTime)/TimeVars[stripNo].effektTime + clr2_2*( actTime - t0)/TimeVars[stripNo].effektTime;
@@ -330,13 +330,13 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     int clrs[3];
     int stripValue;
     int stripNo;
-    //for (int i=0; i < STRIPE_CNT; i++) {lightState[i] = -1;}
+    //for (int i=0; i < STRIPE_CNT; i++) {lightMode[i] = -1;}
 
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             setAllStripsToClr(setClr);
-            for (int i=0; i < STRIPE_CNT; i++) {TimeVars[stripNo].lightState = -1;}
+            for (int i=0; i < STRIPE_CNT; i++) {TimeVars[stripNo].lightMode = -1;}
 
         break;
         case ledCmds::setStripToClr:
@@ -346,7 +346,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             // && i< pixelNo
             setStripToClr(value, setClr);
             // @todo safety!
-            TimeVars[stripNo].lightState = -1;
+            TimeVars[stripNo].lightMode = -1;
         break;
 
         case setRunning: // starts the runningLight sequence 
@@ -364,11 +364,11 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             Brain.sendAck();
             setStripToClr(stripNo, clrBlack);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
-            if  (TimeVars[stripNo].lightState != ledCmds::setRunning){      // for restart at the same LED (looks better)
+            if  (TimeVars[stripNo].lightMode != ledCmds::setRunning){      // for restart at the same LED (looks better)
                 TimeVars[stripNo].LED_ON = 0;
             }
-            TimeVars[stripNo].lightState = ledCmds::setRunning;  //for PWM only the first state is necessary  
-            TimeVars[stripNo].lightTiming = 0; // reset Timer
+            TimeVars[stripNo].lightMode = ledCmds::setRunning;  //for PWM only the first state is necessary  
+            TimeVars[stripNo].modeDuration = 0; // reset Timer
         break;
 
         case setRunningPWM: // starts the runningLight sequence (CW 281022)
@@ -379,12 +379,12 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             Brain.sendAck();
             setStripToClr(stripNo, clrBlack);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
-            if  (TimeVars[0].lightState != ledCmds::setRunningPWM){ // for restart at the same LED (looks better)
+            if  (TimeVars[0].lightMode != ledCmds::setRunningPWM){ // for restart at the same LED (looks better)
                 TimeVars[0].LED_ON = 0;
             }
-            TimeVars[0].lightState = ledCmds::setRunningPWM;  //for PWM only the first state is necessary  
+            TimeVars[0].lightMode = ledCmds::setRunningPWM;  //for PWM only the first state is necessary  
             TimeVars[0].deltaTime =  long(round(long(TimeVars[0].effektTime) / long(TimeVars[0].usedLED)));
-            TimeVars[0].lightTiming  = millis();
+            TimeVars[0].modeDuration  = millis();
             
         break;
         
@@ -403,8 +403,8 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, TimeVars[stripNo].blinkTime[0]); getBufferValues(Brain, 1, TimeVars[stripNo].blinkTime[1]);   
             Brain.sendAck();
 
-            TimeVars[stripNo].lightState = setBlinking; 
-            TimeVars[stripNo].lightTiming  = millis();
+            TimeVars[stripNo].lightMode = setBlinking; 
+            TimeVars[stripNo].modeDuration  = millis();
             blinking(stripNo);
         break;
 
@@ -424,8 +424,8 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             TimeVars[stripNo].color[1] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]);  
             getBufferValues(Brain, 1, TimeVars[stripNo].effektTime);  
             Brain.sendAck();
-            TimeVars[stripNo].lightState = ledCmds::setfade2color; 
-            TimeVars[stripNo].lightTiming  = millis() + TimeVars[stripNo].effektTime;       
+            TimeVars[stripNo].lightMode = ledCmds::setfade2color; 
+            TimeVars[stripNo].modeDuration  = millis() + TimeVars[stripNo].effektTime;       
             fade2color(stripNo);
 
 
