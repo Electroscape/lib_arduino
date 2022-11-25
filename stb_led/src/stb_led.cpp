@@ -362,6 +362,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, TimeVars[stripNo].usedLED);
             getBufferValues(Brain, 1, TimeVars[stripNo].pauseTime);
             Brain.sendAck();
+            setStripToClr(stripNo, clrBlack);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
             if  (TimeVars[stripNo].lightState != ledCmds::setRunning){      // for restart at the same LED (looks better)
                 TimeVars[stripNo].LED_ON = 0;
@@ -376,6 +377,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, TimeVars[0].usedLED);
             getBufferValues(Brain, 1, TimeVars[0].pauseTime);
             Brain.sendAck();
+            setStripToClr(stripNo, clrBlack);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
             if  (TimeVars[0].lightState != ledCmds::setRunningPWM){ // for restart at the same LED (looks better)
                 TimeVars[0].LED_ON = 0;
