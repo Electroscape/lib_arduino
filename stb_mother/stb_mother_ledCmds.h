@@ -27,21 +27,20 @@ class LED_CMDS {
     static void blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2, int brightness1, int brightness2, int stripNo);
     static void fade2color(STB_MOTHER &Mother, int brainNo, const int clr1[3], int brightness1, const int clr2[3], int brightness2, int runTime, int stripNo);
 };enum PWM {
-    // sets all strips to a given clr
     out,
-    set1,
-    set2,
-    set1_2,
-    set3,
-    set1_3,
-    set2_3,
-    set1_2_3,
-    set4,
-    set1_4,
-    set2_4,
-    set1_2_4,
-    set3_4,
-    set1_3_4,
-    set2_3_4,
-    set1_2_3_4,
+    set1, // PWM 0
+    set2, // PWM 1
+    set1_2, // PWM 0 +1
+    set3, // PWM 2
+    set1_3, // PWM 0+2
+    set2_3, // PWM 1+2
+    set1_2_3, // PWM 0+1+2
+    set4,   // PWM 3
+    set1_4, // PWM 0+3
+    set2_4, // PWM 1+3
+    set1_2_4, // PWM 0+1+3
+    set3_4, // PWM 2+3
+    set1_3_4, // PWM 0+2+3
+    set2_3_4, // PWM 1+2+3
+    set1_2_3_4, // PWM 0+1+2+3
 };

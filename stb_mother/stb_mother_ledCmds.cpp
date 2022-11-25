@@ -50,13 +50,14 @@ void LED_CMDS::setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[
 
 
 /**
- * @brief  sets a single given pixel to 
+ * @brief 
+ * 
  * @param Mother 
- * @param pixel 
+ * @param brainNo 
  * @param clr 
  * @param brightness 
- * @param brainNo 
-*/
+ * @param stripNo 
+ */
 void LED_CMDS::setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo) {
     char msg[32] = "";
     char noString[3] = "";
