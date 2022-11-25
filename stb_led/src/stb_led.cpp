@@ -175,17 +175,17 @@ void STB_LED::LEDloop(STB_BRAIN &Brain){
  */
 void STB_LED::running(int stripNo) {
     
-    if (TimeVars[stripNo].lightTiming == 0){// first run after call
+    if (TimeVars[stripNo].lightTiming == 0){    // first run after call
             TimeVars[stripNo].deltaTime =  long(round(long(TimeVars[stripNo].effektTime) / long(TimeVars[stripNo].usedLED)));
             TimeVars[stripNo].lightTiming  = millis();
     } 
 
-    if (TimeVars[stripNo].lightTiming > millis()) { return; }       // return if lightTiming is not reached
+    if (TimeVars[stripNo].lightTiming > millis()) { return; }   // return if lightTiming is not reached
 	
     if (TimeVars[stripNo].LED_ON == uint16_t(TimeVars[stripNo].usedLED) && TimeVars[stripNo].pauseTime > 0) { // condition if LED_ON reaches end of actPWM if pause is active
         TimeVars[stripNo].lightTiming  = TimeVars[stripNo].lightTiming  + TimeVars[stripNo].pauseTime;  // reset timing with defined pauseTime
-        setLEDToClr(stripNo,TimeVars[stripNo].usedLED -1 , clrBlack);             // turn off Last LED 
-        TimeVars[stripNo].LED_ON += 1;                                 // increaese counter to avoid pause condition new LED   
+        setLEDToClr(stripNo,TimeVars[stripNo].usedLED - 1, clrBlack);                                   // turn off Last LED 
+        TimeVars[stripNo].LED_ON += 1;                                                                  // increaese counter to avoid pause condition on next Loop   
         return;   
     }
 
@@ -198,8 +198,8 @@ void STB_LED::running(int stripNo) {
         setLEDToClr(stripNo,TimeVars[stripNo].LED_ON - 1, clrBlack);             // turn off LED 
     }
     
-    if (TimeVars[stripNo].LED_ON > uint16_t(TimeVars[stripNo].usedLED) - 1) { // condition if LED_ON reaches end of actPWM
-            TimeVars[stripNo].LED_ON = 0; // reset LED-Counter
+    if (TimeVars[stripNo].LED_ON > uint16_t(TimeVars[stripNo].usedLED) - 1) {    // condition if LED_ON reaches end of actPWM
+            TimeVars[stripNo].LED_ON = 0;                                       // reset LED-Counter
     }                    
     setLEDToClr(stripNo,TimeVars[stripNo].LED_ON, TimeVars[stripNo].color[0]);            // turn on new LED  
 
@@ -224,7 +224,7 @@ void STB_LED::runningPWM() { //(CW 281022)
 	
     if (TimeVars[0].LED_ON == uint16_t(TimeVars[0].usedLED) && TimeVars[0].pauseTime > 0) { // condition if LED_ON reaches end of actPWM if pause is active
         TimeVars[0].lightTiming  = TimeVars[0].lightTiming  + TimeVars[0].pauseTime;  // reset timing with defined pauseTime
-        setStripToClr(TimeVars[0].usedLED -1 , clrBlack);             // turn off Last LED 
+        setStripToClr(TimeVars[0].usedLED - 1, clrBlack);             // turn off Last LED 
         TimeVars[0].LED_ON += 1;                                 // increaese counter to avoid pause condition new LED   
         return;   
     }
@@ -363,7 +363,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, TimeVars[stripNo].pauseTime);
             Brain.sendAck();
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
-            if  (TimeVars[stripNo].lightState != ledCmds::setRunning){      // for restart at the same LED 
+            if  (TimeVars[stripNo].lightState != ledCmds::setRunning){      // for restart at the same LED (looks better)
                 TimeVars[stripNo].LED_ON = 0;
             }
             TimeVars[stripNo].lightState = ledCmds::setRunning;  //for PWM only the first state is necessary  
@@ -377,7 +377,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, TimeVars[0].pauseTime);
             Brain.sendAck();
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
-            if  (TimeVars[0].lightState != ledCmds::setRunningPWM){
+            if  (TimeVars[0].lightState != ledCmds::setRunningPWM){ // for restart at the same LED (looks better)
                 TimeVars[0].LED_ON = 0;
             }
             TimeVars[0].lightState = ledCmds::setRunningPWM;  //for PWM only the first state is necessary  
