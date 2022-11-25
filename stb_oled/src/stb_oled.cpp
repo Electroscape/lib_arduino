@@ -18,7 +18,7 @@
  * @param row 
 */
 void STB_OLED::clearAbove(SSD1306AsciiWire oled, uint8_t row) {
-    uint8_t i = row;
+    uint8_t i = row + rowOffset;
     while (i < oled.displayRows()) {
         oled.setRow(i);
         oled.clearToEOL();
@@ -104,10 +104,11 @@ void STB_OLED::writeCenteredLine(SSD1306AsciiWire *oled, String text) {
 void STB_OLED::writeHeadline(SSD1306AsciiWire *oled, String text) {
     oled->clear();
     oled->setFont(Verdana12_bold);
+    oled->setRow((uint8_t) rowOffset);
     writeCenteredLine(oled, text);
     setDefaultFont(oled);
     // if set to 1 it collides with the smaller followup font
-    oled->setRow((uint8_t) 2);
+    oled->setRow((uint8_t) 2 + rowOffset);
 }
 
 
@@ -119,7 +120,7 @@ void STB_OLED::writeHeadline(SSD1306AsciiWire *oled, String text) {
  * @param centered (defaults to uncentered)
  */
 void STB_OLED::writeToLine(SSD1306AsciiWire *oled, uint8_t row, String text, bool centered) {
-    oled->setRow(row);
+    oled->setRow(row+rowOffset);
     if (centered) {
         writeCenteredLine(oled, text);
     } else {

@@ -41,12 +41,12 @@ void STB_MOTHER::setFlags(int brainNo, int flags) {
 }
 
 
-int STB_MOTHER::rs485getPolledSlave() {
+int STB_MOTHER::getPolledSlave() {
     return polledSlave;
 }
 
 
-int STB_MOTHER::rs485getSlaveCnt() {
+int STB_MOTHER::getSlaveCnt() {
     return slaveCount;
 }
 
@@ -60,7 +60,7 @@ void STB_MOTHER::rs485PerformPoll() {
         polledSlave = 0;
     }
 
-    char message[16];
+    char message[16] = "";
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pollStr.c_str());
     char slaveNoStr[3] = "";
@@ -88,16 +88,26 @@ void STB_MOTHER::rs485PerformPoll() {
  */
 bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
     delay(1);
+    STB_.clearBuffer();
+    // Serial.println(message);
+
     if (slaveNo < 0) {
         slaveNo = polledSlave;
     }
+    int reps = 0;
 
     setSlaveAsTgt(slaveNo);
-    STB_.rs485AddToBuffer(message);
+    if (strlen(message) <= 0) { return true; }
+    if (!STB_.rs485AddToBuffer(message)) {
+        Serial.println("message too long!!");
+        return false;
+    }
     while (!STB_.rs485SendBuffer(true)) {
         wdt_reset();
         // maybe spamming too much aint teh best idea
         delay(5);
+        if (reps > 10) { return false; }
+        reps++;
     }
     return true;
 };
@@ -109,7 +119,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
  */
 void STB_MOTHER::setSlaveAsTgt(int slaveNo) {
 
-    char message[16];
+    char message[16] = "";
     // there should not be other data left here anyways, alternativle use strCat
     strcpy(message,  KeywordsList::pushStr.c_str());
     char slaveNoStr[3] = "";

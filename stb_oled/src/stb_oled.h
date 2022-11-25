@@ -1,5 +1,7 @@
 #pragma once
 #include "SSD1306AsciiWire.h"
+// due to casing we loose the first row hence shifting everything downwards
+#define rowOffset 2
 
 class STB_OLED {
     private:
