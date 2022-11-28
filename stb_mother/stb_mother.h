@@ -9,6 +9,7 @@
     #define RELAY_I2C_ADD 0x3F
 #endif 
 #define RESET_I2C_ADD 0x3D
+#define RESEND_ATTEMPTS 30
 
 class STB_MOTHER
 {

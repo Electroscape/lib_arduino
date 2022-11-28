@@ -106,7 +106,7 @@ bool STB_MOTHER::sendCmdToSlave(char* message, int slaveNo) {
         wdt_reset();
         // maybe spamming too much aint teh best idea
         delay(5);
-        if (reps > 10) { return false; }
+        if (reps > RESEND_ATTEMPTS) { return false; }
         reps++;
     }
     return true;
