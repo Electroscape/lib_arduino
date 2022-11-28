@@ -5,15 +5,23 @@
 #define BuzzerMaxStages 3
 
 class STB_BUZZER {
+    private:
     // maybe a better way to organize just copying 
-    unsigned int buzzerFreq[BuzzerMaxStages] = {0};
-    unsigned long buzzerOn[BuzzerMaxStages] = {0};
-    unsigned long buzzerOff[BuzzerMaxStages] = {0};
-    unsigned long buzzerTimeStamp = millis();
-    int buzzerStage = -1;
-    int buzzerPin;
+    struct BuzzerParsStruct {
+        unsigned int freq[BuzzerMaxStages] = {0};
+        unsigned long onTime[BuzzerMaxStages] = {0};
+        unsigned long offTime[BuzzerMaxStages] = {0};
+        unsigned long timeStamp = millis();
+        int stage = -1;
+        int pin;
+    };
 
+    BuzzerParsStruct BuzzerPars;
+
+    public:
+    STB_BUZZER();
     void init(int pwmPin);
-    void buzzerUpdate();
-    void buzzerReset();
+    void update();
+    void triggerBuzzer();
+    void buzzerStop();
 };

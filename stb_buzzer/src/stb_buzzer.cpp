@@ -12,6 +12,9 @@
 #include "stb_buzzer.h"
 
 
+STB_BUZZER::STB_BUZZER() {};
+
+
 /**
  * @brief initializes the buzzer
  * @param pwmPin 
@@ -19,41 +22,41 @@
 void STB_BUZZER::init(int pwmPin) {
     pinMode(pwmPin, OUTPUT);
     noTone(pwmPin);
-    buzzerPin = pwmPin;
+    BuzzerPars.pin = pwmPin;
 }
 
 
 /**
  * @brief  resets the buzzer terminating the previous mode
 */
-void STB_BUZZER::buzzerReset() {
+void STB_BUZZER::buzzerStop() {
     for (int i=0; i<BuzzerMaxStages; i++) {
-        buzzerStage = -1;
-        buzzerFreq[i] = 0;
+        BuzzerPars.stage = -1;
+        BuzzerPars.freq[i] = 0;
     }
-    noTone(buzzerPin);
+    noTone(BuzzerPars.pin);
 }
 
 
 /**
  * @brief updates the buzzer inside the mainloop nonblocking
 */
-void STB_BUZZER::buzzerUpdate() {
-    if (buzzerStage < 0) {return;}
-    if (buzzerStage >= BuzzerMaxStages) {
-        buzzerReset();
+void STB_BUZZER::update() {
+    if (BuzzerPars.stage < 0) {return;}
+    if (BuzzerPars.stage >= BuzzerMaxStages) {
+        buzzerStop();
         return;
     }
 
-    if (buzzerStage == 0 || millis() > buzzerTimeStamp) {
+    if (BuzzerPars.stage == 0 || millis() > BuzzerPars.timeStamp) {
         // moves next execution to after the on + offtime elapsed 
-        buzzerTimeStamp = millis() + buzzerOn[buzzerStage] + buzzerOff[buzzerStage];
-        if (buzzerFreq[buzzerStage] > 0) {
-            tone(buzzerPin, buzzerFreq[buzzerStage], buzzerOn[buzzerStage]);
-            buzzerStage++;
+        BuzzerPars.timeStamp = millis() + BuzzerPars.onTime[BuzzerPars.stage] + BuzzerPars.offTime[BuzzerPars.stage];
+        if (BuzzerPars.freq[BuzzerPars.stage] > 0) {
+            tone(BuzzerPars.pin, BuzzerPars.freq[BuzzerPars.stage], BuzzerPars.onTime[BuzzerPars.stage]);
+            BuzzerPars.stage++;
             return;
         } else {
-            buzzerReset();
+            buzzerStop();
         }
     }
 }
