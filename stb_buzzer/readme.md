@@ -1,0 +1,1 @@
+helper library to simplify and standartize usage of simple buzzers
