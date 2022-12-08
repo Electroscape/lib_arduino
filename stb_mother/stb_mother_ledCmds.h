@@ -26,7 +26,9 @@ class LED_CMDS {
     static void runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime = 1200, int usedLED = 2,int pauseTime = 0);
     static void blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2, int brightness1, int brightness2, int stripNo);
     static void fade2color(STB_MOTHER &Mother, int brainNo, const int clr1[3], int brightness1, const int clr2[3], int brightness2, int runTime, int stripNo);
-};enum PWM {
+};
+
+enum PWM {
     out,
     set1, // PWM 0
     set2, // PWM 1

@@ -204,6 +204,7 @@ void STB_LED::running(int stripNo) {
 
     TimeVars[stripNo].LED_ON += 1;                                  // set new for next loop LED 
 
+
 }
 
 
@@ -274,8 +275,16 @@ void STB_LED::blinking(int stripNo) { //(CW 281022)
  * 
  * @param stripNo 
  */
-void STB_LED::fade2color(int stripNo){
+void STB_LED::fade2color(int stripNo){    
 
+    
+    // flinkering
+  /*  int possibility = rand() % 101; 
+        if (possibility > 5){                
+            setStripToClr(stripNo, clrBlack);    
+            delay(5);              
+        }
+ */
     unsigned long actTime = millis();
 
     if (TimeVars[stripNo].modeDuration  < actTime) { // last call force color
@@ -330,13 +339,14 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     int clrs[3];
     int stripValue;
     int stripNo;
+    int stripArray[4] = {-1,-1,-1,-1};
     //for (int i=0; i < STRIPE_CNT; i++) {lightMode[i] = -1;}
 
     switch (cmdNo) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             setAllStripsToClr(setClr);
-            for (int i=0; i < STRIPE_CNT; i++) {TimeVars[stripNo].lightMode = -1;}
+            for (int i=0; i < STRIPE_CNT; i++) {TimeVars[i].lightMode = -1;}
 
         break;
         case ledCmds::setStripToClr:
@@ -346,7 +356,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             // && i< pixelNo
             setStripToClr(value, setClr);
             // @todo safety!
-            TimeVars[stripNo].lightMode = -1;
+            TimeVars[value].lightMode = -1;
         break;
 
         case setRunning: // starts the runningLight sequence 
@@ -391,11 +401,17 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
         case setBlinking:  // starts the blinking sequence
             getBufferValues(Brain, 1, stripValue);   
             switch(stripValue){ // combinded blinking has to be added
-                case 1: stripNo = 0; break;
-                case 2: stripNo = 1; break;
-                case 4: stripNo = 2; break;
-                case 8: stripNo = 3; break;
-            }    
+                case 1: stripArray[0] = 0; break;
+                case 2: stripArray[0] = 1; break;
+                case 3: stripArray[0] = 0; stripArray[1] = 1; break;
+                case 4: stripArray[0] = 2; break;
+                case 7: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; break;
+                case 8: stripArray[0] = 3; break;
+                case 15: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; stripArray[3] = 3;   break;
+            }
+
+            stripNo = stripArray[0];
+
             getBufferValues(Brain, 1, clrs[0]); getBufferValues(Brain, 1, clrs[1]); getBufferValues(Brain, 1, clrs[2]);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]);  
             getBufferValues(Brain, 1, clrs[0]); getBufferValues(Brain, 1, clrs[1]); getBufferValues(Brain, 1, clrs[2]);
@@ -406,6 +422,19 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             TimeVars[stripNo].lightMode = setBlinking; 
             TimeVars[stripNo].modeDuration  = millis();
             blinking(stripNo);
+            
+            for (int i=1; i<STRIPE_CNT; i++) { // for setting 
+                if (stripArray[i] > -1){
+                    stripNo = stripArray[i];
+                    TimeVars[stripNo].color[0] =  TimeVars[stripArray[0]].color[0];  
+                    TimeVars[stripNo].color[1] =  TimeVars[stripArray[0]].color[1];  
+                    TimeVars[stripNo].blinkTime[0] = TimeVars[stripArray[0]].blinkTime[0];
+                    TimeVars[stripNo].blinkTime[1] = TimeVars[stripArray[0]].blinkTime[1];
+                    TimeVars[stripNo].lightMode = setBlinking; 
+                    TimeVars[stripNo].modeDuration  = millis();       
+                    blinking(stripNo);
+                }
+            }
         break;
 
         case setfade2color: // fading to new color
@@ -413,11 +442,16 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             getBufferValues(Brain, 1, stripValue);   
                
             switch(stripValue){ // combinded blinking has to be added
-                case 1: stripNo = 0; break;
-                case 2: stripNo = 1; break;
-                case 4: stripNo = 2; break;
-                case 8: stripNo = 3; break;
-            }    
+                case 1: stripArray[0] = 0; break;
+                case 2: stripArray[0] = 1; break;
+                case 3: stripArray[0] = 0; stripArray[1] = 1; break;
+                case 4: stripArray[0] = 2; break;
+                case 7: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; break;
+                case 8: stripArray[0] = 3; break;
+                case 15: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; stripArray[3] = 3;   break;
+            }
+
+            stripNo = stripArray[0];
             getBufferValues(Brain, 1, clrs[0]); getBufferValues(Brain, 1, clrs[1]); getBufferValues(Brain, 1, clrs[2]);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]);  
             getBufferValues(Brain, 1, clrs[0]); getBufferValues(Brain, 1, clrs[1]); getBufferValues(Brain, 1, clrs[2]);
@@ -428,7 +462,18 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             TimeVars[stripNo].modeDuration  = millis() + TimeVars[stripNo].effektTime;       
             fade2color(stripNo);
 
-
+            for (int i=1; i<STRIPE_CNT; i++) { // for setting of more than one PWM
+                if (stripArray[i] > -1){
+                    stripNo = stripArray[i];
+                    TimeVars[stripNo].color[0] =  TimeVars[stripArray[0]].color[0];  
+                    TimeVars[stripNo].color[1] =  TimeVars[stripArray[0]].color[1];  
+                    TimeVars[stripNo].effektTime = TimeVars[stripArray[0]].effektTime;  
+                    TimeVars[stripNo].lightMode = ledCmds::setfade2color; 
+                    TimeVars[stripNo].modeDuration  = millis() + TimeVars[stripNo].effektTime;       
+                    fade2color(stripNo);
+                }
+            }
+            
         default: return false;
     }
     return true;
@@ -462,7 +507,7 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
  * @return true 
  * @return false 
  */
-/* bool STB_LED::writeBuffer2Matirx(STB_BRAIN &Brain, int StripNo,  int VarNo){
+/* bool STB_LED::writeBuffer2Matrix(STB_BRAIN &Brain, int StripNo,  int VarNo){
     
     int tmpValues[5];
     
