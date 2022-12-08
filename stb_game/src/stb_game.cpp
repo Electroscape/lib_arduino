@@ -1,8 +1,14 @@
 #include "stb_game.h"
 
 
-STB_GAME::STB_GAME(int stageCount) {
+/**
+ * @brief Construct a new stb game::stb game object 
+ * @param stageCount 
+ * @param startingStage     // first stage to happen by default 1
+*/
+STB_GAME::STB_GAME(int stageCount, int startingStage) {
     stageCount = stageCount;
+    stage = startingStage;
 }
 
 /**
@@ -25,19 +31,23 @@ void STB_GAME::setStageIndex() {
 }
 
 
-void STB_GAME::stageUpdate() {
-    if (lastStage == stage) { return; }
+bool STB_GAME::stageUpdate() {
+    if (lastStage == stage) { return false; }
     Serial.print("Stage is:");
     Serial.println(stage);
     setStageIndex();
 
     // check || stageIndex >= int(sizeof(stages))
     if (stageIndex < 0) {
+        // @todo: TBD reset? shall we simply hold?
         Serial.println(F("Stages out of index!"));
         delay(15000);
     }
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
+    return true;
+
+    // @todo: add oledupdates
 }
 
 

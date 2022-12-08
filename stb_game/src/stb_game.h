@@ -7,13 +7,13 @@
 class STB_GAME {
     private:
     int lastStage = -1;
-    int stageIndex = 0;
     public:
+    int stageIndex = 0;
     int stageCount = 0;
     int stage = 0;
-    STB_GAME(int stageCount);
+    STB_GAME(int stageCount, int startingStage=1);
     // reset fnc?
     void setStageIndex();
-    void stageUpdate();
-    void sendResult(STB_MOTHER &Mother, bool result, int brainNo=-1);
+    bool stageUpdate();
+    static void sendResult(STB_MOTHER &Mother, bool result, int brainNo=-1);
 };
