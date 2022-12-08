@@ -1,11 +1,16 @@
 #include "stb_game.h"
 
+
+STB_GAME::STB_GAME(int stageCount) {
+    stageCount = stageCount;
+}
+
 /**
  * @brief Set the Stage Index object
  * @todo safety considerations
 */
 void STB_GAME::setStageIndex() {
-    for (int i=0; i<StageCount; i++) {
+    for (int i=0; i<stageCount; i++) {
         if (stage <= 1 << i) {
             stageIndex = i;
             Serial.print("stageIndex:");
@@ -33,4 +38,29 @@ void STB_GAME::stageUpdate() {
     }
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
+}
+
+
+/**
+ * @brief sends keypad/rfid validity to be displayed on the oled
+ * @param Mother 
+ * @param result 
+ * @param brainNo 
+*/
+void STB_GAME::sendResult(STB_MOTHER &Mother, bool result, int brainNo) {
+
+    // prepare return msg with correct or incorrect
+    char msg[10] = "";
+    char noString[3] = "";
+    strcpy(msg, keypadCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+
+    if (result) {
+        sprintf(noString, "%d", KeypadCmds::correct);
+    } else {
+        sprintf(noString, "%d", KeypadCmds::wrong);
+    }
+
+    strcat(msg, noString);
+    Mother.sendCmdToSlave(msg, brainNo);
 }
