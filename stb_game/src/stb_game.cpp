@@ -3,11 +3,13 @@
 
 /**
  * @brief Construct a new stb game::stb game object 
- * @param stageCount 
- * @param startingStage     // first stage to happen by default 1
+ * 
+ * @param _stageCount 
+ * @param startingStage 
+ * @param _stageTexts 
 */
-STB_GAME::STB_GAME(int stageCount, int startingStage) {
-    stageCount = stageCount;
+STB_GAME::STB_GAME(int _stageCount, int startingStage) {
+    stageCount = _stageCount;
     stage = startingStage;
 }
 
@@ -73,4 +75,25 @@ void STB_GAME::sendResult(STB_MOTHER &Mother, bool result, int brainNo) {
 
     strcat(msg, noString);
     Mother.sendCmdToSlave(msg, brainNo);
+}
+
+
+/**
+ * @brief  
+ * 
+ * @param Mother 
+ * @param msg 
+ * @param brainNo 
+*/
+void STB_GAME::setOledHeader(STB_MOTHER &Mother, char* msg, int brainNo) {
+
+    char fullMsg[32] = "";
+    if (brainNo < 0) {
+        brainNo = Mother.getPolledSlave();
+    }
+
+    strcpy(fullMsg, oledHeaderCmd.c_str());
+    strcat(fullMsg, KeywordsList::delimiter.c_str());
+    strcat(fullMsg, msg); 
+    Mother.sendCmdToSlave(fullMsg, brainNo);
 }

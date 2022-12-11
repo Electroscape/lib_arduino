@@ -2,6 +2,7 @@
 
 #include <stb_mother.h>
 #include <stb_keypadCmds.h>
+#include <stb_oledCmds.h>
 #include <avr/wdt.h>
 
 class STB_GAME {
@@ -16,4 +17,5 @@ class STB_GAME {
     void setStageIndex();
     bool stageUpdate();
     static void sendResult(STB_MOTHER &Mother, bool result, int brainNo=-1);
+    void setOledHeader(STB_MOTHER &Mother, char* msg, int brainNo=-1);
 };
