@@ -163,6 +163,7 @@ void STB_LED::LEDloop(STB_BRAIN &Brain){
         }
     //delay(50);
     }
+    lightDog();
 }
 
 
@@ -346,7 +347,10 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
         case setAll:
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             setAllStripsToClr(setClr);
-            for (int i=0; i < STRIPE_CNT; i++) {TimeVars[i].lightMode = -1;}
+            for (int stripNo=0; stripNo < STRIPE_CNT; stripNo++) {
+                TimeVars[stripNo].color[0] =  setClr;
+                TimeVars[stripNo].lightMode = -1;
+            }
 
         break;
         case ledCmds::setStripToClr:
@@ -356,6 +360,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             // && i< pixelNo
             setStripToClr(value, setClr);
             // @todo safety!
+            TimeVars[value].color[0] =  setClr;
             TimeVars[value].lightMode = -1;
         break;
 
@@ -535,4 +540,17 @@ bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
     values = *tmpValues;
     return true;
 
+}
+
+bool STB_LED::lightDog(){
+    // constantly reset the light on actual state. Applied to compensate light faults because of current fluctuations
+    for (int stripNo = 0; stripNo < STRIPE_CNT; stripNo++) {
+        if (TimeVars[stripNo].lightMode < 0) { // only steady light
+            setStripToClr(stripNo, TimeVars[stripNo].color[0] );
+            //setStripToClr(stripNo,  STB_LED::Strips->Color(123, 32, 0));
+        }
+    //delay(50);
+    }
+
+    return true;
 }
