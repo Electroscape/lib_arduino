@@ -17,7 +17,8 @@ class STB_LED {
 
     bool getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr);
     bool getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values);
-    bool lightDog();
+    void lightDog();
+    unsigned long lightDogTimer = millis();
 
     void enableStrip0(uint32_t clrOrder=NEO_BRG);
     void enableStrip1(uint32_t clrOrder=NEO_BRG);

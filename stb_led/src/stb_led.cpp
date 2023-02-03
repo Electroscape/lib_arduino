@@ -503,29 +503,6 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
     return true;
 }
 
-/**
- * @brief 
- * 
- * @param Brain 
- * @param StripNo 
- * @param VarNo 
- * @return true 
- * @return false 
- */
-/* bool STB_LED::writeBuffer2Matrix(STB_BRAIN &Brain, int StripNo,  int VarNo){
-    
-    int tmpValues[5];
-    
-    for (int i=0; i <=nrValues-1;i++){
-        sscanf(Brain.STB_.rcvdPtr,"%d", &tmpValues[i]); //gets Value No i from Buffer  
-        Brain.STB_.rcvdPtr=strstr( Brain.STB_.rcvdPtr, "_")+1; // find Delimiter in String and move pointer
-        // Serial.println(tmpValues[i]);
-    }
-
-    values = *tmpValues;
-    return true;
-
-} */
 
 bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
     
@@ -541,16 +518,20 @@ bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
     return true;
 
 }
-
-bool STB_LED::lightDog(){
-    // constantly reset the light on actual state. Applied to compensate light faults because of current fluctuations
-    for (int stripNo = 0; stripNo < STRIPE_CNT; stripNo++) {
-        if (TimeVars[stripNo].lightMode < 0) { // only steady light
-            setStripToClr(stripNo, TimeVars[stripNo].color[0] );
-            //setStripToClr(stripNo,  STB_LED::Strips->Color(123, 32, 0));
+/**
+ * @brief Resets the light to actual state
+ * 
+ */
+void STB_LED::lightDog(){
+    if ( millis() > lightDogTimer) {
+        // constantly reset the light on actual state. Applied to compensate light faults because of current fluctuations
+        for (int stripNo = 0; stripNo < STRIPE_CNT; stripNo++) {
+            if (TimeVars[stripNo].lightMode < 0) { // only steady light
+                setStripToClr(stripNo, TimeVars[stripNo].color[0] );
+                //setStripToClr(stripNo,  STB_LED::Strips->Color(123, 32, 0));
+            }
+        //delay(50);
         }
-    //delay(50);
-    }
-
-    return true;
+        lightDogTimer += 500;
+    } 
 }
