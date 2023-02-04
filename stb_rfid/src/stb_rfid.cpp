@@ -104,3 +104,24 @@ bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock,
     // Serial.println((char *) data);
     return true;
 }
+
+
+char STB_RFID::allRFID_Message(Adafruit_PN532 RFID_READERS[4], int rfid_amount, int datablock) {
+
+    uint8_t data[16];
+    char message[32] = "!RFID";
+
+    for (int readerNo = 0; readerNo < rfid_amount; readerNo++) {
+        if (STB_RFID::cardRead(RFID_READERS[readerNo], data, datablock)) {
+            strcat(message, "_");
+            strcat(message, (char*) data);
+        }
+        else{ 
+            strcat(message, "_");
+            strcat(message, "ZERO");
+        }
+    }
+    return message[32];
+}
+
+

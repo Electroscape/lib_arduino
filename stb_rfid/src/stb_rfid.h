@@ -16,6 +16,7 @@ class STB_RFID {
     static bool RFIDInit(Adafruit_PN532 &reader);
     static bool cardDetect(Adafruit_PN532 &reader, uint8_t *uid);
     static bool cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock=1, uint16_t timeout=150);
+    char allRFID_Message(Adafruit_PN532 RFID_READERS[4], int rfid_amount, int datablock=1); 
         // static bool RFID_Gate_locked();
         // static bool read_PN532(int reader_nr, uint8_t *data, uint8_t *uid, uint8_t uidLength);
 };
