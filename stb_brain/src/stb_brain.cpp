@@ -174,9 +174,14 @@ int STB_BRAIN::pollingCheck() {
             if (slavePushStr[indexPush] == read) {
                 indexPush++;
                 if (indexPush == 6) {
-                    STB_.rs485Receive();
-                    delay(1);
-                    return 0;
+                    // needs to be rejected in case of incomplete message 
+                    if (STB_.rs485Receive()) {
+                        delay(1);
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+
                 } 
             } else {
                 indexPush = 0;
