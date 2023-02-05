@@ -227,6 +227,7 @@ bool STB::checkAck() {
 void STB::rs485SendAck() {
     char msg[8];
     strcpy(msg, KeywordsList::ACK.c_str()); 
+    clearBuffer();
     rs485AddToBuffer(msg);
     rs485Write();
 }
