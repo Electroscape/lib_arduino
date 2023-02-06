@@ -121,6 +121,7 @@ void STB_OLED::writeHeadline(SSD1306AsciiWire *oled, String text) {
  */
 void STB_OLED::writeToLine(SSD1306AsciiWire *oled, uint8_t row, String text, bool centered) {
     oled->setRow(row+rowOffset);
+    oled->clearToEOL();
     if (centered) {
         writeCenteredLine(oled, text);
     } else {
