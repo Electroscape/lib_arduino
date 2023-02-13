@@ -13,7 +13,7 @@ class STB_MOTHER_IO {
     int _outputCnt;
     public:
     int getInputs();
-    bool ioInit(int inputs[], int inputCnt, int outputs[], int outputCnt);
+    bool ioInit(int inputs[], size_t inputCnt, int outputs[], size_t outputCnt);
     void outputReset();
     bool setOuput(int value);
 };

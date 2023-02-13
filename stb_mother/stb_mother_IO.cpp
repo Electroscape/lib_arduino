@@ -37,18 +37,19 @@ int STB_MOTHER_IO::getInputs() {
  * @param outputCnt 
  * @return true 
 */
-bool STB_MOTHER_IO::ioInit(int inputs[], int inputCnt, int outputs[], int outputCnt) {
+bool STB_MOTHER_IO::ioInit(int inputs[], size_t inputCnt, int outputs[], size_t outputCnt) {
 
-    _inputCnt = inputCnt;
-    _outputCnt = outputCnt;
+    _inputCnt = inputCnt / sizeof(int);
+    _outputCnt = outputCnt / sizeof(int);
     memcpy(_outputs, outputs, outputCnt);
+    memcpy(_inputs, inputs, inputCnt);
 
     ioPcf.begin(RESET_I2C_ADD);
-    for (int i=0; i<inputCnt; i++) {
+    for (int i=0; i<_inputCnt; i++) {
         ioPcf.pinMode((uint8_t) inputs[i], INPUT);
         ioPcf.digitalWrite((uint8_t) inputs[i], HIGH);
     }
-    for (int i=0; i<outputCnt; i++) {
+    for (int i=0; i<_outputCnt; i++) {
         ioPcf.pinMode((uint8_t) outputs[i], OUTPUT);
         ioPcf.digitalWrite((uint8_t) outputs[i], HIGH);
     }
