@@ -38,7 +38,7 @@ bool STB_RFID::RFIDInit(Adafruit_PN532 &reader) {
             Serial.println((versiondata >> 24) & 0xFF, HEX);
             Serial.print(F("Firmware ver. "));
             Serial.print((versiondata >> 16) & 0xFF, DEC);
-            Serial.print('.');
+            Serial.print(F("."));
             Serial.println((versiondata >> 8) & 0xFF, DEC);
             break;
         }
@@ -90,15 +90,15 @@ bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock,
 
     success = reader.mifareclassic_AuthenticateBlock(uid, uidLength, datablock, 0, keya);
     if (!success) {
-        Serial.println("Auth failed"); return false;
+        Serial.println(F("Auth failed")); return false;
     }
 
     success = reader.mifareclassic_ReadDataBlock(datablock, data);
     if (!success) {
-        Serial.println("read failed"); return false;
+        Serial.println(F("read failed")); return false;
     }
     if (strlen((char *) data) == 0) {
-        Serial.println("read empty datablock -> invalid");
+        Serial.println(F("read empty datablock -> invalid"));
         return false;
     } 
     // Serial.println((char *) data);
