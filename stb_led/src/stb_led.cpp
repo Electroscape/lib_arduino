@@ -332,7 +332,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     if (sscanf(Brain.STB_.rcvdPtr, "%d", &cmdNo) <= 0) {return false; } 
     Brain.STB_.rcvdPtr += 2;
     long int setClr;
-    int value; 
+    //int value; 
     // uint32_t currentClr;
    
      
@@ -341,6 +341,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     int stripValue;
     int stripNo;
     int stripArray[4] = {-1,-1,-1,-1};
+    int stripArrayNew[4] = {-1,-1,-1,-1};
     //for (int i=0; i < STRIPE_CNT; i++) {lightMode[i] = -1;}
 
     switch (cmdNo) {
@@ -354,14 +355,23 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
 
         break;
         case ledCmds::setStripToClr:
-            if (sscanf(Brain.STB_.rcvdPtr, "%d", &value) <= 0) { return false; } 
+            if (sscanf(Brain.STB_.rcvdPtr, "%d", &stripValue) <= 0) { return false; } 
             Brain.STB_.rcvdPtr += 2; // only works for single digits of pixels
             if (!getClrsFromBuffer(Brain, setClr)) { return false; }
             // && i< pixelNo
-            setStripToClr(value, setClr);
-            // @todo safety!
-            TimeVars[value].color[0] =  setClr;
-            TimeVars[value].lightMode = -1;
+            getStrippArray(stripValue,*stripArrayNew);
+            for (int i=0; i<STRIPE_CNT; i++) { // for setting of more than one PWM
+                
+                /* Serial.println("ArrayNew");
+                Serial.println(stripArrayNew[i]); */
+                if (stripArrayNew[i] > -1){
+                    stripNo = stripArrayNew[i];
+                    TimeVars[stripNo].color[0] =  setClr;
+                    TimeVars[stripNo].lightMode = -1;
+                    //Serial.println(stripNo);
+                    setStripToClr(stripNo, setClr);
+                }
+            }
         break;
 
         case setRunning: // starts the runningLight sequence 
@@ -534,4 +544,18 @@ void STB_LED::lightDog(){
         }
         lightDogTimer += 500;
     } 
+}
+
+void STB_LED::getStrippArray(int stripValue, int &stripArrayOut){
+    int stripArray[4] = {-1,-1,-1,-1};
+    switch (stripValue){
+        case 1: stripArray[0] = 0; break;
+        case 2: stripArray[0] = 1; break;
+        case 3: stripArray[0] = 0; stripArray[1] = 1; break;
+        case 4: stripArray[0] = 2; break;
+        case 7: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; break;
+        case 8: stripArray[0] = 3; break;
+        case 15: stripArray[0] = 0; stripArray[1] = 1; stripArray[2] = 2; stripArray[3] = 3;   break;
+    }
+    stripArrayOut = *stripArray;
 }

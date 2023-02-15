@@ -59,4 +59,5 @@ class STB_LED {
     void blinking(int stripNo);
     void fade2color(int stripNo);
     void LEDloop(STB_BRAIN &Brain);
+    void getStrippArray(int stripValue, int &stripArray);
 };
