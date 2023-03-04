@@ -339,6 +339,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
     //Serial.println(cmdNo);
     int clrs[3];
     int stripValue;
+    int LEDValue;
     int stripNo;
     int stripArray[4] = {-1,-1,-1,-1};
     int stripArrayNew[4] = {-1,-1,-1,-1};
@@ -351,6 +352,23 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             for (int stripNo=0; stripNo < STRIPE_CNT; stripNo++) {
                 TimeVars[stripNo].color[0] =  setClr;
                 TimeVars[stripNo].lightMode = -1;
+            }
+
+        break;
+        case ledCmds::setLEDToClr: // has no Light Dog
+            getBufferValues(Brain, 1, stripValue);  
+            getStrippArray(stripValue,*stripArrayNew);
+            getBufferValues(Brain, 1, LEDValue);  
+            getBufferValues(Brain, 1, clrs[0]); getBufferValues(Brain, 1, clrs[1]); getBufferValues(Brain, 1, clrs[2]);
+            Brain.sendAck();
+            //setLEDToClr(stripNo,TimeVars[stripNo].LED_ON, TimeVars[stripNo].color[0]);            // turn on new LED  
+            for (int i=0; i<STRIPE_CNT; i++) { // for setting of more than one PWM
+                if (stripArrayNew[i] > -1){
+                    stripNo = stripArrayNew[i];
+                    TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); ;
+                    TimeVars[stripNo].lightMode =-2;
+                    setLEDToClr(stripNo,LEDValue, TimeVars[stripNo].color[0]);
+                }
             }
 
         break;
@@ -537,8 +555,13 @@ void STB_LED::lightDog(){
         // constantly reset the light on actual state. Applied to compensate light faults because of current fluctuations
         for (int stripNo = 0; stripNo < STRIPE_CNT; stripNo++) {
             if (TimeVars[stripNo].lightMode < 0) { // only steady light
-                setStripToClr(stripNo, TimeVars[stripNo].color[0] );
-                //setStripToClr(stripNo,  STB_LED::Strips->Color(123, 32, 0));
+                if(TimeVars[stripNo].lightMode == -2){
+                    //Light Dog for seperate Colors on a strip
+
+                }
+                else{
+                    setStripToClr(stripNo, TimeVars[stripNo].color[0] );
+                }
             }
         //delay(50);
         }

@@ -91,6 +91,41 @@ void LED_CMDS::turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt) {
     setAllStripsToClr(Mother, brainNo, clrBlack, int(100), ledCnt);
 }
 
+/// @brief switches the Color of on LED
+/// @param Mother 
+/// @param brainNo 
+/// @param clr 
+/// @param brightness 
+/// @param LED_Nr 
+
+void LED_CMDS::setLEDToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo, int LED_Nr) {
+    char msg[48] = "";
+    char noString[3] = "";
+     
+    strcpy(msg, KeywordsList::ledKeyword.c_str());
+    sprintf(noString, "%i", ledCmds::setLEDToClr);   
+    strcat(msg, noString);
+
+    strcat(msg, KeywordsList::delimiter.c_str());
+    sprintf(noString, "%i", stripNo);
+    strcat(msg, noString);
+
+    strcat(msg, KeywordsList::delimiter.c_str());
+    sprintf(noString, "%i", LED_Nr);
+    strcat(msg, noString);
+
+    strcat(msg, KeywordsList::delimiter.c_str());
+    // repeat function ... pack this into a fnc
+    for (int i=0; i<3; i++) {
+        char intStr[3];
+        itoa((clr[i] * brightness) / 100, intStr, 10);
+        strcat(msg, intStr);
+        if (i<2) {strcat(msg, "_");}
+    }
+
+    Mother.sendCmdToSlave(msg, brainNo);
+}
+
 /**
  * @brief 
  * 

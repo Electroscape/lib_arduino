@@ -21,7 +21,7 @@ class LED_CMDS {
     static void setAllStripsToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness=100, int ledCnt=-1);
     static void setStripToClr(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int stripNo);
     static void turnOff(STB_MOTHER &Mother, int brainNo, int ledCnt=-1);
-    static void setPixelToClr(STB_MOTHER &Mother, int pixel , const int clr[3], int brightness=100, int brainNo=-1);
+    static void setLEDToClr(STB_MOTHER &Mother,int brainNo , const int clr[3], int brightness,int stripNo, int LED_Nr);
     static void running(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime, int usedLED, int stripNo,int pauseTime = 0);
     static void runningPWM(STB_MOTHER &Mother, int brainNo, const int clr[3], int brightness, int runTime = 1200, int usedLED = 2,int pauseTime = 0);
     static void blinking(STB_MOTHER &Mother, int brainNo, const int clr1[3], const int clr2[3], int blinkTime1, int blinkTime2, int brightness1, int brightness2, int stripNo);
