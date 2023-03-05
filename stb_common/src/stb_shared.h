@@ -23,6 +23,7 @@ enum cmdFlags {
     rfidFlag=2,
     oledFlag=4,
     keypadFlag=8,
+    servoFlag = 16,
     // update this everytime you add flags, only count the flags
 };
 
@@ -58,4 +59,5 @@ class KeywordsList {
     static const String delimiter;
     static const String eof;
     static const String oledHKeyword;
+    static const String ServoKeyword;
 };
