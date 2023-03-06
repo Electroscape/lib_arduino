@@ -11,12 +11,7 @@
 
 STB_SERVO::STB_SERVO() {};
 
-/**
- * @brief initializes the parsed RFID reader not working
- * @param reader 
- * @return success
- */
-bool STB_SERVO::ServoInit() { // 
+bool STB_SERVO::ServoInit() { // necassary??
 
     Serial.print(F("\nServo init ... \n"));
 
@@ -30,13 +25,10 @@ bool STB_SERVO::ServoInit() { //
 
 void STB_SERVO::moveSingleServo(int stripValue, int pos) {  
     Servo myservo;
-    myservo.attach(ServoPins[stripValue]);  // attaches the servo on pin 9 to the servo object
+    myservo.attach(ServoPins[stripValue]);  // attaches the servo on a pin to the servo object
     myservo.write(pos);  
-    
+    myservo.detach();
     Serial.println("Servo moved!");
-    delay(3000);
-
-
 }
 
 bool STB_SERVO::evaluateCmds(STB_BRAIN &Brain) {
