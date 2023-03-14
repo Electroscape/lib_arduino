@@ -10,12 +10,7 @@
 */
 #include "stb_mother_IO.h"
 
-
-/**
- * @brief  read all declared inputs as a binary added number
- * @return int 
-*/
-int STB_MOTHER_IO::getInputs() {
+int STB_MOTHER_IO::_getInput() {
     int value = 0;
     for (int i=0; i<_inputCnt; i++) {
         int inputPin = _inputs[i];
@@ -25,6 +20,20 @@ int STB_MOTHER_IO::getInputs() {
         }
     }
     return value;
+}
+
+/**
+ * @brief  read all declared inputs as a binary added number
+ * @return int 
+*/
+int STB_MOTHER_IO::getInputs() {
+    int ret = _getInput();
+    delay(2);
+    if (ret == _getInput()) {
+        return ret;
+    } else {
+        return 0;
+    }
 }
 
 

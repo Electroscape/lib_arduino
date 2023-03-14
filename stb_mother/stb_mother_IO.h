@@ -11,6 +11,7 @@ class STB_MOTHER_IO {
     int _inputs[8] = {0};
     int _outputs[8] = {0};
     int _outputCnt;
+    int _getInput();
     public:
     int getInputs();
     bool ioInit(int inputs[], size_t inputCnt, int outputs[], size_t outputCnt);
