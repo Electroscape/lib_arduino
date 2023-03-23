@@ -9,9 +9,10 @@
 #include "stb_servo.h"
 
 
-STB_SERVO::STB_SERVO() {};
+ Servo myservo;
+//STB_SERVO::STB_SERVO() {};
 
-bool STB_SERVO::ServoInit() { // necassary??
+/* bool STB_SERVO::ServoInit() { // necassary??
 
     Serial.print(F("\nServo init ... \n"));
 
@@ -21,13 +22,13 @@ bool STB_SERVO::ServoInit() { // necassary??
     }
 
     return true;
-}
+} */
 
 void STB_SERVO::moveSingleServo(int stripValue, int pos) {  
-    Servo myservo;
     myservo.attach(ServoPins[stripValue]);  // attaches the servo on a pin to the servo object
     myservo.write(pos);  
-    myservo.detach();
+    delay(500); // enough time to move?
+    //myservo.detach();
     Serial.println("Servo moved!");
 }
 
