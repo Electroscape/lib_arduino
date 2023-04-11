@@ -54,7 +54,7 @@ int STB_MOTHER::getSlaveCnt() {
 /**
  * @brief polls the bus slaves and forwards the input to cmdInterpreter
  */
-void STB_MOTHER::rs485PerformPoll(int brainNo) {
+bool STB_MOTHER::rs485PerformPoll(int brainNo) {
 
     if (brainNo >= 0) {
         polledSlave = brainNo;
@@ -74,7 +74,7 @@ void STB_MOTHER::rs485PerformPoll(int brainNo) {
     
     STB_.rs485AddToBuffer(message);
     STB_.rs485SendBuffer();
-    STB_.rs485Receive();
+    return STB_.rs485Receive();
 
     // needs to be modified
     /*

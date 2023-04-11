@@ -28,7 +28,7 @@ class STB_MOTHER
         void setFlags(int brainNo, int flags);
         int getPolledSlave();
         int getSlaveCnt();
-        void rs485PerformPoll(int brainNo=-1);
+        bool rs485PerformPoll(int brainNo=-1);
         bool sendCmdToSlave(char* message, int slaveNo=-1);
         void setSlaveAsTgt(int slaveNo);
         void rs485SetSlaveCount(int count);
