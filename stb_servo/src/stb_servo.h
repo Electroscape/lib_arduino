@@ -14,10 +14,10 @@ class STB_SERVO {
     bool getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values);
     
     public:
-    STB_SERVO();    
+    //STB_SERVO();    
     
-    Servo Servo_i[SERVO_CNT];
-    static bool ServoInit();
+    //Servo Servo_i[SERVO_CNT];
+    //static bool ServoInit();
     bool evaluateCmds(STB_BRAIN &Brain);
     void moveSingleServo(int stripValue, int pos);
     //void moveServo(int stripNo);
