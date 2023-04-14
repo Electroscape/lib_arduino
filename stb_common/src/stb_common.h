@@ -22,7 +22,7 @@ class STB {
     // maybe change this name to keep things less confusing sine mother uses slaveStr
     // time the master waits for  the slave to respond
     // this needs to be higher for the mother?
-    unsigned long maxResponseTime = 90;
+    unsigned long maxResponseTime = 120;
     char rcvd[bufferSize] = "";
     char bufferOut[bufferSize] = "";
     bool bufferSplit = false;
