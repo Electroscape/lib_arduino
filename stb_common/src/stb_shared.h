@@ -33,7 +33,7 @@ enum settingCmds {
     rfidAmount,
     /* 
     Dots -> NEO_RGB, 
-    5V WS2812B strips -> NEO_GRB
+    5V WS2812B strips -> NEO_BRG
     */
     ledClrOrder,
     // to iterate over settings
