@@ -80,10 +80,16 @@ void STB_MOTHER_IO::outputReset() {
  * @return success
  * @todo consider safety with false return result, and stored pins/pincnt
 */
-bool STB_MOTHER_IO::setOuput(int value) {
+bool STB_MOTHER_IO::setOuput(int value, bool pinValueBasedOnIndex) {
+    int pinValue;
+    int pin;
     for (int index=0; index<_outputCnt; index++) {
-        int pin = _outputs[index];
-        int pinValue = 1 << pin;
+        pin = _outputs[index];
+        if (pinValueBasedOnIndex) {
+            pinValue = 1 << index;
+        } else {
+            pinValue = 1 << pin;
+        }
         ioPcf.digitalWrite((uint8_t) pin, ((pinValue & value) == 0));
     }
     return true;
