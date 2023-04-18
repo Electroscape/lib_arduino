@@ -291,6 +291,7 @@ void STB_LED::fade2color(int stripNo){
     if (TimeVars[stripNo].modeDuration  < actTime) { // last call force color
         TimeVars[stripNo].lightMode = -1;          
         setStripToClr(stripNo, TimeVars[stripNo].color[1]);    
+        TimeVars[stripNo].color[0] = TimeVars[stripNo].color[1]; 
         return; 
     } 
 
