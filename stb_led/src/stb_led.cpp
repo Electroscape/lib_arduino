@@ -167,8 +167,6 @@ void STB_LED::LEDloop(STB_BRAIN &Brain){
 }
 
 
-
-
 /**
  * @brief runningLight
  * 
@@ -218,8 +216,8 @@ void STB_LED::runningPWM() { //(CW 281022)
     
     
     if (TimeVars[0].modeDuration == 0){// first run after call
-            TimeVars[0].deltaTime =  long(round(long(TimeVars[0].effektTime) / long(TimeVars[0].usedLED)));
-            TimeVars[0].modeDuration  = millis();
+        TimeVars[0].deltaTime = long(round(long(TimeVars[0].effektTime) / long(TimeVars[0].usedLED)));
+        TimeVars[0].modeDuration = millis();
     } 
 
     if (TimeVars[0].modeDuration > millis()) { return; }       // return if modeDuration is not reached
@@ -235,8 +233,7 @@ void STB_LED::runningPWM() { //(CW 281022)
 
     if (TimeVars[0].LED_ON == 0){
         setStripToClr(TimeVars[0].usedLED - 1, clrBlack);             // turn off LED when reset
-    }
-    else{
+    } else {
         setStripToClr(TimeVars[0].LED_ON - 1, clrBlack);             // turn off LED 
     }
     
@@ -257,12 +254,11 @@ void STB_LED::blinking(int stripNo) { //(CW 281022)
   
     if (TimeVars[stripNo].modeDuration > millis()) { return; } 
     
-    if(TimeVars[stripNo].LED_ON == 0){
+    if (TimeVars[stripNo].LED_ON == 0) {
         TimeVars[stripNo].modeDuration  += TimeVars[stripNo].blinkTime[0];
         TimeVars[stripNo].LED_ON = 1;
         setStripToClr(stripNo, TimeVars[stripNo].color[0]);             // turn off LED
-    }
-    else{
+    } else {
         TimeVars[stripNo].modeDuration += TimeVars[stripNo].blinkTime[1];
         TimeVars[stripNo].LED_ON = 0;
         setStripToClr(stripNo, TimeVars[stripNo].color[1]);
@@ -276,7 +272,7 @@ void STB_LED::blinking(int stripNo) { //(CW 281022)
  * 
  * @param stripNo 
  */
-void STB_LED::fade2color(int stripNo){    
+void STB_LED::fade2color(int stripNo) {    
 
     
     // flinkering
@@ -314,6 +310,7 @@ void STB_LED::fade2color(int stripNo){
     
     setStripToClr(stripNo, Adafruit_NeoPixel::Color(newclr_1, newclr_3, newclr_2));
 }
+
 
 /**
  * @brief  
@@ -364,7 +361,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             Brain.sendAck();
             //setLEDToClr(stripNo,TimeVars[stripNo].LED_ON, TimeVars[stripNo].color[0]);            // turn on new LED  
             for (int i=0; i<STRIPE_CNT; i++) { // for setting of more than one PWM
-                if (stripArrayNew[i] > -1){
+                if (stripArrayNew[i] > -1) {
                     stripNo = stripArrayNew[i];
                     TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); ;
                     TimeVars[stripNo].lightMode =-2;
@@ -408,7 +405,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             Brain.sendAck();
             setStripToClr(stripNo, clrBlack);
             TimeVars[stripNo].color[0] =  STB_LED::Strips->Color(clrs[0], clrs[1], clrs[2]); 
-            if  (TimeVars[stripNo].lightMode != ledCmds::setRunning){      // for restart at the same LED (looks better)
+            if (TimeVars[stripNo].lightMode != ledCmds::setRunning) {      // for restart at the same LED (looks better)
                 TimeVars[stripNo].LED_ON = 0;
             }
             TimeVars[stripNo].lightMode = ledCmds::setRunning;  //for PWM only the first state is necessary  
@@ -497,7 +494,7 @@ bool STB_LED::evaluateCmds(STB_BRAIN &Brain) {
             fade2color(stripNo);
 
             for (int i=1; i<STRIPE_CNT; i++) { // for setting of more than one PWM
-                if (stripArray[i] > -1){
+                if (stripArray[i] > -1) {
                     stripNo = stripArray[i];
                     TimeVars[stripNo].color[0] =  TimeVars[stripArray[0]].color[0];  
                     TimeVars[stripNo].color[1] =  TimeVars[stripArray[0]].color[1];  
@@ -533,11 +530,20 @@ bool STB_LED::getClrsFromBuffer(STB_BRAIN &Brain, long int &setClr) {
 }
 
 
-bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
+/**
+ * @brief  
+ * 
+ * @param Brain 
+ * @param nrValues 
+ * @param values 
+ * @return true 
+ * @return false 
+*/
+bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values) {
     
     int tmpValues[5];
     
-    for (int i=0; i <=nrValues-1;i++){
+    for (int i=0; i <=nrValues-1;i++) {
         sscanf(Brain.STB_.rcvdPtr,"%d", &tmpValues[i]); //gets Value No i from Buffer  
         Brain.STB_.rcvdPtr=strstr( Brain.STB_.rcvdPtr, "_")+1; // find Delimiter in String and move pointer
         // Serial.println(tmpValues[i]);
@@ -547,20 +553,21 @@ bool STB_LED::getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values){
     return true;
 
 }
+
+
 /**
  * @brief Resets the light to actual state
  * 
  */
-void STB_LED::lightDog(){
-    if ( millis() > lightDogTimer) {
+void STB_LED::lightDog() {
+    if (millis() > lightDogTimer) {
         // constantly reset the light on actual state. Applied to compensate light faults because of current fluctuations
         for (int stripNo = 0; stripNo < STRIPE_CNT; stripNo++) {
             if (TimeVars[stripNo].lightMode < 0) { // only steady light
-                if(TimeVars[stripNo].lightMode == -2){
+                if (TimeVars[stripNo].lightMode == -2) {
                     //Light Dog for seperate Colors on a strip
 
-                }
-                else{
+                } else {
                     setStripToClr(stripNo, TimeVars[stripNo].color[0] );
                 }
             }
@@ -570,9 +577,16 @@ void STB_LED::lightDog(){
     } 
 }
 
-void STB_LED::getStrippArray(int stripValue, int &stripArrayOut){
+
+/**
+ * @brief  
+ * 
+ * @param stripValue 
+ * @param stripArrayOut 
+*/
+void STB_LED::getStrippArray(int stripValue, int &stripArrayOut) {
     int stripArray[4] = {-1,-1,-1,-1};
-    switch (stripValue){
+    switch (stripValue) {
         case 1: stripArray[0] = 0; break;
         case 2: stripArray[0] = 1; break;
         case 3: stripArray[0] = 0; stripArray[1] = 1; break;
