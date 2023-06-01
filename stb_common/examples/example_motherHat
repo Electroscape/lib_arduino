@@ -1,0 +1,27 @@
+#include <stb_common.h>
+
+STB STB;
+
+void setup() {
+    STB.begin();
+
+    STB.rs485SetToMaster();
+    // slavecount can also be modified later
+    STB.rs485SetSlaveCount(1);
+    
+    STB.i2cScanner();
+    STB.printSetupEnd(); 
+}
+
+void loop() {
+
+    STB.rs485PerformPoll();
+
+    char* ptr = strtok(STB.rcvdPtr, "_");
+    while (STB.rs485RcvdNextLn() && lineCnt++ < 5) {
+        if (strcmp("!RFID", ptr) != 0) {
+            // do stuff
+            STB.motherRelay.digitalWrite(REL_0_PIN, !REL_0_INIT);
+        }
+    }
+}

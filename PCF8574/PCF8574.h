@@ -50,12 +50,12 @@
 /**
  * @brief PCF8574 Arduino class
  */
-class Expander_PCF8574 {
+class PCF8574 {
 public:
 	/**
 	 * Create a new PCF8574 instance
 	 */
-	Expander_PCF8574();
+	PCF8574();
 
 	/**
 	 * Start the I2C controller and store the PCF8574 chip address

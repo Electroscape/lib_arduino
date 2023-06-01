@@ -1,19 +1,20 @@
 // Simple software SPI test for Adafruit 128x32 oled.
-
-// pin definitions
-#define OLED_RST   8
-#define OLED_DC    9
-#define OLED_CS   10
-#define OLED_DATA 11
-#define OLED_CLK  13
-
 #include "SSD1306Ascii.h"
 #include "SSD1306AsciiSoftSpi.h"
 
+// pin definitions
+#define CS_PIN    7
+#define RST_PIN   8
+#define DC_PIN    9
+#define OLED_DATA 11
+#define OLED_CLK  13
+
 SSD1306AsciiSoftSpi oled;
 //------------------------------------------------------------------------------
-void setup() {         
-  oled.begin(&Adafruit128x32, OLED_CS, OLED_DC, OLED_CLK, OLED_DATA, OLED_RST);
+void setup() {
+  // Use next line if no RST_PIN or reset is not required.
+  // oled.begin(&Adafruit128x32, CS_PIN, DC_PIN, OLED_CLK, OLED_DATA);  
+  oled.begin(&Adafruit128x32, CS_PIN, DC_PIN, OLED_CLK, OLED_DATA, RST_PIN);
   oled.setFont(Adafruit5x7);  
 
   uint32_t m = micros();
