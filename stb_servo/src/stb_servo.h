@@ -8,15 +8,17 @@
 
 
 class STB_SERVO {
-    private:
 
-    const int16_t ServoPins[SERVO_CNT] = {9, 6, 5, 3};
+    private:
+    Servo servos[SERVO_CNT]; 
+
+
+    const int ServoPins[SERVO_CNT] = {9, 6, 5, 3};
     bool getBufferValues(STB_BRAIN &Brain, int nrValues,  int &values);
     
     public:
-    //STB_SERVO();    
+    STB_SERVO();    
     
-    //Servo Servo_i[SERVO_CNT];
     //static bool ServoInit();
     bool evaluateCmds(STB_BRAIN &Brain);
     void moveSingleServo(int stripValue, int pos);
