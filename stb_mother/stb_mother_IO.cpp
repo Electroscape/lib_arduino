@@ -10,11 +10,22 @@
 */
 #include "stb_mother_IO.h"
 
-int STB_MOTHER_IO::_getInput() {
+
+/**
+ * @brief  
+ * @param pinValueBasedOnIndex 
+ * @return int 
+*/
+int STB_MOTHER_IO::_getInput(bool pinValueBasedOnIndex) {
     int value = 0;
     for (int i=0; i<_inputCnt; i++) {
         int inputPin = _inputs[i];
-        int inputValue = (1 << inputPin);
+        int inputValue;
+        if (pinValueBasedOnIndex) {
+            inputValue = (1 << i);
+        } else {
+            inputValue = (1 << inputPin);
+        }
         if (!ioPcf.digitalRead((uint8_t) inputPin)) {
             value += inputValue;
         }
@@ -22,14 +33,16 @@ int STB_MOTHER_IO::_getInput() {
     return value;
 }
 
+
 /**
  * @brief  read all declared inputs as a binary added number
+ * @param pinValueBasedOnIndex defaults to false and reads pins based pcf order nor input declaration index
  * @return int 
 */
-int STB_MOTHER_IO::getInputs() {
-    int ret = _getInput();
+int STB_MOTHER_IO::getInputs(bool pinValueBasedOnIndex) {
+    int ret = _getInput(pinValueBasedOnIndex);
     delay(2);
-    if (ret == _getInput()) {
+    if (ret == _getInput(pinValueBasedOnIndex)) {
         return ret;
     } else {
         return 0;

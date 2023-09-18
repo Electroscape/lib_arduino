@@ -9,28 +9,17 @@
 #include "stb_servo.h"
 
 
- Servo myservo;
-//STB_SERVO::STB_SERVO() {};
+STB_SERVO::STB_SERVO() {};
 
-/* bool STB_SERVO::ServoInit() { // necassary??
-
-    Serial.print(F("\nServo init ... \n"));
-
-    for( int i = 0; i < SERVO_CNT; i++ ){
-        //Servo_i.attach(ServoPins[i])
-       
-    }
-
-    return true;
-} */
 
 void STB_SERVO::moveSingleServo(int stripValue, int pos) {  
-    myservo.attach(ServoPins[stripValue]);  // attaches the servo on a pin to the servo object
-    myservo.write(pos);  
-    delay(500); // enough time to move?
-    //myservo.detach();
-    Serial.println("Servo moved!");
+    servos[stripValue].attach(ServoPins[stripValue]);
+    servos[stripValue].write(pos);  
+    // listed as 0.1 per 60° with 180° max range of movement, 100ms extra as buffer
+    delay(400);
+    servos[stripValue].detach();
 }
+
 
 bool STB_SERVO::evaluateCmds(STB_BRAIN &Brain) {
     
@@ -54,7 +43,7 @@ bool STB_SERVO::evaluateCmds(STB_BRAIN &Brain) {
             Serial.println(stripValue);
             Serial.println(pos); */
             Brain.sendAck();
-            moveSingleServo(stripValue,pos);
+            moveSingleServo(stripValue, pos);
         break;
       }
     return true;

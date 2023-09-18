@@ -11,9 +11,9 @@ class STB_MOTHER_IO {
     int _inputs[8] = {0};
     int _outputs[8] = {0};
     int _outputCnt;
-    int _getInput();
+    int _getInput(bool pinValueBasedOnIndex);
     public:
-    int getInputs();
+    int getInputs(bool pinValueBasedOnIndex=false);
     bool ioInit(int inputs[], size_t inputCnt, int outputs[], size_t outputCnt);
     void outputReset();
     // technicall we should make the bool also for getInputs...
