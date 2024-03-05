@@ -7,10 +7,10 @@
 class STB_MOTHER_IO {
     private:
     PCF8574 ioPcf;
-    int _inputCnt;
+    int _inputCnt = 0;
     int _inputs[8] = {0};
     int _outputs[8] = {0};
-    int _outputCnt;
+    int _outputCnt = 0;
     int _getInput(bool pinValueBasedOnIndex);
     public:
     int getInputs(bool pinValueBasedOnIndex=false);
