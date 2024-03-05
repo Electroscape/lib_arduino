@@ -106,22 +106,27 @@ bool STB_RFID::cardRead(Adafruit_PN532 &reader, uint8_t data[16], int datablock,
 }
 
 
-char STB_RFID::allRFID_Message(Adafruit_PN532 RFID_READERS[4], int rfid_amount, int datablock) {
+/**
+ * @brief is limited to up to 5 characters per reader
+ * @param RFID_READERS 
+ * @param rfid_amount 
+ * @param datablock 
+ * @return char 
+*/
+void STB_RFID::allRFID_Message(Adafruit_PN532 RFID_READERS[4], int rfid_amount, char* inputStr, int datablock) {
 
     uint8_t data[16];
-    char message[32] = "!RFID";
+    strcpy(inputStr, KeywordsList::rfidKeyword.c_str());
 
     for (int readerNo = 0; readerNo < rfid_amount; readerNo++) {
         if (STB_RFID::cardRead(RFID_READERS[readerNo], data, datablock)) {
-            strcat(message, "_");
-            strcat(message, (char*) data);
-        }
-        else{ 
-            strcat(message, "_");
-            strcat(message, "ZERO");
+            strcat(inputStr, "_");
+            strncat(inputStr, (char*) data, 5);
+        } else { 
+            strcat(inputStr, "_");
+            strcat(inputStr, "ZERO");
         }
     }
-    return message[32];
 }
 
 
