@@ -217,3 +217,9 @@ bool STB_BRAIN::slaveRespond() {
     return false;
 }
 
+void STB_BRAIN::clearBuffer() {
+    outgoingCmd = false;
+    STB_.clearBuffer();
+
+}
+

@@ -32,6 +32,7 @@ class STB_BRAIN {
         void dbg(String message) { STB_.dbg(message); };
         void oledClear() {STB_.defaultOled.clear();};
         void addToBuffer(char* message, bool containsCmd=false);
+        void clearBuffer();
         void sendAck() {STB_.rs485SendAck();};
         bool nextRcvdLn() {return STB_.rs485RcvdNextLn();};
 
