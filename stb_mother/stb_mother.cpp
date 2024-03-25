@@ -203,19 +203,16 @@ void STB_MOTHER::setupComplete(int brainNo) {
  */
 bool STB_MOTHER::relayInit(int pins[], int initvals[], int amount) {
     
-    String relayString = String(RELAY_I2C_ADD, HEX);
-    relayString.toUpperCase();
-    STB_OLED::writeHeadline(&STB_.defaultOled, "Relay " + relayString);
-    motherRelay.begin(RELAY_I2C_ADD);
+    STB_OLED::writeHeadline(&STB_.defaultOled, "Relay ");
     String pinStr = ""; 
     String valueStr = "";
 
     for (int i = 0; i < amount; i++) {
-        motherRelay.pinMode(pins[i], OUTPUT);
+        pinMode(STB_MOTHER::uln_pins[i], OUTPUT);
         motherRelay.digitalWrite(pins[i], initvals[i]);
         pinStr += String(pins[i]) + " ";
         valueStr += String(initvals[i]) + " ";
-        // dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
+        dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
     }
     STB_OLED::writeToLine(&STB_.defaultOled, 2, pinStr);
     STB_OLED::writeToLine(&STB_.defaultOled, 3, valueStr);

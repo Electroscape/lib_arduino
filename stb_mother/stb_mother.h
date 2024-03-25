@@ -5,10 +5,12 @@
 #include <avr/wdt.h>
 #include <PCF8574.h> /* I2C Port Expander  */
 
-#ifndef RELAY_I2C_ADD
-    #define RELAY_I2C_ADD 0x3F
-#endif 
-#define RESET_I2C_ADD 0x3D
+#define IO_OUT_ADD  0x3F
+#define IO_IN_ADD   0x3D
+
+#define PCF_PIN_CNT 8
+
+
 #define RESEND_ATTEMPTS 30
 
 class STB_MOTHER
@@ -16,6 +18,8 @@ class STB_MOTHER
     private:
         int slaveCount = 8;
         int polledSlave = -1;
+        uint8_t uln_pins[8] = { A1, A2, A3, 2, 3, 4, 5, 6};
+    
     public:
         PCF8574 motherRelay;
         STB STB_;
