@@ -195,7 +195,6 @@ void STB_MOTHER::setupComplete(int brainNo) {
 
 /**
  * @brief initializes the given relay along with init states
- * @param relay (PCF8574) relay instance
  * @param pins (int) pin numbers
  * @param initvals (int) init value
  * @param amount (int) amount of relays to be initialized
@@ -209,7 +208,7 @@ bool STB_MOTHER::relayInit(int pins[], int initvals[], int amount) {
 
     for (int i = 0; i < amount; i++) {
         pinMode(STB_MOTHER::uln_pins[i], OUTPUT);
-        motherRelay.digitalWrite(pins[i], initvals[i]);
+        digitalWrite(STB_MOTHER::uln_pins[pins[i]], initvals[i]);
         pinStr += String(pins[i]) + " ";
         valueStr += String(initvals[i]) + " ";
         dbg("Relay ["); dbg(String(pins[i])); dbg("] set to "); dbgln(String(initvals[i]));
