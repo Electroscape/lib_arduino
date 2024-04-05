@@ -42,6 +42,7 @@ class STB_MOTHER
         void setupComplete(int brainNo);
 
         bool relayInit(int pins[], int initvals[], int amount=8);
+        void relayWrite(int pinIndex, int value);
 
         // linking functions to shorten code
         void dbgln(String message) { STB_.dbgln(message); };

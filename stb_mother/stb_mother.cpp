@@ -218,3 +218,8 @@ bool STB_MOTHER::relayInit(int pins[], int initvals[], int amount) {
     delay(500);
     return true;
 }
+
+
+void STB_MOTHER::relayWrite(int pinIndex, int value) {
+    digitalWrite(STB_MOTHER::uln_pins[pinIndex], value);
+}
