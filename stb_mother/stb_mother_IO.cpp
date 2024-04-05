@@ -13,20 +13,14 @@
 
 /**
  * @brief  
- * @param pinValueBasedOnIndex 
  * @return int 
 */
-int STB_MOTHER_IO::_getInput(bool pinValueBasedOnIndex) {
+int STB_MOTHER_IO::_getInput() {
     int value = 0;
+    int inputValue;
     for (int i=0; i<PCF_PIN_CNT; i++) {
-        int inputPin = _inputs[i];
-        int inputValue;
-        if (pinValueBasedOnIndex) {
-            inputValue = (1 << i);
-        } else {
-            inputValue = (1 << inputPin);
-        }
-        if (!io_in_pcf.digitalRead((uint8_t) inputPin)) {
+        inputValue = (1 << i);
+        if (!io_in_pcf.digitalRead((uint8_t) i)) {
             value += inputValue;
         }
     }
@@ -39,10 +33,10 @@ int STB_MOTHER_IO::_getInput(bool pinValueBasedOnIndex) {
  * @param pinValueBasedOnIndex defaults to false and reads pins based pcf order nor input declaration index
  * @return int 
 */
-int STB_MOTHER_IO::getInputs(bool pinValueBasedOnIndex) {
-    int ret = _getInput(pinValueBasedOnIndex);
+int STB_MOTHER_IO::getInputs() {
+    int ret = _getInput();
     delay(2);
-    if (ret == _getInput(pinValueBasedOnIndex)) {
+    if (ret == _getInput()) {
         return ret;
     } else {
         return 0;
@@ -73,7 +67,7 @@ void STB_MOTHER_IO::ioInit() {
 */
 void STB_MOTHER_IO::outputReset() {
     for (int i=0; i<PCF_PIN_CNT; i++) {
-        io_out_pcf.digitalWrite((uint8_t) _outputs[i], HIGH);
+        io_out_pcf.digitalWrite((uint8_t) i, HIGH);
     }
 }
 
@@ -84,17 +78,10 @@ void STB_MOTHER_IO::outputReset() {
  * @return success
  * @todo consider safety with false return result, and stored pins/pincnt
 */
-bool STB_MOTHER_IO::setOuput(int value, bool pinValueBasedOnIndex) {
+void STB_MOTHER_IO::setOuput(int value) {
     int pinValue;
-    int pin;
-    for (int index=0; index<PCF_PIN_CNT; index++) {
-        pin = _outputs[index];
-        if (pinValueBasedOnIndex) {
-            pinValue = 1 << index;
-        } else {
-            pinValue = 1 << pin;
-        }
+    for (int pin=0; pin<PCF_PIN_CNT; pin++) {
+        pinValue = 1 << pin;
         io_out_pcf.digitalWrite((uint8_t) pin, ((pinValue & value) == 0));
     }
-    return true;
 }
