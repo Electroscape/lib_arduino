@@ -15,6 +15,8 @@ class LED_CMDS {
     static constexpr int clrBlue[3] = {0,0,255};
     static constexpr int clrYellow[3] = {255,255,0};
     static constexpr int clrPurple[3] = {136,0,255};
+    static constexpr int clrwarmWhite[3]= {255, 162, 57};
+    static constexpr int clrwarmerWhite[3]  = {255, 115, 23};
 
     /*could possibly just pass the Mother class once? 
     brainNo as optional param? otherwise take the currently polled slave
